@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- You may freely edit this file. See commented blocks below for -->
+<!-- some examples of how to customize the build. -->
+<!-- (If you delete it and reopen the project it will be recreated.) -->
+<project name="jClxWebSync" default="main" basedir=".">
+  <description>jShipping Wsdl2JavaBuilds</description>
+
+  <!-- http://test:test123@backend.bjshop.sw/transfer/service.wsdl -->
+
+ <property name="out.dir" value="src" />
+
+  <property name="wsdl.user" value="test" />
+  <property name="wsdl.pass" value="test123" />
+
+  <property name="wsdl.url" value="http://${wsdl.user}:${wsdl.pass}@backend.daibersync.ak/transfer/service.wsdl" />
+  <property name="package.name" value="de.complex.jclxsync.soap.axis" />
+  <property name="package.path" value="de/complex/jclxsync/soap/axis" />
+
+  <property name="datacheck.wsdl.url" value="http://${wsdl.user}:${wsdl.pass}@backend.daibersync.ak/datacheck/service.wsdl" />
+  <property name="datacheck.package.name" value="de.complex.jclxsync.soap.datacheck" />
+  <property name="datacheck.package.path" value="de/complex/jclxsync/soap/datacheck" />
+
+  <property name="tablesync.wsdl.url" value="http://${wsdl.user}:${wsdl.pass}@backend.daibersync.ak/tablesync/service.wsdl" />
+  <property name="tablesync.package.name" value="de.complex.jclxsync.soap.tablesync" />
+  <property name="tablesync.package.path" value="de/complex/jclxsync/soap/tablesync" />
+
+  <path id="axis.classpath">
+    <fileset dir="lib/">
+      <include name="**/*.jar" />
+    </fileset>
+  </path>
+  
+  <taskdef resource="axis-tasks.properties" classpathref="axis.classpath" />
+
+  <target name="main" depends="clean">
+    <axis-wsdl2java output="${out.dir}" testcase="false" verbose="true" url="${wsdl.url}" typemappingversion="1.2">
+        <mapping namespace="urn:Transfer" package="${package.name}" />
+    </axis-wsdl2java>
+  </target>
+
+ <!--<target name="adressen" depends="clean_adressen">
+    <axis-wsdl2java output="${out.dir}" testcase="false" verbose="true" url="${wsdl.url}/adressen/wsdl/${access.code}" typemappingversion="1.2">
+        <mapping namespace="urn:adressen" package="${package.name.adressen}" />
+    </axis-wsdl2java>
+	</target>-->
+
+    <target name="clean">
+    <delete includeemptydirs="true">
+      <fileset dir="${out.dir}" includes="**/*" />
+    </delete> 
+  </target>
+
+    <target name="default" depends="main">
+    <delete includeemptydirs="true">
+      <fileset dir="${out.dir}" includes="**/*" />
+    </delete> 
+  </target>
+
+    <target name="datacheck_clean">
+    <delete includeemptydirs="true">
+      <fileset dir="${out.dir}" includes="**/*" />
+    </delete>
+  </target>
+  
+    <target name="tablesync" depends="">
+    <axis-wsdl2java output="${out.dir}" testcase="false" verbose="true" url="${tablesync.wsdl.url}" typemappingversion="1.2">
+        <mapping namespace="urn:Tablesync" package="${tablesync.package.name}" />
+    </axis-wsdl2java>
+  </target>
+
+
+  
+</project>
