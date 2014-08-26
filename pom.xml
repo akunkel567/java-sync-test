@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>de.complex</groupId>
-		<artifactId>ComplexParentPOM</artifactId>
+		<artifactId>ComplexParentPOMWithSvnInfo</artifactId>
 		<version>1.0.0</version>
 	</parent>
    
@@ -15,7 +15,93 @@
 	
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<SCM-Revision>$Id: $</SCM-Revision>
+		<SCM-URL>$URL: $</SCM-URL>
 	</properties>
+	
+	<profiles>
+		<profile>
+			<id>daiber-prod</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<properties>
+				<build.profile.id>daiber-prod</build.profile.id>
+			</properties>
+		</profile>
+		<profile>
+			<id>daiber-sandbox</id>
+			<activation>
+				<activeByDefault>false</activeByDefault>
+			</activation>
+			<properties>
+				<build.profile.id>daiber-sandbox</build.profile.id>
+			</properties>
+		</profile>
+		<profile>
+			<id>daiber-dev</id>
+			<activation>
+				<activeByDefault>false</activeByDefault>
+			</activation>
+			<properties>
+				<build.profile.id>daiber-dev</build.profile.id>
+			</properties>
+		</profile>
+		<profile>
+			<id>fare-prod</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<properties>
+				<build.profile.id>fare-prod</build.profile.id>
+			</properties>
+		</profile>
+		<profile>
+			<id>fare-sandbox</id>
+			<activation>
+				<activeByDefault>false</activeByDefault>
+			</activation>
+			<properties>
+				<build.profile.id>fare-sandbox</build.profile.id>
+			</properties>
+		</profile>
+		<profile>
+			<id>fare-dev</id>
+			<activation>
+				<activeByDefault>false</activeByDefault>
+			</activation>
+			<properties>
+				<build.profile.id>fare-dev</build.profile.id>
+			</properties>
+		</profile>
+		<profile>
+			<id>mbw-prod</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<properties>
+				<build.profile.id>mbw-prod</build.profile.id>
+			</properties>
+		</profile>
+		<profile>
+			<id>mbw-sandbox</id>
+			<activation>
+				<activeByDefault>false</activeByDefault>
+			</activation>
+			<properties>
+				<build.profile.id>mbw-sandbox</build.profile.id>
+			</properties>
+		</profile>
+		<profile>
+			<id>mbw-dev</id>
+			<activation>
+				<activeByDefault>false</activeByDefault>
+			</activation>
+			<properties>
+				<build.profile.id>mbw-dev</build.profile.id>
+			</properties>
+		</profile>
+	</profiles>
 	
 	<build>
 		<plugins>
