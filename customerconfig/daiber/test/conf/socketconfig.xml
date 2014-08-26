@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<socketconfig>
-    <table name="TEMP_ORDER_KOPF">
-        <procedure tablefield="TMP_ORDER_KOPFID" name="WRITE_AK_FROM_ORDER" />
-    </table>
-</socketconfig>
