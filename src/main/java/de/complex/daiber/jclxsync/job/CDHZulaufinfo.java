@@ -200,7 +200,7 @@ public class CDHZulaufinfo extends Thread {
 		Logger.getRootLogger().setLevel(Level.DEBUG);
 
 
-		String iniFilename = "./conf/jClxSync.properties";
+		String iniFilename = "./conf/clxProductSync.properties";
 		ApplicationConfig.loadConfig(iniFilename);
 
 		Properties prop = new Properties();

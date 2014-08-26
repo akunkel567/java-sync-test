@@ -527,7 +527,7 @@ public class CDHArtBestand extends Thread {
 		BasicConfigurator.configure();
 		Logger.getRootLogger().setLevel(Level.DEBUG);
 
-		String iniFilename = "./conf/jClxSync.properties";
+		String iniFilename = "./conf/clxProductSync.properties";
 		ApplicationConfig.loadConfig(iniFilename);
 
 		Properties prop = new Properties();

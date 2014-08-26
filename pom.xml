@@ -21,9 +21,18 @@
 	
 	<profiles>
 		<profile>
-			<id>daiber-prod</id>
+			<id>complex</id>
 			<activation>
 				<activeByDefault>true</activeByDefault>
+			</activation>
+			<properties>
+				<build.profile.id>complex</build.profile.id>
+			</properties>
+		</profile>
+		<profile>
+			<id>daiber-prod</id>
+			<activation>
+				<activeByDefault>false</activeByDefault>
 			</activation>
 			<properties>
 				<build.profile.id>daiber-prod</build.profile.id>
@@ -50,7 +59,7 @@
 		<profile>
 			<id>fare-prod</id>
 			<activation>
-				<activeByDefault>true</activeByDefault>
+				<activeByDefault>false</activeByDefault>
 			</activation>
 			<properties>
 				<build.profile.id>fare-prod</build.profile.id>
@@ -77,7 +86,7 @@
 		<profile>
 			<id>mbw-prod</id>
 			<activation>
-				<activeByDefault>true</activeByDefault>
+				<activeByDefault>false</activeByDefault>
 			</activation>
 			<properties>
 				<build.profile.id>mbw-prod</build.profile.id>
