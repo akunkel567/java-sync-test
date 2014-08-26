@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<eventconfig>
+	<events>
+		<event name="ADA" />
+		<event name="ADAKZ" />
+		<event name="ADB" />
+		<event name="ADL" />
+		<event name="ADP" />
+		<event name="ADR" />
+		<event name="ANREDEKURZ" />
+		<event name="ANREDELANG" />
+		<event name="ARTFARBE" />
+		<event name="ARTFARBESPRACHEN" />
+		<event name="ARTFEATURES" />
+		<event name="ARTGROESSE" />
+		<event name="ARTGROESSEBESTAND" />
+		<event name="ARTPREISTYP" />
+		<event name="ARTPREISTYPGROESSE" />                
+		<event name="ARTPREISTYPPREISE" />
+		<event name="INETFARBEN" />
+		<event name="INETFARBENFARBEN" />
+		<event name="KATEGORIEN_WGR_FILTER" />
+		<event name="LAND" />
+		<event name="MARKEN" />
+		<event name="WAEHRUNG" />
+		<event name="SHOP" />                   
+		<event name="WEBARTSHOP" />
+		<event name="WEBKATEGORIEN" />
+		<event name="WEBWARENGRUPPEN" />
+		<event name="SPRACHE" />
+		<event name="WEBSHOPMARKEN" />
+		<event name="WEBWARENGRUPPENFEATURES" />
+		<event name="WEBPREISGRUPPE" />
+		<event name="WEBPREISTYP" />
+		<event name="SHOPSPRACHEN" />
+		<event name="WEBFARBEN" />
+		<event name="WEBGROESSEN" />
+		<event name="WEBPSYMK" />
+		<event name="WEBFEATURE" />
+		<event name="WEBPSYMBOLE" />
+		<event name="WEBARTSHOPKATEGORIE" />
+		<event name="SHOPPREISGRUPPE" />
+		<event name="ARTVERWAND" />
+		<event name="SENDADPPASSWORT" />
+		<event name="BESTANDLOG" />
+		<event name="INETFARBENSPRACHEN" />
+		<event name="SHOPRABATT" />
+		<event name="SHOPRABATTSPRACHEN" />
+		<event name="ERRORCODE" />
+		<event name="ERRORCODESPRACHE" />
+		<event name="WEBARTPREISTYPPREISE" />
+		<event name="GENDER" />
+		<event name="GENDERSPRACHEN" />
+		<event name="ARTPARTNER" />
+		
+		<event name="ART" />
+		<event name="ARTSHOP" />
+		<event name="ARTSPRACHEN" />
+		<event name="ARTSPRACHENSHOP" />
+		<event name="ARTALTERNATIV" />
+		<event name="ARTKATEGORIE" />
+		
+		<event name="FARBEN" />
+		<event name="FARBENSPRACHE" />
+
+		<event name="FEATUREART" />
+		<event name="FEATURE" />
+		<event name="FEATURESPRACHEN" />
+
+		<event name="GROESSEN" />
+		<event name="GROESSENSPRACHE" />
+
+		<event name="KATEGORIEN" />
+		<event name="KATEGORIENSPRACHEN" />
+
+		<event name="PREISGRUPPE" />
+		<event name="PREISGRUPPESPRACHEN" />
+		
+		<event name="PREISTYP" />
+		<event name="PREISTYPSPRACHEN" />
+
+		<event name="PSYMBOLE" />
+		<event name="PSYMBOLESPRACHEN" />
+
+		<event name="PSYMK" />
+		<event name="PSYMKSPRACHE" />
+
+		<event name="WARENGRUPPEN" />
+		<event name="WARENGRUPPENSPRACHEN" />
+	</events>
+</eventconfig>

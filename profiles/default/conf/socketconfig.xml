@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<socketconfig>
+    <table name="TEMP_AK">
+        <procedure tablefield="TEMP_AKID" name="CREATE_WEBAK" />
+    </table>
+    <table name="TEMP_ADP">
+        <procedure tablefield="TEMP_ADPID" name="CREATE_ADP_FROM_WEB" />
+    </table>
+    <table name="TEMP_AKPAY">
+        <procedure tablefield="TEMP_AKPAYID" name="CREATE_AKPAY" />
+    </table>	
+</socketconfig>

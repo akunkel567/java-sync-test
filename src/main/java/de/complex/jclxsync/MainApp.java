@@ -102,9 +102,9 @@ public class MainApp extends Thread {
 					String iniFilename = null;
 
 					if (setDebug) {
-						iniFilename = "conf/jClxSync.properties";
+						iniFilename = "conf/clxProductSync.properties";
 					} else {
-						iniFilename = "../conf/jClxSync.properties";
+						iniFilename = "../conf/clxProductSync.properties";
 					}
 
 					if (!ApplicationConfig.loadConfig(iniFilename)) {

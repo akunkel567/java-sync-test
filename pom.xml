@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>de.complex</groupId>
 		<artifactId>ComplexParentPOMWithSvnInfo</artifactId>
-		<version>1.0.0</version>
+		<version>1.0.0-SNAPSHOT</version>
 	</parent>
    
 	<groupId>de.complex</groupId>
@@ -111,17 +111,13 @@
 				<version>2.4</version>
 				<configuration>
 					<outputDirectory>${project.build.directory}/../dist</outputDirectory>
-					<finalName>clxSyncDaiber</finalName>
+					<finalName>${project.artifactId}-${project.version}</finalName>
 					<archive>
 						<manifest>
 							<addClasspath>true</addClasspath>
 							<classpathPrefix>lib/</classpathPrefix>
 							<!--<mainClass>de.complex.XXX</mainClass>--><!-- z.Zt. keine Main-Class vorhanden, wird über Service-Wrapper ausgeführt-->
 						</manifest>
-						<manifestEntries>
-							<SCM-Revision>$Id: pom.xml 3414 2014-08-21 15:24:51Z a.kunkel $</SCM-Revision>
-							<SCM-URL>$URL: https://xp-dev.com/svn/daiber/Programme/clxfashionsync/trunk/pom.xml $</SCM-URL>
-						</manifestEntries>
 					</archive>
 				</configuration>
 			</plugin>
@@ -130,13 +126,73 @@
 				<version>2.8</version>
 				<executions>
 					<execution>
-						<phase>install</phase>
+						<phase>package</phase>
 						<goals>
 							<goal>copy-dependencies</goal>
 						</goals>
 						<configuration>
 							<outputDirectory>${project.build.directory}/../dist/lib</outputDirectory>
 							<useBaseVersion>false</useBaseVersion>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<artifactId>maven-resources-plugin</artifactId>
+				<version>2.3</version>
+				<executions>
+					<execution>
+						<id>copy-prod-resources</id>
+						<!--<phase>process-resources</phase>-->
+						<phase>package</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<configuration>
+							<!-- this is important -->
+							<overwrite>true</overwrite>
+							<!-- target -->
+							<outputDirectory>${basedir}/serviceDist/${project.artifactId}-${build.profile.id}-${project.version}</outputDirectory>
+							<resources>
+								<resource>
+									<!-- default configuration -->
+									<directory>${basedir}/profiles/default</directory>
+									<includes>
+										<include>conf/**.*</include>
+									</includes>
+								</resource>
+								<resource>
+									<!-- profile configuration -->
+									<directory>${basedir}/profiles/${build.profile.id}</directory>
+									<includes>
+										<include>conf/**.*</include>
+									</includes>
+								</resource>
+								<resource>
+									<!-- dist -->
+									<directory>${basedir}</directory>
+									<includes>
+										<include>dist/**.*</include>
+										<include>dist/lib/**.*</include>
+									</includes>
+								</resource>
+								<resource>
+									<!-- serviceWrapper -->
+									<directory>${basedir}/serviceWrapper</directory>
+									<includes>
+										<include>bin/**.*</include>
+										<include>lib/**.*</include>
+									</includes>
+								</resource>
+								<resource>
+									<!-- serviceWrapper and filtering config -->
+									<directory>${basedir}/serviceWrapper</directory>
+									<filtering>true</filtering>
+									<includes>
+										<include>conf/**.*</include>
+									</includes>
+								</resource>
+							</resources>
 						</configuration>
 					</execution>
 				</executions>
