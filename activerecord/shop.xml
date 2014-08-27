@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<activerecord name="shop" tablename=""  pkey="" procedure="false" >
+	<select_fields></select_fields>
+	<exclude_fields>sau sadt scu scdt</exclude_fields>
+	<mapping tablename="shop" pkey="shopid">
+		<field name="shopdomain">domain</field>		
+		<field name="shopname">name</field>		
+	</mapping>
+</activerecord>
