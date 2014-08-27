@@ -189,11 +189,8 @@
 								<resource>
 									<!-- serviceWrapper -->
 									<directory>${basedir}/serviceWrapper</directory>
-									<filtering>true</filtering>
 									<includes>
 										<include>bin/**.*</include>
-										<include>bin/**.*</include>
-										<include>bin/clxProduktSync</include>
 										<include>bin/wrapper</include>
 									</includes>
 								</resource>
@@ -203,6 +200,7 @@
 									<filtering>true</filtering>
 									<includes>
 										<include>conf/**.*</include>
+										<include>bin/clxProductSync</include>
 									</includes>
 								</resource>
 							</resources>
