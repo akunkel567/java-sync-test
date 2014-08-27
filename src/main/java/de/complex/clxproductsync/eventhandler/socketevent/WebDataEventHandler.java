@@ -73,6 +73,8 @@ public class WebDataEventHandler extends AbstractSocketEventHandler {
 							Connection con = null;
 							try {
 								con = this.db.getConnection();
+								con.setReadOnly(false);
+								con.setAutoCommit(false);
 
 								if (snjobweb.getJobtyp().equals("D")) {
 									WebDataEventHandler.logger.debug("delete Table A");

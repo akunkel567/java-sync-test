@@ -333,6 +333,8 @@ public class SnJobDAO {
 
 		try {
 			c = db.getConnection();
+			c.setReadOnly(false);
+			c.setAutoCommit(false);
 			if (c != null) {
 
 				stmt = c.createStatement();
@@ -365,6 +367,9 @@ public class SnJobDAO {
 		String updateQry = "";
 		try {
 			c = db.getConnection();
+			c.setReadOnly(false);
+			c.setAutoCommit(false);
+			
 			if (c != null) {
 				stmt = c.createStatement();
 

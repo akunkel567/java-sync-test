@@ -255,7 +255,6 @@ public class MainApp extends Thread {
 		FirebirdDbPool.setMaxPoolSize(30);
 		FirebirdDbPool.setMaxIdleTime(1000 * 20);
 				
-		FirebirdDbPool.setAutoCommit(false);
 		FirebirdDbPool.createInstance();
 		
 		WebsyncEventManager.setJobCheckInterval(30 * 1000);
