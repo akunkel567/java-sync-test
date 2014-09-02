@@ -27,6 +27,7 @@ import java.sql.SQLException;
 import org.apache.log4j.Logger;
 import de.complex.tools.config.ApplicationConfig;
 import java.sql.Connection;
+import org.apache.axis.AxisFault;
 
 /**
  *
@@ -64,43 +65,54 @@ public class WebDataEventHandler extends AbstractSocketEventHandler {
 						currSnjobWeb = snjobweb;
 						WebDataEventHandler.logger.info("Snjobweb start - " + snjobweb);
 
-						XmlOut xmlOut = SoapHandler.getXmlData(snjobweb.getSnjobwebid());
+						try {
+							XmlOut xmlOut = SoapHandler.getXmlData(snjobweb.getSnjobwebid());
 
-						if (xmlOut != null) {
-							XmlData xmlData = new XmlConverter().xmlDataFromXml(xmlOut.getXml());
+							if (xmlOut != null) {
+								XmlData xmlData = new XmlConverter().xmlDataFromXml(xmlOut.getXml());
 
-							// Connection holen
-							Connection con = null;
-							try {
-								con = this.db.getConnection();
-								con.setReadOnly(false);
-								con.setAutoCommit(false);
+								// Connection holen
+								Connection con = null;
+								try {
+									con = this.db.getConnection();
+									con.setReadOnly(false);
+									con.setAutoCommit(false);
 
-								if (snjobweb.getJobtyp().equals("D")) {
-									WebDataEventHandler.logger.debug("delete Table A");
-									deleteXmlTable(xmlData.getTable(), con);
-									WebDataEventHandler.logger.debug("delete Table B");
-								} else {
-									WebDataEventHandler.logger.debug("save Table A");
-									saveXmlTable(xmlData.getTable(), con);
-									WebDataEventHandler.logger.debug("save Table B");
+									if (snjobweb.getJobtyp().equals("D")) {
+										WebDataEventHandler.logger.debug("delete Table A");
+										deleteXmlTable(xmlData.getTable(), con);
+										WebDataEventHandler.logger.debug("delete Table B");
+									} else {
+										WebDataEventHandler.logger.debug("save Table A");
+										saveXmlTable(xmlData.getTable(), con);
+										WebDataEventHandler.logger.debug("save Table B");
+									}
+									WebDataEventHandler.logger.debug("save/delete Table OK, Commit now");
+									con.commit();
+									WebDataEventHandler.logger.debug("save/delete Table after Commit");
+
+									SoapHandler.setSnJobWebOK(snjobweb.getSnjobwebid());
+									WebDataEventHandler.logger.info("Snjobweb done - " + currSnjobWeb);
+
+								} catch (SQLException ex) {
+									WebDataEventHandler.logger.error("save not ok - Rollback SnjobWeb: " + snjobweb, ex);
+									if (con != null) {
+										con.rollback();
+									}
+
+									throw ex;
+								} finally {
+									FirebirdDb.close(null, null, con);
 								}
-								WebDataEventHandler.logger.debug("save/delete Table OK, Commit now");
-								con.commit();
-								WebDataEventHandler.logger.debug("save/delete Table after Commit");
+							}
+						} catch (RemoteCallException rce) {
+							if ( rce.getCause() instanceof AxisFault && "410".equalsIgnoreCase(((AxisFault) rce.getCause()).getFaultCode().toString()) ) {
+								WebDataEventHandler.logger.warn("AxisFault: " + ((AxisFault) rce.getCause()).getFaultString(), rce);
 
+								// Datensatz nicht mehr vorhanden, wurde bereits gelöscht und noch offener Löschjob vorhanden 
 								SoapHandler.setSnJobWebOK(snjobweb.getSnjobwebid());
-								WebDataEventHandler.logger.info("Snjobweb done - " + currSnjobWeb);
-
-							} catch (SQLException ex) {
-								WebDataEventHandler.logger.error("save not ok - Rollback SnjobWeb: " + snjobweb, ex);
-								if (con != null) {
-									con.rollback();
-								}
-
-								throw ex;
-							} finally {
-								FirebirdDb.close(null, null, con);
+							} else {
+								throw rce;
 							}
 						}
 					}
@@ -126,7 +138,7 @@ public class WebDataEventHandler extends AbstractSocketEventHandler {
 			activeRow = activeRecord.findOne(Long.parseLong(row.getPkValue()));
 
 			if (activeRow != null) {
-				if (!activeRow.delete(con)){
+				if (!activeRow.delete(con)) {
 					throw new SQLException("Löschen fehlgeschlagen");
 				}
 			}
