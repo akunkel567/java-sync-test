@@ -17,6 +17,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<SCM-Revision>$Id: $</SCM-Revision>
 		<SCM-URL>$URL: $</SCM-URL>
+		<wrapper.java.command>java</wrapper.java.command>
 	</properties>
 	
 	<profiles>
@@ -36,6 +37,7 @@
 			</activation>
 			<properties>
 				<build.profile.id>daiber-prod</build.profile.id>
+				<wrapper.java.command>d:/Complex/Dienste/jdk1.7.0_51/bin/java</wrapper.java.command>
 			</properties>
 		</profile>
 		<profile>
@@ -45,6 +47,7 @@
 			</activation>
 			<properties>
 				<build.profile.id>daiber-sandbox</build.profile.id>
+				<wrapper.java.command>d:/Complex/Dienste/jdk1.7.0_51/bin/java</wrapper.java.command>
 			</properties>
 		</profile>
 		<profile>
@@ -172,13 +175,6 @@
 									</includes>
 								</resource>
 								<resource>
-									<!-- profile configuration -->
-									<directory>${basedir}/profiles/${build.profile.id}</directory>
-									<includes>
-										<include>conf/**.*</include>
-									</includes>
-								</resource>
-								<resource>
 									<!-- dist -->
 									<directory>${basedir}</directory>
 									<includes>
@@ -201,6 +197,14 @@
 									<includes>
 										<include>conf/**.*</include>
 										<include>bin/clxProductSync</include>
+									</includes>
+								</resource>
+								<resource>
+									<!-- profile configuration -->
+									<directory>${basedir}/profiles/${build.profile.id}</directory>
+									<includes>
+										<include>conf/**.*</include>
+										<include>conf/jssecacerts</include>
 									</includes>
 								</resource>
 							</resources>
