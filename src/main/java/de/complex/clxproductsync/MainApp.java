@@ -259,6 +259,8 @@ public class MainApp extends Thread {
 		
 		WebsyncEventManager.setJobCheckInterval(30 * 1000);
 		FileEventManager.setJobCheckInterval(30 * 1000);
+		
+		System.setProperty("complex.axis.default.timeout", String.valueOf(1000 * 60 * 10)); // 10 Minuten
 
 		MainApp.logger.info("***** EventConfig START *****");
 		FirebirdEventConfig eventconfig = (FirebirdEventConfig) ApplicationConfig.getObject("eventconfig");

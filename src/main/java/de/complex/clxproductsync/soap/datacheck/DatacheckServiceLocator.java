@@ -54,6 +54,9 @@ public class DatacheckServiceLocator extends org.apache.axis.client.Service impl
         try {
             de.complex.clxproductsync.soap.datacheck.DatacheckBindingStub _stub = new de.complex.clxproductsync.soap.datacheck.DatacheckBindingStub(portAddress, this);
             _stub.setPortName(getDatacheckPortWSDDServiceName());
+				
+				_stub.setTimeout(Integer.parseInt(System.getProperty("complex.axis.default.timeout")));
+								
             return _stub;
         }
         catch (org.apache.axis.AxisFault e) {

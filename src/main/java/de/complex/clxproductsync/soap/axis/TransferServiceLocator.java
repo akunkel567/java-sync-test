@@ -54,6 +54,9 @@ public class TransferServiceLocator extends org.apache.axis.client.Service imple
         try {
             de.complex.clxproductsync.soap.axis.TransferBindingStub _stub = new de.complex.clxproductsync.soap.axis.TransferBindingStub(portAddress, this);
             _stub.setPortName(getTransferPortWSDDServiceName());
+				
+				_stub.setTimeout(Integer.parseInt(System.getProperty("complex.axis.default.timeout")));
+				
             return _stub;
         }
         catch (org.apache.axis.AxisFault e) {

@@ -54,7 +54,10 @@ public class TablesyncServiceLocator extends org.apache.axis.client.Service impl
         try {
             de.complex.clxproductsync.soap.tablesync.TablesyncBindingStub _stub = new de.complex.clxproductsync.soap.tablesync.TablesyncBindingStub(portAddress, this);
             _stub.setPortName(getTablesyncPortWSDDServiceName());
-            return _stub;
+				
+				_stub.setTimeout(Integer.parseInt(System.getProperty("complex.axis.default.timeout")));
+ 
+				return _stub;
         }
         catch (org.apache.axis.AxisFault e) {
             return null;
