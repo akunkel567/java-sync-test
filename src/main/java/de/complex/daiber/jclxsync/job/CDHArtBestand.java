@@ -116,6 +116,8 @@ public class CDHArtBestand extends Thread {
 
 			try {
 				con = db.getConnection();
+				con.setAutoCommit(false);
+				con.setReadOnly(false);
 				CDHArtBestand.logger.debug("FirebirdDb Connection:" + con);
 				cdhCon = msdb.getConnection();
 				CDHArtBestand.logger.debug("Mssql-Db Connection: " + cdhCon);

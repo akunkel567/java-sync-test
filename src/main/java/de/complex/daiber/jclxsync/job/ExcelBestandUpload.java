@@ -17,9 +17,14 @@ import de.complex.clxproductsync.soap.SoapHandler;
 import de.complex.clxproductsync.tools.ClxFtp;
 import de.complex.tools.config.ApplicationConfig;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -28,6 +33,8 @@ import java.util.Properties;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.net.ftp.FTPClient;
+import org.apache.log4j.BasicConfigurator;
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
@@ -74,6 +81,7 @@ public class ExcelBestandUpload extends Thread {
 			try {
 				try {
 					con = db.getConnection();
+					con.setAutoCommit(false);
 					ExcelBestandUpload.logger.debug("FirebirdDb Connection:" + con);
 					stmtSprachen = con.createStatement();
 					stmt = con.createStatement();
@@ -219,6 +227,9 @@ public class ExcelBestandUpload extends Thread {
 						}
 
 					}
+				
+					con.commit();
+				
 				} catch (java.sql.SQLException e) {
 					ExcelBestandUpload.logger.error("SQL Error", e);
 					SQLLog.logger.error("SQL Error.", e);
@@ -239,4 +250,30 @@ public class ExcelBestandUpload extends Thread {
 		HSSFCell cell = row.createCell(cellIndex);
 		cell.setCellValue(value);
 	}
+	
+	public static void main(String[] args) throws IOException, SQLException {
+		// TODO code application logic here
+
+		BasicConfigurator.configure();
+		Logger.getRootLogger().setLevel(Level.DEBUG);
+
+		String iniFilename = "./conf/clxProductSync.properties";
+		ApplicationConfig.loadConfig(iniFilename);
+
+		Properties prop = new Properties();
+		prop.load(new FileInputStream(new File(iniFilename)));
+		
+		System.setProperty("complex.axis.default.timeout", String.valueOf(1000 * 60 * 10)); // 10 Minuten
+
+		FirebirdDbPool.createInstance();
+		Connection con = FirebirdDbPool.getInstance().getConnection();
+		ExcelBestandUpload job = new ExcelBestandUpload(prop);
+
+		job.run();
+		
+		con.close();
+
+		//	job.run();
+	}
+
 }

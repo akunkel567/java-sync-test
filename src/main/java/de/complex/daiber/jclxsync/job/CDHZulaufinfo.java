@@ -109,6 +109,9 @@ public class CDHZulaufinfo extends Thread {
 
 			try {
 				con = db.getConnection();
+				con.setAutoCommit(false);
+				con.setReadOnly(false);
+				
 				CDHZulaufinfo.logger.debug("FirebirdDb Connection:" + con);
 				cdhCon = msdb.getConnection();
 				CDHZulaufinfo.logger.debug("Mssql-Db Connection: " + cdhCon);
