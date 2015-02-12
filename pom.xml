@@ -31,6 +31,15 @@
 			</properties>
 		</profile>
 		<profile>
+			<id>clxprodukt</id>
+			<activation>
+				<activeByDefault>false</activeByDefault>
+			</activation>
+			<properties>
+				<build.profile.id>clxprodukt</build.profile.id>
+			</properties>
+		</profile>
+		<profile>
 			<id>daiber-prod</id>
 			<activation>
 				<activeByDefault>false</activeByDefault>
