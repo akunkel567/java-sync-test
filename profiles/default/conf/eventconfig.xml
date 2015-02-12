@@ -87,5 +87,16 @@
 
 		<event name="WARENGRUPPEN" />
 		<event name="WARENGRUPPENSPRACHEN" />
+
+		<event name="HAUPTARTGROESSE" />
+		<event name="MASSEINHEITEN" />
+		<event name="MASSEINHEITENSPRACHEN" />
+		<event name="MASSGRUPPEN" />
+		<event name="MASSGRUPPENMASSTBS" />
+		<event name="MASSTBS" />
+		<event name="MASSTBSSPRACHEN" />
+		<event name="ARTMASSTBS" />
+		<event name="GROESSENARTMASSTBS" />
+		<event name="ARTGROESSEADA" />
 	</events>
 </eventconfig>
