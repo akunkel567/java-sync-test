@@ -186,28 +186,34 @@ public class CDHArtBestand extends Thread {
 		if (bestand.getAktuellerBestand() == 0) {
 			CDHArtBestand.logger.debug("artgroesseid: " + sku.getArtgroesseid() + " Bestand ist 0");
 
-			if (sku.getArtgroesseWebinaktiv() == 0 && (sku.getArtAuslauf() != 0 || sku.getArtfarbeAuslauf() != 0 || sku.getArtgroesseAuslauf() != 0)) {
+			if (sku.getArtAuslauf() != 0 || sku.getArtfarbeAuslauf() != 0 || sku.getArtgroesseAuslauf() != 0) {
 				CDHArtBestand.logger.debug(" ArtGroesseid: " + sku.getArtgroesseid() + " inaktiv setzen");
 
-				// Artgroesse inaktiv schalten
-				setDetailInaktiv(con, Detailtype.artgroesse, sku.getArtgroesseid());
+				// wenn noch aktiv, Artgroesse inaktiv schalten
+				if (sku.getArtgroesseWebinaktiv() == 0) {
+					setDetailInaktiv(con, Detailtype.artgroesse, sku.getArtgroesseid());
+				}
 
-				// artfarbe aktiv && keine weiteren Artgroesse aktiv
-				if (sku.getArtfarbeWebinaktiv() == 0 && !hasMoreDetail(con, Detailtype.artgroesse, sku.getArtgroesseid())) {
+				// keine weiteren Artgroesse aktiv
+				if (!hasMoreDetail(con, Detailtype.artgroesse, sku.getArtgroesseid())) {
 
-					// Artfarbe inaktiv schalten
-					setDetailInaktiv(con, Detailtype.artfarbe, sku.getArtfarbeId());
-					checkSeoHauptfarbe(con, sku.getArtfarbeId());
+					// wenn noch aktiv, Artfarbe inaktiv schalten
+					if (sku.getArtfarbeWebinaktiv() == 0) {
+						setDetailInaktiv(con, Detailtype.artfarbe, sku.getArtfarbeId());
+						checkSeoHauptfarbe(con, sku.getArtfarbeId());
+					}
 
-					// Art aktiv && und keine weitere Artfarbe aktiv
-					if (sku.getArtAktiv() == 1 && !hasMoreDetail(con, Detailtype.artfarbe, sku.getArtfarbeId())) {
+					// keine weitere Artfarbe aktiv
+					if (!hasMoreDetail(con, Detailtype.artfarbe, sku.getArtfarbeId())) {
 
-						// Art inaktiv
-						setDetailInaktiv(con, Detailtype.art, sku.getArtid());
+						// wenn noch aktiv, Art inaktiv schalten
+						if (sku.getArtAktiv() == 1) {
+							setDetailInaktiv(con, Detailtype.art, sku.getArtid());
+						}
 					}
 				}
 			} else {
-				CDHArtBestand.logger.debug("artgroesseid: " + sku.getArtgroesseid() + " bereits inaktiv oder nicht Auslauf");
+				CDHArtBestand.logger.debug("artgroesseid: " + sku.getArtgroesseid() + ", keine Stufe auf Auslauf, nicht deaktivieren");
 			}
 		} else {
 
@@ -486,10 +492,10 @@ public class CDHArtBestand extends Thread {
 	}
 
 	/**
-	 * sqlDeaktivieren = Update-Sql zum Deaktivieren des Details<br>
-	 * sqlCheck = Select-Sql zum prüfen ob noch ein gleichwertiger Datensatz
-	 * aktiv ist<br>
-	 * sqlAktivieren = Update-Sql zum Aktivieren des Details
+	 *
+	 * <li>{@link #sqlDeaktivieren}</li>
+	 * <li>{@link #sqlCheck}</li>
+	 * <li>{@link #sqlAktivieren}</li>
 	 *
 	 */
 	private enum Detailtype {
@@ -512,8 +518,17 @@ public class CDHArtBestand extends Thread {
 				  + " inner join ARTGROESSE AGMASTER ON (AGMASTER.ARTFARBEID=AGDETAIL.ARTFARBEID AND AGMASTER.ARTGROESSEID<>AGDETAIL.ARTGROESSEID)"
 				  + " where AGMASTER.ARTGROESSEID=?"
 				  + " and AGDETAIL.WEBINAKTIV=0", "update ARTGROESSE set ARTGROESSE.WEBINAKTIV=0 where ARTGROESSE.ARTGROESSEID=?");
+		/**
+		 * Update-Sql zum Deaktivieren des Details
+		 */
 		public String sqlDeaktivieren;
+		/**
+		 * Select-Sql zum prüfen ob noch ein gleichwertiger Datensatz aktiv ist
+		 */
 		public String sqlCheck;
+		/**
+		 * Update-Sql zum Aktivieren des Details
+		 */
 		public String sqlAktivieren;
 
 		private Detailtype(String sqlDeaktivieren, String sqlCheck, String sqlAktivieren) {
@@ -537,6 +552,8 @@ public class CDHArtBestand extends Thread {
 
 		FirebirdDbPool.createInstance();
 		Connection con = FirebirdDbPool.getInstance().getConnection();
+		con.setReadOnly(false);
+		con.setAutoCommit(false);
 		CDHArtBestand job = new CDHArtBestand(prop);
 
 		SKU sku = new SKU();
@@ -545,19 +562,25 @@ public class CDHArtBestand extends Thread {
 //		sku.setArtgroesseid(85288);
 //		sku.setArtgroesseid(85289);
 //		sku.setArtgroesseid(85290);
-		sku.setArtgroesseid(78425);
-		sku.setArtfarbeId(35680);
-		sku.setArtid(7513);
-		sku.setCdhid(64356);
-		
-		sku.setArtgroesseAuslauf(0);
-		sku.setArtfarbeAuslauf(0);
+		sku.setArtgroesseid(97391);
+		sku.setArtfarbeId(41265);
+		sku.setArtid(8310);
+		sku.setCdhid(119);
+
+		sku.setArtgroesseAuslauf(1);
+		sku.setArtfarbeAuslauf(1);
 		sku.setArtAuslauf(1);
 
-		sku.setArtgroesseWebinaktiv(1);
+		// aktiv
+		sku.setArtgroesseWebinaktiv(0);
 		sku.setArtfarbeWebinaktiv(0);
 		sku.setArtAktiv(1);
-		
+				  
+		// ínaktiv
+		sku.setArtgroesseWebinaktiv(1);
+		sku.setArtfarbeWebinaktiv(1);
+		sku.setArtAktiv(0);
+
 //		// true = alles aktiv
 //		if (false) {
 //			sku.setArtgroesseWebinaktiv(0);
@@ -579,12 +602,11 @@ public class CDHArtBestand extends Thread {
 //			sku.setArtfarbeAuslauf(0);
 //			sku.setArtAuslauf(0);
 //		}
-
-		CDHBestand bestand = new CDHBestand(10, 5);
+//		CDHBestand bestand = new CDHBestand(0, 0);
+		CDHBestand bestand = new CDHBestand(100, 50);
 
 		//job.checkSeoHauptfarbe(con, 33847);
 		//job.checkSeoHauptfarbe(con, 33876);
-
 		job.handleSKU(con, sku, bestand);
 		con.commit();
 		con.close();
