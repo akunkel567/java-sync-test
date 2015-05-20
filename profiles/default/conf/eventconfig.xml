@@ -98,5 +98,15 @@
 		<event name="ARTMASSTBS" />
 		<event name="GROESSENARTMASSTBS" />
 		<event name="ARTGROESSEADA" />
+		
+		<event name="VERTRIEBSGRP" />
+		<event name="VERTRIEBSGRP_ADRESSEN" />
+
+		<event name="PREISAKTIONEN" />
+		<event name="PREISAKTIONEN_ART" />
+		<event name="PREISAKTIONEN_ART_PREISTYP" />
+		<event name="PREISAKTIONEN_ART_PTYP_PREISE" />
+		<event name="PREISAKTIONEN_TEILNEHMER" />
+		<event name="PREISAKTIONEN_WGKAT" />
 	</events>
 </eventconfig>
