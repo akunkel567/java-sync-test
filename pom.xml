@@ -10,6 +10,7 @@
 	<groupId>de.complex</groupId>
 	<artifactId>clxProductSync</artifactId>
 	<version>1.0.5-SNAPSHOT</version>
+	<name>${project.artifactId} - ${project.version}</name>
 	
 	<packaging>jar</packaging>
 	
@@ -22,12 +23,12 @@
 	
 	<profiles>
 		<profile>
-			<id>complex</id>
+			<id>complex-test</id>
 			<activation>
 				<activeByDefault>true</activeByDefault>
 			</activation>
 			<properties>
-				<build.profile.id>complex</build.profile.id>
+				<build.profile.id>complex-test</build.profile.id>
 			</properties>
 		</profile>
 		<profile>
