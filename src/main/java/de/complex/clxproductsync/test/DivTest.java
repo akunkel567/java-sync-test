@@ -4,9 +4,13 @@
  */
 package de.complex.clxproductsync.test;
 
+import de.complex.util.datetime.DateTool;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.text.DecimalFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import org.supercsv.io.CsvMapWriter;
 import org.supercsv.io.ICsvMapWriter;
@@ -31,6 +35,22 @@ public class DivTest {
 //		
 //		System.out.println("" + df.format(i));
 
+		
+		Date d = DateTool.simpleParse("2015-07-07 14:34:19.999", "yyyy-MM-dd HH:mm:ss.SSS");
+		
+		System.out.println("date: " + d);
+		
+		//2015-07-07 14:34:19.31
+		
+	
+			Calendar cal = new GregorianCalendar();
+			cal.setTime(d);
+			cal.add(Calendar.MINUTE, +1);
+		
+		System.out.println("date: " + cal.getTime());
+		
+		System.exit(0);
+		
 		
 		
     ICsvMapWriter writer = new CsvMapWriter(new FileWriter("testfile2.csv"), CsvPreference.EXCEL_NORTH_EUROPE_PREFERENCE);
