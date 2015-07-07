@@ -73,7 +73,17 @@ public class FileEventHandler {
 
 							} else {
 								// upload
-								this.uploadFile(job, job.getSnJobFremdId(), job.getHerkunft(), job.getFileName());
+								try {
+									this.uploadFile(job, job.getSnJobFremdId(), job.getHerkunft(), job.getFileName());
+								} catch(FileNotFoundException fnf){
+								
+									if (!snJobDAO.isDeleteJobAvailable(job)) {
+										throw fnf;
+									} else {
+										logger.info("Es ist bereits ein Delete Job für Datei vorhanden. Upload nicht notwendig.");
+									}
+								}
+								
 								snJobDAO.setSnJobDone(job);
 								FileEventHandler.logger.info("Job done - " + job);
 							}
@@ -105,7 +115,7 @@ public class FileEventHandler {
 			FileEventHandler.logger.info("FileEvent nothing to do");
 		}
 	}
-
+	
 	private void uploadFile(SnJob job, int fremdId, String herkunft, String fileName) throws RemoteCallException, FileNotFoundException {
 		String rootPath = ApplicationConfig.getValue("fileRootPath", ".");
 		String fileSeparator = ApplicationConfig.getValue("fileSeparator", "\\");

@@ -75,6 +75,7 @@
 
 		<event name="PREISGRUPPE" />
 		<event name="PREISGRUPPESPRACHEN" />
+		<event name="PREISGRUPPEDETAIL" />
 		
 		<event name="PREISTYP" />
 		<event name="PREISTYPSPRACHEN" />

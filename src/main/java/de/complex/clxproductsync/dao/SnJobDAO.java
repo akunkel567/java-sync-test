@@ -11,8 +11,13 @@ package de.complex.clxproductsync.dao;
 import de.complex.database.SQLLog;
 import de.complex.database.exception.DbConnectionNotAvailableException;
 import de.complex.database.firebird.FirebirdDb;
+import de.complex.util.datetime.DateTool;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 import org.apache.log4j.*;
 import java.util.Vector;
@@ -53,7 +58,6 @@ public class SnJobDAO {
 //				logger.debug("eventnames:" + s);
 //			}
 //		}
-
 		java.sql.Connection c = null;
 		java.sql.Statement stmt = null;
 		java.sql.ResultSet rs = null;
@@ -181,7 +185,6 @@ public class SnJobDAO {
 		java.sql.ResultSet rs = null;
 
 		Vector snJobVector = new Vector();
-
 
 		SnJob snJob = null;
 
@@ -369,7 +372,7 @@ public class SnJobDAO {
 			c = db.getConnection();
 			c.setReadOnly(false);
 			c.setAutoCommit(false);
-			
+
 			if (c != null) {
 				stmt = c.createStatement();
 
@@ -397,4 +400,52 @@ public class SnJobDAO {
 	public Integer[] getIdList() {
 		return null;
 	}
+
+	public boolean isDeleteJobAvailable(SnJob job) throws SQLException {
+		java.sql.Connection c = null;
+		java.sql.PreparedStatement pstmt = null;
+		java.sql.ResultSet rs = null;
+
+		try {
+			c = this.db.getConnection();
+
+			// Sadt umn 2 Minuten erweitern
+			Date sadt = DateTool.simpleParse(job.getSadt(), "yyyy-MM-dd HH:mm:ss.SSS");
+			Calendar cal = new GregorianCalendar();
+			cal.setTime(sadt);
+			cal.add(Calendar.MINUTE, +2);
+			
+			String qry = " SELECT COUNT(*) AS ANZAHL"
+					  + " FROM SNJOB"
+					  + " WHERE SNJOB.EVENTNAME =  ?" // 1
+					  + " AND SNJOB.FREMDID = ?" // 2
+					  + " AND SNJOB.JOBTYP = ?" // 3
+					  + " AND SNJOB.FILENAME = ?" // 4
+					  + " AND SNJOB.SNJOBID > ?" // 5
+					  + " AND SNJOB.SADT < ?"; // 6
+
+			pstmt = c.prepareStatement(qry);
+			
+			pstmt.setString(1, job.getEventName());
+			pstmt.setInt(2, job.getSnJobFremdId());
+			pstmt.setString(3, "D");
+			pstmt.setString(4, job.getFileName());
+			pstmt.setInt(5, job.getSnJobId());
+			pstmt.setDate(6,  new java.sql.Date(cal.getTimeInMillis()));
+					  
+			SQLLog.logger.debug(qry);
+			rs = pstmt.executeQuery();
+
+			if (rs.next()) {
+				if (rs.getInt("ANZAHL") > 0) {
+					return true;
+				}
+			}
+
+			return false;
+		} finally {
+			FirebirdDb.close(rs, pstmt, c);
+		}
+	}
+
 }
