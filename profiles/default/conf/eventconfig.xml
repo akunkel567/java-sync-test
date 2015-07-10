@@ -109,5 +109,8 @@
 		<event name="PREISAKTIONEN_ART_PTYP_PREISE" />
 		<event name="PREISAKTIONEN_TEILNEHMER" />
 		<event name="PREISAKTIONEN_WGKAT" />
+		
+		<event name="MASSGRUPPENSPRACHEN" />
+		<event name="ARTGROESSEZULAUF" />
 	</events>
 </eventconfig>
