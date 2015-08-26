@@ -112,5 +112,6 @@
 		
 		<event name="MASSGRUPPENSPRACHEN" />
 		<event name="ARTGROESSEZULAUF" />
+		<event name="PREISAKTIONENSPRACHEN" />
 	</events>
 </eventconfig>
