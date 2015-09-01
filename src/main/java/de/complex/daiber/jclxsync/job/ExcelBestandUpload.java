@@ -109,7 +109,7 @@ public class ExcelBestandUpload extends Thread {
 						ICsvMapWriter writer = new CsvMapWriter(osw, CsvPreference.EXCEL_NORTH_EUROPE_PREFERENCE);
 						try {
 //                                                         0        1        2      3        4          5        6             7        8                     9                   10            11             12    
-							final String[] header = new String[]{"clxID", "cdhID", "Neu", "Marke", "Artikel", "Farbe", "Farbkürzel", "Größe", "Artikelbezeichnung", "Kurzbeschreibung", "Lagermenge", "Zulaufmenge", "Zulaufstatus"};
+							final String[] header = new String[]{"clxID", "FK int.", "Neu", "Marke", "Artikel", "Farbe", "Farbkürzel", "Größe", "Artikelbezeichnung", "Kurzbeschreibung", "Lagermenge", "Zulaufmenge", "Zulaufstatus"};
 							writer.writeHeader(header);
 
 							int rowIndex = 0;
@@ -185,31 +185,35 @@ public class ExcelBestandUpload extends Thread {
 
 						File ftpUploadFile = null;
 
-						ExcelBestandUpload.logger.info("ftpUpload: " + file.getAbsolutePath());
-						try {
-							ExcelBestandUpload.logger.debug("file absolutePath: " + file.getAbsolutePath());
-							ExcelBestandUpload.logger.debug("file path: " + file.getPath());
-							ExcelBestandUpload.logger.debug("file name: " + file.getName());
+						if (!ApplicationConfig.getValue("excelbestand.ftphost", "").equals("")) {
+							ExcelBestandUpload.logger.info("ftpUpload: " + file.getAbsolutePath());
+							try {
+								ExcelBestandUpload.logger.debug("file absolutePath: " + file.getAbsolutePath());
+								ExcelBestandUpload.logger.debug("file path: " + file.getPath());
+								ExcelBestandUpload.logger.debug("file name: " + file.getName());
 
-							ftpUploadFile = new File("bestand_" + rsSprachen.getString("KUERZEL") + ".csv");
-							ExcelBestandUpload.logger.debug(ftpUploadFile.getAbsolutePath() + " - " + ftpUploadFile.getName());
+								ftpUploadFile = new File("bestand_" + rsSprachen.getString("KUERZEL") + ".csv");
+								ExcelBestandUpload.logger.debug(ftpUploadFile.getAbsolutePath() + " - " + ftpUploadFile.getName());
 
-							FileUtils.copyFile(file, ftpUploadFile);
+								FileUtils.copyFile(file, ftpUploadFile);
 
-							ExcelBestandUpload.logger.debug("file: " + file);
-							ExcelBestandUpload.logger.debug("ftpUploadFile: " + ftpUploadFile);
+								ExcelBestandUpload.logger.debug("file: " + file);
+								ExcelBestandUpload.logger.debug("ftpUploadFile: " + ftpUploadFile);
 
-							String ftphost = ApplicationConfig.getValue("excelbestand.ftphost", "");
-							String username = ApplicationConfig.getValue("excelbestand.username", "");
-							String password = ApplicationConfig.getValue("excelbestand.password", "");
-							String remotepath = ApplicationConfig.getValue("excelbestand.remotepath", ".");
+								String ftphost = ApplicationConfig.getValue("excelbestand.ftphost", "");
+								String username = ApplicationConfig.getValue("excelbestand.username", "");
+								String password = ApplicationConfig.getValue("excelbestand.password", "");
+								String remotepath = ApplicationConfig.getValue("excelbestand.remotepath", ".");
 
-							ClxFtp ftp = new ClxFtp(ftphost, username, password);
-							if (!ftp.uploadFile(ftpUploadFile, remotepath)) {
-								ExcelBestandUpload.logger.error("ftp Upload fehler");
+								ClxFtp ftp = new ClxFtp(ftphost, username, password);
+								if (!ftp.uploadFile(ftpUploadFile, remotepath)) {
+									ExcelBestandUpload.logger.error("ftp Upload fehler");
+								}
+							} catch (Exception e) {
+								ExcelBestandUpload.logger.error(e, e);
 							}
-						} catch (Exception e) {
-							ExcelBestandUpload.logger.error(e, e);
+						} else {
+							ExcelBestandUpload.logger.debug("Kein Ftp-Upload. Ftp-Zugang nicht konfiguriert.");
 						}
 
 						try {
@@ -227,9 +231,9 @@ public class ExcelBestandUpload extends Thread {
 						}
 
 					}
-				
+
 					con.commit();
-				
+
 				} catch (java.sql.SQLException e) {
 					ExcelBestandUpload.logger.error("SQL Error", e);
 					SQLLog.logger.error("SQL Error.", e);
@@ -250,7 +254,7 @@ public class ExcelBestandUpload extends Thread {
 		HSSFCell cell = row.createCell(cellIndex);
 		cell.setCellValue(value);
 	}
-	
+
 	public static void main(String[] args) throws IOException, SQLException {
 		// TODO code application logic here
 
@@ -262,7 +266,7 @@ public class ExcelBestandUpload extends Thread {
 
 		Properties prop = new Properties();
 		prop.load(new FileInputStream(new File(iniFilename)));
-		
+
 		System.setProperty("complex.axis.default.timeout", String.valueOf(1000 * 60 * 10)); // 10 Minuten
 
 		FirebirdDbPool.createInstance();
@@ -270,7 +274,7 @@ public class ExcelBestandUpload extends Thread {
 		ExcelBestandUpload job = new ExcelBestandUpload(prop);
 
 		job.run();
-		
+
 		con.close();
 
 		//	job.run();
