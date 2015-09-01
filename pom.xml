@@ -18,6 +18,32 @@
 		<SCM-Revision>$Id: $</SCM-Revision>
 		<SCM-URL>$URL: $</SCM-URL>
 		<wrapper.java.command>java</wrapper.java.command>
+		
+		<!-- default für alle Profile, auch Produktiv -->
+		<wrapper.ntservice.account></wrapper.ntservice.account>
+		<wrapper.ntservice.account.prompt>false</wrapper.ntservice.account.prompt>
+		<wrapper.ntservice.password></wrapper.ntservice.password>
+		<wrapper.ntservice.password.prompt>false</wrapper.ntservice.password.prompt>
+		<wrapper.ntservice.starttype>AUTO_START</wrapper.ntservice.starttype>
+
+		<!-- Werte für die clxTest-Profile -->
+		<clxtest.ntservice.account>COMPLEX\adminservice</clxtest.ntservice.account>
+		<clxtest.ntservice.password></clxtest.ntservice.password>
+		<clxtest.ntservice.password.prompt>true</clxtest.ntservice.password.prompt>
+		<!--
+		Mögliche Werte für Starttype
+			AUTO_START
+			DELAY_START 
+			DEMAND_START - Manueller Start
+		-->
+		<clxtest.ntservice.starttype>AUTO_START</clxtest.ntservice.starttype>
+
+		<!-- Beispiel für Config-Werte für clxTest
+		<wrapper.ntservice.account>${clxtest.ntservice.account}</wrapper.ntservice.account>
+		<wrapper.ntservice.account.prompt>false</wrapper.ntservice.account.prompt>
+		<wrapper.ntservice.password.prompt>${clxtest.ntservice.password.prompt}</wrapper.ntservice.password.prompt>
+		<wrapper.ntservice.starttype>${clxtest.ntservice.starttype}</wrapper.ntservice.starttype>
+		-->		
 	</properties>
 	
 	<profiles>
@@ -28,6 +54,12 @@
 			</activation>
 			<properties>
 				<build.profile.id>complex</build.profile.id>
+				
+				<wrapper.ntservice.account>${clxtest.ntservice.account}</wrapper.ntservice.account>
+				<wrapper.ntservice.account.prompt>false</wrapper.ntservice.account.prompt>
+				<wrapper.ntservice.password.prompt>${clxtest.ntservice.password.prompt}</wrapper.ntservice.password.prompt>
+				<wrapper.ntservice.starttype>${clxtest.ntservice.starttype}</wrapper.ntservice.starttype>
+
 			</properties>
 		</profile>
 		<profile>
@@ -60,12 +92,18 @@
 			</properties>
 		</profile>
 		<profile>
-			<id>daiber-dev</id>
+			<id>daiber-test</id>
 			<activation>
 				<activeByDefault>false</activeByDefault>
 			</activation>
 			<properties>
-				<build.profile.id>daiber-dev</build.profile.id>
+				<build.profile.id>daiber-test</build.profile.id>
+				
+				<wrapper.ntservice.account>${clxtest.ntservice.account}</wrapper.ntservice.account>
+				<wrapper.ntservice.account.prompt>false</wrapper.ntservice.account.prompt>
+				<wrapper.ntservice.password.prompt>${clxtest.ntservice.password.prompt}</wrapper.ntservice.password.prompt>
+				<wrapper.ntservice.starttype>${clxtest.ntservice.starttype}</wrapper.ntservice.starttype>
+
 			</properties>
 		</profile>
 		<profile>
@@ -87,12 +125,18 @@
 			</properties>
 		</profile>
 		<profile>
-			<id>fare-dev</id>
+			<id>fare-test</id>
 			<activation>
 				<activeByDefault>false</activeByDefault>
 			</activation>
 			<properties>
-				<build.profile.id>fare-dev</build.profile.id>
+				<build.profile.id>fare-test</build.profile.id>
+				
+				<wrapper.ntservice.account>${clxtest.ntservice.account}</wrapper.ntservice.account>
+				<wrapper.ntservice.account.prompt>false</wrapper.ntservice.account.prompt>
+				<wrapper.ntservice.password.prompt>${clxtest.ntservice.password.prompt}</wrapper.ntservice.password.prompt>
+				<wrapper.ntservice.starttype>${clxtest.ntservice.starttype}</wrapper.ntservice.starttype>
+
 			</properties>
 		</profile>
 		<profile>
@@ -114,12 +158,18 @@
 			</properties>
 		</profile>
 		<profile>
-			<id>mbw-dev</id>
+			<id>mbw-test</id>
 			<activation>
 				<activeByDefault>false</activeByDefault>
 			</activation>
 			<properties>
-				<build.profile.id>mbw-dev</build.profile.id>
+				<build.profile.id>mbw-test</build.profile.id>
+				
+				<wrapper.ntservice.account>${clxtest.ntservice.account}</wrapper.ntservice.account>
+				<wrapper.ntservice.account.prompt>false</wrapper.ntservice.account.prompt>
+				<wrapper.ntservice.password.prompt>${clxtest.ntservice.password.prompt}</wrapper.ntservice.password.prompt>
+				<wrapper.ntservice.starttype>${clxtest.ntservice.starttype}</wrapper.ntservice.starttype>
+
 			</properties>
 		</profile>
 	</profiles>
