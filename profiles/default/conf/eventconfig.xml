@@ -116,5 +116,10 @@
 
 		<event name="BILDTEXTE" />
 		<event name="BILDTEXTESPRACHEN" />
+		
+		<event name="VPE" />
+		<event name="VPEART" />
+		<event name="VPETYP" />
+		<event name="ARTGROESSEVPE" />
 	</events>
 </eventconfig>
