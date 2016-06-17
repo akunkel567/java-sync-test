@@ -121,5 +121,53 @@
 		<event name="VPEART" />
 		<event name="VPETYP" />
 		<event name="ARTGROESSEVPE" />
+		
+		<event name="ANBRINGPOS" />
+		<event name="ANBRINGPOSGRP" />
+		<event name="ANBRINGPOSGRPDETAIL" />
+		<event name="ANBRINGPOSSPRACHEN" />
+		<event name="DIMENSIONEN" />
+		<event name="PREISPROFIL" />
+		<event name="PREISPROFILMMZUSCHLAG" />
+		<event name="PREISPROFILSPRACHEN" />
+		<event name="PREISPROFIL_PREISE" />
+		<event name="PREISRASTER" />
+		<event name="PREISRASTERFAKTOREN" />
+		<event name="PREISRASTERSPRACHEN" />
+		<event name="PREISRASTERSTAFFEL" />
+		<event name="PREISRASTERSTAFFELSPRACHEN" />
+		<event name="SERVICEARTEN" />
+		<event name="SERVICEARTENSPRACHEN" />
+		<event name="SERVICES" />
+		<event name="SERVICESALTERNATIV" />
+		<event name="SERVICESFARBEN" />
+		<event name="SERVICESSPRACHEN" />
+		<event name="SERVICESTAFFEL_UNSICHTBAR" />
+		<event name="SERVICES_STICHE" />
+		<event name="SERVICES_STICHE_AUFSCHLAG" />
+		<event name="VEARTEN" />
+		<event name="VEARTENSPRACHEN" />
+		<event name="VEPARAM" />
+		<event name="VEPARAMSPRACHEN" />
+		<event name="VEPREISTABELLEN" />
+		<event name="VEPREISTABELLENSPRACHEN" />
+		<event name="VEPTDIMENSIONEN" />
+		<event name="VEPTFARBEN" />
+		<event name="VEPTMMZUSCHLAG" />
+		<event name="VEPTPREISE" />
+		<event name="VEPTSTAFFEL_UNSICHTBAR" />
+		<event name="VEPTSTICHE" />
+		<event name="VEPTSTICHEAUFSCHLAG" />
+		<event name="VETECH" />
+		<event name="VETECHALTERNATIV" />
+		<event name="VETECHFEATURES" />
+		<event name="VETECHLIEFERANT" />
+		<event name="VETECHMATERIAL" />
+		<event name="VETECHMATERIALTEXTIL" />
+		<event name="VETECHPARAM" />
+		<event name="VETECHSERVICES" />
+		<event name="VETECHSPRACHEN" />
+		
+		
 	</events>
 </eventconfig>
