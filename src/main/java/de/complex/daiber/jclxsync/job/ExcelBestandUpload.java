@@ -104,7 +104,7 @@ public class ExcelBestandUpload extends Thread {
 
 						File file = new File("bestand.csv");
 
-						OutputStreamWriter osw = new OutputStreamWriter(new FileOutputStream(file), "ISO-8859-1");
+						OutputStreamWriter osw = new OutputStreamWriter(new FileOutputStream(file), "UTF-8");
 
 						ICsvMapWriter writer = new CsvMapWriter(osw, CsvPreference.EXCEL_NORTH_EUROPE_PREFERENCE);
 						try {
