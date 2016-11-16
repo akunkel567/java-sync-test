@@ -230,6 +230,7 @@
 									<directory>${basedir}/profiles/default</directory>
 									<includes>
 										<include>conf/**.*</include>
+										<include>conf/*</include>
 										<include>activerecord/**.*</include>
 									</includes>
 								</resource>
