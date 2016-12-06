@@ -99,7 +99,7 @@ public class ExcelBestandUpload extends Thread {
 //						P_WEBAKTIV
 //						P_AUSLAUFARTIKEL
 //						P_SONDERPOSTEN
-						String sql = "SELECT * FROM SEL_EXPORT_SKULAGER(null," + spracheid + ",1,null,null)";
+						String sql = "SELECT * FROM SEL_EXPORT_SKULAGER(null," + spracheid + ",1,null,null,null)";
 						rs = stmt.executeQuery(sql);
 
 						File file = new File("bestand.csv");
