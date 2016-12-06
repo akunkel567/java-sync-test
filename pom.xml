@@ -10,6 +10,8 @@
 	<groupId>de.complex</groupId>
 	<artifactId>clxProductSync</artifactId>
 	<version>1.4.1-SNAPSHOT</version>
+        
+        <name>${project.artifactId} - ${project.version}</name>
 	
 	<packaging>jar</packaging>
 	
