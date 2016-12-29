@@ -128,7 +128,6 @@
 		<event name="ANBRINGPOSSPRACHEN" />
 		<event name="DIMENSIONEN" />
 		<event name="PREISPROFIL" />
-		<event name="PREISPROFILMMZUSCHLAG" />
 		<event name="PREISPROFILSPRACHEN" />
 		<event name="PREISPROFIL_PREISE" />
 		<event name="PREISRASTER" />
@@ -140,11 +139,8 @@
 		<event name="SERVICEARTENSPRACHEN" />
 		<event name="SERVICES" />
 		<event name="SERVICESALTERNATIV" />
-		<event name="SERVICESFARBEN" />
 		<event name="SERVICESSPRACHEN" />
 		<event name="SERVICESTAFFEL_UNSICHTBAR" />
-		<event name="SERVICES_STICHE" />
-		<event name="SERVICES_STICHE_AUFSCHLAG" />
 		<event name="VEARTEN" />
 		<event name="VEARTENSPRACHEN" />
 		<event name="VEPARAM" />
@@ -153,7 +149,6 @@
 		<event name="VEPREISTABELLENSPRACHEN" />
 		<event name="VEPTDIMENSIONEN" />
 		<event name="VEPTFARBEN" />
-		<event name="VEPTMMZUSCHLAG" />
 		<event name="VEPTPREISE" />
 		<event name="VEPTSTAFFEL_UNSICHTBAR" />
 		<event name="VEPTSTICHE" />
@@ -168,6 +163,20 @@
 		<event name="VETECHSERVICES" />
 		<event name="VETECHSPRACHEN" />
 		
-		
+		<event name="FORMEN" />
+		<event name="FORMENSPRACHEN" />
+		<event name="DIMENSIONENSPRACHEN" />
+		<event name="PREISPROFIL_SERVICE" />
+		<event name="PREISRASTERTYP" />
+		<event name="PREISRASTERSTAFFELTYP" />
+		<event name="VEPTPREISE_STICHZAHL" />
+		<event name="VEPTSTUFEN" />
+		<event name="VETECH_VEPT" />
+		<event name="PREISRASTER_KONFIG" />
+		<event name="PREISRASTER_KONFIG_AUFSCHLAG" />
+		<event name="PREISRASTER_KONFIG_FARBEN" />
+		<event name="PREISRASTER_KONFIG_PROFILE" />
+		<event name="PREISRASTER_KONFIG_SICHTBAR" />
+		<event name="PREISRASTER_KONFIG_STICHE" /> 
 	</events>
 </eventconfig>
