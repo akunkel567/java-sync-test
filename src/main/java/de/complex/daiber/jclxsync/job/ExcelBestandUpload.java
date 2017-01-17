@@ -109,7 +109,7 @@ public class ExcelBestandUpload extends Thread {
 //						P_AUSLAUFARTIKEL
 //						P_SONDERPOSTEN
 						
-                                                String excelbestandShopid = prop.getProperty("excelbestand.shopid", "null");
+                                                String excelbestandShopid = ApplicationConfig.getValue("excelbestand.shopid", "null");
                                                 if(StringTool.isEmpty(excelbestandShopid)){
                                                     excelbestandShopid = "null";
                                                 }
@@ -154,7 +154,7 @@ public class ExcelBestandUpload extends Thread {
 									data.put(header[10], "N/A");
 								}
 
-                                                                if ("FARE".equalsIgnoreCase(prop.getProperty("customer", ""))) {
+                                                                if ("FARE".equalsIgnoreCase(ApplicationConfig.getValue("customer", ""))) {
                                                                     data.put(header[11], getZulaufmenge(con, rs.getInt("ARTGROESSEID")));
                                                                 } else {
                                                                     try {
@@ -170,7 +170,7 @@ public class ExcelBestandUpload extends Thread {
                                                                     }
                                                                 }
 
-                                                                if ("FARE".equalsIgnoreCase(prop.getProperty("customer", ""))) {
+                                                                if ("FARE".equalsIgnoreCase(ApplicationConfig.getValue("customer", ""))) {
                                                                     data.put(header[12], getZulaufstatus(con, rs.getInt("ARTGROESSEID")));
                                                                 } else {
                                                                     try {
@@ -280,13 +280,13 @@ public class ExcelBestandUpload extends Thread {
 
     private String[] createHeader(String sLocale) throws MalformedURLException {
 
-        File exportLabelsBundle = new File("./conf/ExportLabelsBundle.properties");
+        File exportLabelsBundle = new File("../conf/ExportLabelsBundle.properties");
         if(!exportLabelsBundle.exists()){
-            ExcelBestandUpload.logger.warn("./conf/ExportLabelsBundle.properties nicht vorhanden. Verwende DefaultHeader");
+            ExcelBestandUpload.logger.warn("ExportLabelsBundle.properties nicht vorhanden. Verwende DefaultHeader. Pfad " + exportLabelsBundle.getAbsolutePath());
             return new String[]{"clxID", "FK int.", "Neu", "Marke", "Artikel", "Farbe", "Farbkürzel", "Größe", "Artikelbezeichnung", "Kurzbeschreibung", "Lagermenge", "Zulaufmenge", "Zulaufstatus"};
         }
         
-        File conf = new File("./conf");
+        File conf = new File("../conf");
         URL[] urls = {conf.toURI().toURL()};
         ClassLoader loader = new URLClassLoader(urls);
 
