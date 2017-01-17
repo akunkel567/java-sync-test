@@ -32,6 +32,7 @@ import java.sql.SQLException;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
@@ -153,25 +154,33 @@ public class ExcelBestandUpload extends Thread {
 									data.put(header[10], "N/A");
 								}
 
-								try {
-									int zulaufmenge_sh = rs.getInt("ZULAUFMENGE_SH");
-									if (zulaufmenge_sh != 0) {
-										data.put(header[11], dformat.format(zulaufmenge_sh));
-									} else {
-										data.put(header[11], "");
-									}
-								} catch (Exception e) {
-									ExcelBestandUpload.logger.error(e, e);
-									data.put(header[11], "N/A");
-								}
+                                                                if ("FARE".equalsIgnoreCase(prop.getProperty("customer", ""))) {
+                                                                    data.put(header[11], getZulaufmenge(con, rs.getInt("ARTGROESSEID")));
+                                                                } else {
+                                                                    try {
+                                                                        int zulaufmenge_sh = rs.getInt("ZULAUFMENGE_SH");
+                                                                        if (zulaufmenge_sh != 0) {
+                                                                            data.put(header[11], dformat.format(zulaufmenge_sh));
+                                                                        } else {
+                                                                            data.put(header[11], "");
+                                                                        }
+                                                                    } catch (Exception e) {
+                                                                        ExcelBestandUpload.logger.error(e, e);
+                                                                        data.put(header[11], "N/A");
+                                                                    }
+                                                                }
 
-								try {
-									data.put(header[12], rs.getString("ZULAUFSTATUS_SH"));
-								} catch (Exception e) {
-									ExcelBestandUpload.logger.error(e, e);
-									data.put(header[12], "N/A");
-								}
-
+                                                                if ("FARE".equalsIgnoreCase(prop.getProperty("customer", ""))) {
+                                                                    data.put(header[12], getZulaufstatus(con, rs.getInt("ARTGROESSEID")));
+                                                                } else {
+                                                                    try {
+                                                                        data.put(header[12], rs.getString("ZULAUFSTATUS_SH"));
+                                                                    } catch (Exception e) {
+                                                                        ExcelBestandUpload.logger.error(e, e);
+                                                                        data.put(header[12], "N/A");
+                                                                    }
+                                                                }
+                                                                
 								try {
 									writer.write(data, header);
 								} catch (Exception e) {
@@ -298,7 +307,86 @@ public class ExcelBestandUpload extends Thread {
 
         return labels.getString(key);
     }
+    
+    private String getZulaufmenge(Connection con, int artgroesseid) throws SQLException {
 
+        java.sql.PreparedStatement pStmt = null;
+        java.sql.ResultSet rs = null;
+
+        String sql = "SELECT ARTGROESSEZULAUF.MENGE"
+                + " , ARTGROESSEZULAUF.LIEFERKW"
+                + " , IIF( coalesce(ARTGROESSEZULAUF.LIEFERKW,0) < F_KALENDERWOCHE('now'), coalesce(ARTGROESSEZULAUF.LIEFERKW,0) + 100, ARTGROESSEZULAUF.LIEFERKW)"
+                + " FROM ARTGROESSEZULAUF"
+                + " WHERE ARTGROESSEZULAUF.STATUS='indispatch'"
+                + " AND ARTGROESSEZULAUF.ARTGROESSEID = ?"
+                + " ORDER BY 3";
+
+        pStmt = con.prepareStatement(sql);
+        pStmt.setInt(1, artgroesseid);
+
+        rs = pStmt.executeQuery();
+
+        StringBuilder sb = new StringBuilder();
+
+        while (rs.next()) {
+            if (sb.length() != 0) {
+                sb.append("\n");
+            }
+
+            sb.append(rs.getString("MENGE")).append("-KW ").append(rs.getInt("LIEFERKW")).append("/").append(getYearForWeeknumber(rs.getInt("LIEFERKW")));
+        }
+
+        return sb.toString();
+    }
+
+    private String getZulaufstatus(Connection con, int artgroesseid) throws SQLException {
+
+        java.sql.PreparedStatement pStmt = null;
+        java.sql.ResultSet rs = null;
+
+        String sql = "SELECT ARTGROESSEZULAUF.MENGE"
+                + " , ARTGROESSEZULAUF.LIEFERKW"
+                + " , IIF( coalesce(ARTGROESSEZULAUF.LIEFERKW,0) < F_KALENDERWOCHE('now'), coalesce(ARTGROESSEZULAUF.LIEFERKW,0) + 100, ARTGROESSEZULAUF.LIEFERKW)"
+                + " FROM ARTGROESSEZULAUF"
+                + " WHERE ARTGROESSEZULAUF.STATUS='ordered'"
+                + " AND ARTGROESSEZULAUF.ARTGROESSEID = ?"
+                + " ORDER BY 3";
+
+        pStmt = con.prepareStatement(sql);
+        pStmt.setInt(1, artgroesseid);
+
+        rs = pStmt.executeQuery();
+
+        StringBuilder sb = new StringBuilder();
+
+        while (rs.next()) {
+            if (sb.length() != 0) {
+                sb.append("\n");
+            }
+
+            sb.append("KW ").append(rs.getInt("LIEFERKW")).append("/").append(getYearForWeeknumber(rs.getInt("LIEFERKW")));
+        }
+
+        return sb.toString();
+    }
+
+    private int getWeekNumber() {
+        return Calendar.getInstance().get(Calendar.WEEK_OF_YEAR);
+    }
+
+    private int getYear() {
+        return Calendar.getInstance().get(Calendar.YEAR);
+    }
+
+    private int getYearForWeeknumber(int lieferkw) {
+
+        if (lieferkw < getWeekNumber()) {
+            return getYear() + 1;
+        } else {
+            return getYear();
+        }
+    }
+    
 	public static void main(String[] args) throws IOException, SQLException {
 		// TODO code application logic here
 
@@ -316,6 +404,9 @@ public class ExcelBestandUpload extends Thread {
 		FirebirdDbPool.createInstance();
 		Connection con = FirebirdDbPool.getInstance().getConnection();
 		ExcelBestandUpload job = new ExcelBestandUpload(prop);
+                
+                System.out.println("Weeknumber " + job.getWeekNumber() );
+                System.out.println("Year " + job.getYear() );
 
 		job.run();
 
