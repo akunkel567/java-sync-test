@@ -16,6 +16,7 @@ import de.complex.clxproductsync.soap.RemoteCallException;
 import de.complex.clxproductsync.soap.SoapHandler;
 import de.complex.clxproductsync.tools.ClxFtp;
 import de.complex.tools.config.ApplicationConfig;
+import de.complex.util.lang.StringTool;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -23,13 +24,19 @@ import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Properties;
+import java.util.ResourceBundle;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.net.ftp.FTPClient;
@@ -86,12 +93,13 @@ public class ExcelBestandUpload extends Thread {
 					stmtSprachen = con.createStatement();
 					stmt = con.createStatement();
 
-					rsSprachen = stmtSprachen.executeQuery("select SPRACHEID, KUERZEL from SPRACHE order by SPRACHEID");
+                    rsSprachen = stmtSprachen.executeQuery("select SPRACHEID, KUERZEL, LOCALE from SPRACHE order by SPRACHEID");
 
-					while (rsSprachen.next()) {
+                    while (rsSprachen.next()) {
 
 						int spracheid = rsSprachen.getInt(1);
 						String kuerzel = rsSprachen.getString(2);
+                                                String sLocale = rsSprachen.getString(3);
 
 //						Parameter Procedure
 //						P_MARKENID
@@ -99,8 +107,15 @@ public class ExcelBestandUpload extends Thread {
 //						P_WEBAKTIV
 //						P_AUSLAUFARTIKEL
 //						P_SONDERPOSTEN
-						String sql = "SELECT * FROM SEL_EXPORT_SKULAGER(null," + spracheid + ",1,null,null,null)";
-						rs = stmt.executeQuery(sql);
+						
+                                                String excelbestandShopid = prop.getProperty("excelbestand.shopid", "null");
+                                                if(StringTool.isEmpty(excelbestandShopid)){
+                                                    excelbestandShopid = "null";
+                                                }
+
+                                                String sql = "SELECT * FROM SEL_EXPORT_SKULAGER(null," + spracheid + ",1,null,null," + excelbestandShopid + ")";
+						ExcelBestandUpload.logger.debug("sql:" + sql);
+                                                rs = stmt.executeQuery(sql);
 
 						File file = new File("bestand.csv");
 
@@ -108,9 +123,8 @@ public class ExcelBestandUpload extends Thread {
 
 						ICsvMapWriter writer = new CsvMapWriter(osw, CsvPreference.EXCEL_NORTH_EUROPE_PREFERENCE);
 						try {
-//                                                         0        1        2      3        4          5        6             7        8                     9                   10            11             12    
-							final String[] header = new String[]{"clxID", "FK int.", "Neu", "Marke", "Artikel", "Farbe", "Farbkürzel", "Größe", "Artikelbezeichnung", "Kurzbeschreibung", "Lagermenge", "Zulaufmenge", "Zulaufstatus"};
-							writer.writeHeader(header);
+                                                        final String[] header = createHeader(sLocale);
+                                                        writer.writeHeader(header);
 
 							int rowIndex = 0;
 							while (rs.next()) {
@@ -254,6 +268,36 @@ public class ExcelBestandUpload extends Thread {
 		HSSFCell cell = row.createCell(cellIndex);
 		cell.setCellValue(value);
 	}
+
+    private String[] createHeader(String sLocale) throws MalformedURLException {
+
+        File exportLabelsBundle = new File("./conf/ExportLabelsBundle.properties");
+        if(!exportLabelsBundle.exists()){
+            ExcelBestandUpload.logger.warn("./conf/ExportLabelsBundle.properties nicht vorhanden. Verwende DefaultHeader");
+            return new String[]{"clxID", "FK int.", "Neu", "Marke", "Artikel", "Farbe", "Farbkürzel", "Größe", "Artikelbezeichnung", "Kurzbeschreibung", "Lagermenge", "Zulaufmenge", "Zulaufstatus"};
+        }
+        
+        File conf = new File("./conf");
+        URL[] urls = {conf.toURI().toURL()};
+        ClassLoader loader = new URLClassLoader(urls);
+
+        Locale locale = new Locale(sLocale);
+        ExcelBestandUpload.logger.debug("Locale: " + locale);
+
+        ArrayList<String> hList = new ArrayList<String>();
+
+        for (HeaderKey key : HeaderKey.values()) {
+            hList.add(getHeaderValue(locale, key.toString(), loader));
+        }
+
+        return hList.toArray(new String[0]);
+    }
+
+    private String getHeaderValue(Locale currentLocale, String key, ClassLoader loader) {
+        ResourceBundle labels = ResourceBundle.getBundle("ExportLabelsBundle", currentLocale, loader, ResourceBundle.Control.getNoFallbackControl(ResourceBundle.Control.FORMAT_PROPERTIES));
+
+        return labels.getString(key);
+    }
 
 	public static void main(String[] args) throws IOException, SQLException {
 		// TODO code application logic here
