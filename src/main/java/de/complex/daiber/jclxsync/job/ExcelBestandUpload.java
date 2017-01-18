@@ -8,6 +8,7 @@
  */
 package de.complex.daiber.jclxsync.job;
 
+import de.complex.clxproductsync.MainApp;
 import de.complex.database.SQLLog;
 import de.complex.database.firebird.FirebirdDb;
 import de.complex.database.firebird.FirebirdDbPool;
@@ -280,13 +281,21 @@ public class ExcelBestandUpload extends Thread {
 
     private String[] createHeader(String sLocale) throws MalformedURLException {
 
-        File exportLabelsBundle = new File("../conf/ExportLabelsBundle.properties");
-        if(!exportLabelsBundle.exists()){
+        String confPath;
+
+        if (MainApp.debug) {
+            confPath = "./conf";
+        } else {
+            confPath = "../conf";
+        }
+
+        File exportLabelsBundle = new File(confPath +  "/ExportLabelsBundle.properties");
+        if (!exportLabelsBundle.exists()) {
             ExcelBestandUpload.logger.warn("ExportLabelsBundle.properties nicht vorhanden. Verwende DefaultHeader. Pfad " + exportLabelsBundle.getAbsolutePath());
             return new String[]{"clxID", "FK int.", "Neu", "Marke", "Artikel", "Farbe", "Farbkürzel", "Größe", "Artikelbezeichnung", "Kurzbeschreibung", "Lagermenge", "Zulaufmenge", "Zulaufstatus"};
         }
-        
-        File conf = new File("../conf");
+       
+        File conf = new File(confPath);
         URL[] urls = {conf.toURI().toURL()};
         ClassLoader loader = new URLClassLoader(urls);
 
