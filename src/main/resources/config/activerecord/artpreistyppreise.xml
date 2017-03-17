@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<activerecord name="artpreistyppreise" tablename="sel_artpreistyppreise_for_web" pkey="artpreistyppreiseid" procedure="true">
+    <mapping tablename="artpreistyppreise" pkey="artpreistyppreiseid">
+        <field name="artpreistyppreiseid">artpreistyppreiseid</field>
+    </mapping>
+</activerecord>
