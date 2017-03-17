@@ -43,4 +43,15 @@
                 <exec.executable>java</exec.executable>
             </properties>
         </action>
+        <action>
+            <actionName>CUSTOM-Deploy2Nexus</actionName>
+            <displayName>Deploy2Nexus</displayName>
+            <goals>
+                <goal>clean</goal>
+                <goal>generate-resources</goal>
+                <goal>source:jar</goal>
+                <goal>javadoc:jar</goal>
+                <goal>deploy</goal>
+            </goals>
+        </action>
     </actions>
