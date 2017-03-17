@@ -20,6 +20,7 @@ import de.complex.database.firebird.FirebirdDbPool;
 import de.complex.clxproductsync.job.SpoolcheckUploadJob;
 import de.complex.tools.config.ApplicationConfig;
 import de.complex.tools.ssl.InstallCert;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
@@ -56,6 +57,7 @@ public class MainApp extends Thread {
 	FirebirdDb db = null;
 	private boolean closedIsRunning = false;
 	public static Configuration config = null;
+        public static final String EVENTCONFIGFILENAME = "eventconfig.xml";
 
 	/**
 	 * @param args the command line arguments
@@ -221,15 +223,30 @@ public class MainApp extends Thread {
 			ActiveRecordConfig.configFilePath = "../activerecord";
 		}
 
-		// DatabaseEvents ActionHandlerConfig
-		FirebirdEventConfig eventconfig;
-		if (MainApp.debug) {
-			eventconfig = FirebirdEventConfig.factory("conf/eventconfig.xml");
-		} else {
-			eventconfig = FirebirdEventConfig.factory("../conf/eventconfig.xml");
-		}
+                // DatabaseEvents ActionHandlerConfig
+                String eventconfigFile = null;
+                if (MainApp.debug) {
+                    eventconfigFile = "conf/" + EVENTCONFIGFILENAME;
+                } else {
+                    eventconfigFile = "../conf/" + EVENTCONFIGFILENAME;
+                }
 
-		ApplicationConfig.setObject("eventconfig", eventconfig);
+                File evcFile = new File(eventconfigFile);
+
+                FirebirdEventConfig eventconfig;
+                if (evcFile.exists()) {
+                    eventconfig = FirebirdEventConfig.factory(eventconfigFile);
+                } else {
+                    eventconfig = FirebirdEventConfig.factory(MainApp.class.getResourceAsStream("/config/" + EVENTCONFIGFILENAME));
+                }
+                
+                if (eventconfig == null) {
+                    MainApp.logger.info("eventconfig nicht geladen.");
+                    System.err.println("eventconfig nicht geladen.");
+                    System.exit(1);
+                }
+                
+                ApplicationConfig.setObject("eventconfig", eventconfig);
 
 		this.start(); // und jetzt in den run -Mode
 
@@ -241,7 +258,7 @@ public class MainApp extends Thread {
 
 		return 0;
 	}
-
+        
 	@Override
 	public void run() {
 		Thread.currentThread().setName("MainApp");

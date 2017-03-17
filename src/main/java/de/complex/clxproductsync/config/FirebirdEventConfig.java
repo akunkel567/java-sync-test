@@ -8,6 +8,7 @@ import de.complex.exception.ExceptionHelper;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.InputStream;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.util.ArrayList;
@@ -103,4 +104,17 @@ public class FirebirdEventConfig {
 		}
 		return config;
 	}
+        
+        public static FirebirdEventConfig factory(InputStream input) {
+            FirebirdEventConfig config = null;
+
+            try {
+                JAXBContext context = JAXBContext.newInstance(FirebirdEventConfig.class);
+                Unmarshaller um = context.createUnmarshaller();
+                config = (FirebirdEventConfig) um.unmarshal(input);
+            } catch (JAXBException ex) {
+                System.out.println(ExceptionHelper.ExceptionToString(ex));
+            }
+            return config;
+        }
 }

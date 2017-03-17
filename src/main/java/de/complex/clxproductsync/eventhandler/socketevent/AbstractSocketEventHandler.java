@@ -24,6 +24,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Vector;
+import java.util.logging.Level;
+import javax.xml.bind.JAXBException;
 import org.apache.axis.AxisFault;
 import org.apache.log4j.Logger;
 
@@ -42,6 +44,7 @@ public abstract class AbstractSocketEventHandler {
 	private boolean running = false;
 	public int currentWebid = 0;
 	private HashMap<Integer, Vector> map = new HashMap<Integer, Vector>();
+        public static final String SOCKETCONFIGFILENAME = "socketconfig.xml";
 
 	public boolean doSendError(int typeId) {
 		return doSendError(typeId, currentWebid);
@@ -80,20 +83,36 @@ public abstract class AbstractSocketEventHandler {
 
 		SocketConfig sc = null;
 
-		File xmlFile = null;
-
-		if (ApplicationConfig.getValue("isDebug", "false").equalsIgnoreCase("true")) {
-			sc = (SocketConfig) new XmlHelper().factory(new File("conf/socketconfig.xml"), SocketConfig.class);
+                String socketConfigFile = null;
+                if (ApplicationConfig.getValue("isDebug", "false").equalsIgnoreCase("true")) {
+                    socketConfigFile = "conf/" + SOCKETCONFIGFILENAME;
 		} else {
-			sc = (SocketConfig) new XmlHelper().factory(new File("../conf/socketconfig.xml"), SocketConfig.class);
+                    socketConfigFile = "../conf/" + SOCKETCONFIGFILENAME;  
 		}
-
+                
+                File scFile = new File(socketConfigFile);
+                if (scFile.exists()) {
+                    logger.debug("external SocketConfig: " + scFile.getName());
+                    sc = (SocketConfig) new XmlHelper().factory(new File(socketConfigFile), SocketConfig.class);
+                } else {
+                    logger.debug("internal SocketConfig: " + scFile.getName());
+                    try {
+                        sc = (SocketConfig) new XmlHelper().factory(AbstractSocketEventHandler.class.getResourceAsStream("/config/" + SOCKETCONFIGFILENAME), SocketConfig.class);
+                    } catch (JAXBException ex) {
+                        logger.error(ex);
+                        throw new RuntimeException(ex);
+                    }
+                }                
+                
 		if (sc != null) {
+                        AbstractSocketEventHandler.logger.debug("SocketConfig Anzahl TableConfigs: " + sc.getTableConfigs().size());
 			for (TableConfig tc : sc.getTableConfigs()) {
 				tableConfigs.put(tc.getTableName().toLowerCase(), tc);
 				AbstractSocketEventHandler.logger.debug("SocketConfig tablename: " + tc.getTableName());
 			}
-		}
+		} else {
+                    AbstractSocketEventHandler.logger.debug("keine SocketConfig vorhanden");
+                }
 
 		AbstractSocketEventHandler.logger.debug("New AbstractSocketEventHandler pause status: " + this.pause);
 	}
