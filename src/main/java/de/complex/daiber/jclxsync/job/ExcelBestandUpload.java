@@ -135,18 +135,19 @@ public class ExcelBestandUpload extends Thread {
 
 								final HashMap<String, ? super Object> data = new HashMap<String, Object>();
 
-								data.put(header[0], rs.getString("ARTGROESSEID") == null ? "" : rs.getString("ARTGROESSEID"));
+								data.put(header[0], rs.getString("ARTGROESSEID") == null ? "" : rs.getString("ARTGROESSEID")); // A
 								data.put(header[1], rs.getString("FREMDID") == null ? "" : rs.getString("FREMDID"));
 								data.put(header[2], rs.getString("NEU") == null ? "" : rs.getString("NEU"));
 								data.put(header[3], rs.getString("MARKE") == null ? "" : rs.getString("MARKE"));
-								data.put(header[4], rs.getString("ARTIKEL") == null ? "" : rs.getString("ARTIKEL"));
+								data.put(header[4], rs.getString("ARTIKEL") == null ? "" : rs.getString("ARTIKEL"));    // E
 								data.put(header[5], rs.getString("FARBE") == null ? "" : rs.getString("FARBE"));
 								data.put(header[6], rs.getString("FARBKUERZEL") == null ? "" : rs.getString("FARBKUERZEL"));
 								data.put(header[7], rs.getString("GROESSE") == null ? "" : rs.getString("GROESSE"));
 								data.put(header[8], rs.getString("ARTIKELBEZECIHNUNG") == null ? "" : rs.getString("ARTIKELBEZECIHNUNG"));
-								data.put(header[9], rs.getString("KURZBESCHREIBUNG") == null ? "" : rs.getString("KURZBESCHREIBUNG"));
+								data.put(header[9], rs.getString("KURZBESCHREIBUNG") == null ? "" : rs.getString("KURZBESCHREIBUNG")); // J
 
-								DecimalFormat dformat = new DecimalFormat("########0");
+								// K
+                                                                DecimalFormat dformat = new DecimalFormat("########0");
 								try {
 									int lagermenge = rs.getInt("LAGERMENGE");
 									data.put(header[10], dformat.format(lagermenge));
@@ -155,9 +156,24 @@ public class ExcelBestandUpload extends Thread {
 									data.put(header[10], "N/A");
 								}
 
+                                                                // L und M, je Customer unterschiedlich
                                                                 if ("FARE".equalsIgnoreCase(ApplicationConfig.getValue("customer", ""))) {
-                                                                    data.put(header[11], getZulaufmenge(con, rs.getInt("ARTGROESSEID")));
+                                                                    Zulauf naechsterZulauf = getNaechsteZulaufinfo(con, rs.getInt("ARTGROESSEID"));
+
+                                                                    if (naechsterZulauf != null) {
+                                                                        if (naechsterZulauf.isStatusIndispatch()) {
+                                                                            data.put(header[11], naechsterZulauf.getMenge()); // L
+                                                                            data.put(header[12], naechsterZulauf.getKalenderwoche()); // M
+                                                                        } else {
+                                                                            data.put(header[11], "");
+                                                                            data.put(header[12], naechsterZulauf.getKalenderwoche());
+                                                                        }
+                                                                    } else {
+                                                                        data.put(header[11], "");
+                                                                        data.put(header[12], "");
+                                                                    }
                                                                 } else {
+
                                                                     try {
                                                                         int zulaufmenge_sh = rs.getInt("ZULAUFMENGE_SH");
                                                                         if (zulaufmenge_sh != 0) {
@@ -169,11 +185,7 @@ public class ExcelBestandUpload extends Thread {
                                                                         ExcelBestandUpload.logger.error(e, e);
                                                                         data.put(header[11], "N/A");
                                                                     }
-                                                                }
 
-                                                                if ("FARE".equalsIgnoreCase(ApplicationConfig.getValue("customer", ""))) {
-                                                                    data.put(header[12], getZulaufstatus(con, rs.getInt("ARTGROESSEID")));
-                                                                } else {
                                                                     try {
                                                                         data.put(header[12], rs.getString("ZULAUFSTATUS_SH"));
                                                                     } catch (Exception e) {
@@ -317,66 +329,66 @@ public class ExcelBestandUpload extends Thread {
         return labels.getString(key);
     }
     
-    private String getZulaufmenge(Connection con, int artgroesseid) throws SQLException {
-
+    private Zulauf getNaechsteZulaufinfo(Connection con, int artgroesseid) throws SQLException {
         java.sql.PreparedStatement pStmt = null;
         java.sql.ResultSet rs = null;
 
-        String sql = "SELECT ARTGROESSEZULAUF.MENGE"
-                + " , ARTGROESSEZULAUF.LIEFERKW"
-                + " , IIF( coalesce(ARTGROESSEZULAUF.LIEFERKW,0) < F_KALENDERWOCHE('now'), coalesce(ARTGROESSEZULAUF.LIEFERKW,0) + 100, ARTGROESSEZULAUF.LIEFERKW)"
-                + " FROM ARTGROESSEZULAUF"
-                + " WHERE ARTGROESSEZULAUF.STATUS='indispatch'"
-                + " AND ARTGROESSEZULAUF.ARTGROESSEID = ?"
-                + " ORDER BY 3";
+        try {
+            // zuerst indispatch peüfen
+        
+            String sql = "SELECT FIRST 1 ARTGROESSEZULAUF.MENGE"
+                    + " , ARTGROESSEZULAUF.LIEFERKW"
+                    + " , IIF( coalesce(ARTGROESSEZULAUF.LIEFERKW,0) < F_KALENDERWOCHE('now'), coalesce(ARTGROESSEZULAUF.LIEFERKW,0) + 100, ARTGROESSEZULAUF.LIEFERKW)"
+                    + " , ARTGROESSEZULAUF.STATUS"
+                    + " FROM ARTGROESSEZULAUF"
+                    + " WHERE ARTGROESSEZULAUF.STATUS='" + Zulauf.STATUS_INDISPATCH + "'"
+                    + " AND ARTGROESSEZULAUF.ARTGROESSEID = ?"
+                    + " ORDER BY 3";
 
-        pStmt = con.prepareStatement(sql);
-        pStmt.setInt(1, artgroesseid);
+            pStmt = con.prepareStatement(sql);
+            pStmt.setInt(1, artgroesseid);
 
-        rs = pStmt.executeQuery();
+            rs = pStmt.executeQuery();
 
-        StringBuilder sb = new StringBuilder();
+            if (rs.next()) {
+                Zulauf zulauf = new Zulauf();
 
-        while (rs.next()) {
-            if (sb.length() != 0) {
-                sb.append("\n");
+                zulauf.setStatus(rs.getString("STATUS"));
+                zulauf.setMenge(rs.getInt("MENGE"));
+                zulauf.setKalenderwoche(rs.getInt("LIEFERKW") + "/" + getYearForWeeknumber(rs.getInt("LIEFERKW")));
+
+                return zulauf;
             }
 
-            sb.append(rs.getString("MENGE")).append("-KW ").append(rs.getInt("LIEFERKW")).append("/").append(getYearForWeeknumber(rs.getInt("LIEFERKW")));
-        }
+            // jetzt auf ordered prüfen
+            sql = "SELECT FIRST 1 ARTGROESSEZULAUF.MENGE"
+                    + " , ARTGROESSEZULAUF.LIEFERKW"
+                    + " , IIF( coalesce(ARTGROESSEZULAUF.LIEFERKW,0) < F_KALENDERWOCHE('now'), coalesce(ARTGROESSEZULAUF.LIEFERKW,0) + 100, ARTGROESSEZULAUF.LIEFERKW)"
+                    + " , ARTGROESSEZULAUF.STATUS"
+                    + " FROM ARTGROESSEZULAUF"
+                    + " WHERE ARTGROESSEZULAUF.STATUS='" + Zulauf.STATUS_ORDERED + "'"
+                    + " AND ARTGROESSEZULAUF.ARTGROESSEID = ?"
+                    + " ORDER BY 3";
 
-        return sb.toString();
-    }
+            pStmt = con.prepareStatement(sql);
+            pStmt.setInt(1, artgroesseid);
 
-    private String getZulaufstatus(Connection con, int artgroesseid) throws SQLException {
+            rs = pStmt.executeQuery();
 
-        java.sql.PreparedStatement pStmt = null;
-        java.sql.ResultSet rs = null;
+            if (rs.next()) {
+                Zulauf zulauf = new Zulauf();
 
-        String sql = "SELECT ARTGROESSEZULAUF.MENGE"
-                + " , ARTGROESSEZULAUF.LIEFERKW"
-                + " , IIF( coalesce(ARTGROESSEZULAUF.LIEFERKW,0) < F_KALENDERWOCHE('now'), coalesce(ARTGROESSEZULAUF.LIEFERKW,0) + 100, ARTGROESSEZULAUF.LIEFERKW)"
-                + " FROM ARTGROESSEZULAUF"
-                + " WHERE ARTGROESSEZULAUF.STATUS='ordered'"
-                + " AND ARTGROESSEZULAUF.ARTGROESSEID = ?"
-                + " ORDER BY 3";
+                zulauf.setStatus(rs.getString("STATUS"));
+                zulauf.setMenge(rs.getInt("MENGE"));
+                zulauf.setKalenderwoche(rs.getInt("LIEFERKW") + "/" + getYearForWeeknumber(rs.getInt("LIEFERKW")));
 
-        pStmt = con.prepareStatement(sql);
-        pStmt.setInt(1, artgroesseid);
-
-        rs = pStmt.executeQuery();
-
-        StringBuilder sb = new StringBuilder();
-
-        while (rs.next()) {
-            if (sb.length() != 0) {
-                sb.append("\n");
+                return zulauf;
             }
 
-            sb.append("KW ").append(rs.getInt("LIEFERKW")).append("/").append(getYearForWeeknumber(rs.getInt("LIEFERKW")));
+            return null;
+        } finally {
+            FirebirdDb.close(rs, pStmt, null);
         }
-
-        return sb.toString();
     }
 
     private int getWeekNumber() {
@@ -402,7 +414,7 @@ public class ExcelBestandUpload extends Thread {
 		BasicConfigurator.configure();
 		Logger.getRootLogger().setLevel(Level.DEBUG);
 
-		String iniFilename = "./conf/clxProductSync.properties";
+		String iniFilename = "./conf/clxProductSync_fare.properties";
 		ApplicationConfig.loadConfig(iniFilename);
 
 		Properties prop = new Properties();
