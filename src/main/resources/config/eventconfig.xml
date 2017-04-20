@@ -185,5 +185,13 @@
 		<event name="ART_ANBRINGPOS_VETECH" />
 		<event name="ART_VETECH_PREISPROFIL" />
 		<event name="HAUPTARTGROESSE_DIMENSION" />
+
+                <event name="ARTADA" />
+                
+                <event name="ART_TYPGRUPPE" />
+                <event name="ART_TYPGRUPPE_FARBEN" />
+                <event name="ART_TYPGRUPPE_FARBEN_SORT" />
+                <event name="ART_TYPGRUPPE_GROESSEN" />
+                <event name="ART_TYPGRUPPE_SORT" /> 
 	</events>
 </eventconfig>
