@@ -192,6 +192,9 @@
                 <event name="ART_TYPGRUPPE_FARBEN" />
                 <event name="ART_TYPGRUPPE_FARBEN_SORT" />
                 <event name="ART_TYPGRUPPE_GROESSEN" />
-                <event name="ART_TYPGRUPPE_SORT" /> 
+                <event name="ART_TYPGRUPPE_SORT" />
+                
+                <event name="TYPGRUPPE" />
+                <event name="TYPGRUPPESPRACHEN" /> 
 	</events>
 </eventconfig>
