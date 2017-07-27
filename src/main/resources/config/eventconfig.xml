@@ -196,5 +196,15 @@
                 
                 <event name="TYPGRUPPE" />
                 <event name="TYPGRUPPESPRACHEN" /> 
+
+                <event name="SAISON" /> 
+                <event name="ART_KALKMODELL" />
+                <event name="EINSTIEGSPREISGRUPPE" />
+                <event name="EINSTIEGSPREISGRUPPE_DTL" />
+                <event name="KALKULATIONSMODELL" />
+                <event name="KALKULATIONSMODELLSPRACHEN" />
+                <event name="PREISGRUPPEFAKTOREN" />
+				
+				<event name="FEATUREARTSPRACHEN" />
 	</events>
 </eventconfig>
