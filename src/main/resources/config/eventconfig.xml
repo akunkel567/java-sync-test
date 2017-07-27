@@ -204,5 +204,7 @@
                 <event name="KALKULATIONSMODELL" />
                 <event name="KALKULATIONSMODELLSPRACHEN" />
                 <event name="PREISGRUPPEFAKTOREN" />
+				
+				<event name="FEATUREARTSPRACHEN" />
 	</events>
 </eventconfig>
