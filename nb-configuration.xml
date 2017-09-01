@@ -9,8 +9,9 @@ Without this configuration present, some functionality in the IDE may be limited
     <config-data xmlns="http://www.netbeans.org/ns/maven-config-data/1">
         <configurations>
             <configuration id="WebtableCheck" profiles=""/>
-            <configuration id="schnittstellen-mode" profiles=""/>
             <configuration id="WebtableCheck - eventconfig" profiles=""/>
+            <configuration id="development" profiles=""/>
+            <configuration id="development - Fiddler" profiles=""/>
         </configurations>
     </config-data>
 </project-shared-configuration>

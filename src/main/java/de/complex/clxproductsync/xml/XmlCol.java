@@ -23,6 +23,9 @@ public class XmlCol {
 	@XmlAttribute
 	protected boolean base64;
 
+        @XmlAttribute
+	protected boolean valueIsNull;
+
 	public XmlCol() {
 	}
 
@@ -84,6 +87,14 @@ public class XmlCol {
 	public void setIsBase64(boolean base64) {
 		this.base64 = base64;
 	}
+
+        public boolean isValueIsNull() {
+            return valueIsNull;
+        }
+
+        public void setValueIsNull(boolean valueIsNull) {
+            this.valueIsNull = valueIsNull;
+        }
 
 	@Override
 	public boolean equals(Object obj) {

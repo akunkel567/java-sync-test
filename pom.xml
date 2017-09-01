@@ -181,7 +181,7 @@
 		<dependency>
 			<groupId>de.complex.commons</groupId>
 			<artifactId>clxActiveRecord</artifactId>
-			<version>1.2.0</version>
+			<version>1.3.0-SNAPSHOT</version>
 			<type>jar</type>
 		</dependency>
 		<dependency>

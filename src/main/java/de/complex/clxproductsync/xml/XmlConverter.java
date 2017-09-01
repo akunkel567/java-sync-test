@@ -122,6 +122,8 @@ public class XmlConverter {
 								xCol.setIsBase64(false);
 								xRow.addCol(xCol);
 							}
+                                                        
+                                                        xCol.setValueIsNull( ar[i].rowData.get(colName) == null );
 						}
 					}
 
