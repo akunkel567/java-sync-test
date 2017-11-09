@@ -95,13 +95,46 @@ public class ExcelBestandUpload extends Thread {
                     stmtSprachen = con.createStatement();
                     stmt = con.createStatement();
 
-                    rsSprachen = stmtSprachen.executeQuery("select SPRACHEID, KUERZEL, LOCALE from SPRACHE order by SPRACHEID");
+                    String exportsprachenConf = StringTool.getNotNullTrim(ApplicationConfig.getValue("excelbestand.exportsprachen", ""));
 
-                    while (rsSprachen.next()) {
+                    StringBuilder exportsprachen = new StringBuilder();
 
-                        int spracheid = rsSprachen.getInt(1);
-                        String kuerzel = rsSprachen.getString(2);
-                        String sLocale = rsSprachen.getString(3);
+                    String trenner = ",";
+
+                    if (exportsprachenConf.contains(";")) {
+                        trenner = ";";
+                    }
+
+                    for (String sprachkuerzel : exportsprachenConf.split(trenner)) {
+                        if (!StringTool.isEmpty(sprachkuerzel)) {
+
+                            if (exportsprachen.length() > 0) {
+                                exportsprachen.append(",");
+                            }
+
+                            exportsprachen.append("'").append(sprachkuerzel.toUpperCase()).append("'");
+                        }
+                    }
+
+                    StringBuilder sqlBuilder = new StringBuilder("select SPRACHEID, KUERZEL, LOCALE from SPRACHE");
+
+                    if (exportsprachen.length() > 0) {
+                        sqlBuilder.append(" where upper(SPRACHE.KUERZEL) IN (").append(exportsprachen).append(")");
+                    }
+
+                    sqlBuilder.append(" order by SPRACHEID");
+
+                    ExcelBestandUpload.logger.debug("sprachen sql :" + sqlBuilder.toString());
+                    rsSprachen = stmtSprachen.executeQuery(sqlBuilder.toString());
+
+                    if (!rsSprachen.next()) {
+                        ExcelBestandUpload.logger.error("Keine Sprachen mit dem Konfig-Wert (excelbestand.exportsprachen) '" + exportsprachenConf + "' gefunden!");
+                    } else {
+                        do {
+
+                            int spracheid = rsSprachen.getInt(1);
+                            String kuerzel = rsSprachen.getString(2);
+                            String sLocale = rsSprachen.getString(3);
 
 //						Parameter Procedure
 //						P_MARKENID
@@ -109,162 +142,163 @@ public class ExcelBestandUpload extends Thread {
 //						P_WEBAKTIV
 //						P_AUSLAUFARTIKEL
 //						P_SONDERPOSTEN
-                        String excelbestandShopid = ApplicationConfig.getValue("excelbestand.shopid", "null");
-                        if (StringTool.isEmpty(excelbestandShopid)) {
-                            excelbestandShopid = "null";
-                        }
+                            String excelbestandShopid = ApplicationConfig.getValue("excelbestand.shopid", "null");
+                            if (StringTool.isEmpty(excelbestandShopid)) {
+                                excelbestandShopid = "null";
+                            }
 
-                        String sql = "SELECT * FROM SEL_EXPORT_SKULAGER(null," + spracheid + ",1,null,null," + excelbestandShopid + ")";
-                        ExcelBestandUpload.logger.debug("sql:" + sql);
-                        rs = stmt.executeQuery(sql);
+                            String sql = "SELECT * FROM SEL_EXPORT_SKULAGER(null," + spracheid + ",1,null,null," + excelbestandShopid + ")";
+                            ExcelBestandUpload.logger.debug("sql:" + sql);
+                            rs = stmt.executeQuery(sql);
 
-                        File file = new File("bestand.csv");
+                            File file = new File("bestand.csv");
 
-                        OutputStreamWriter osw = new OutputStreamWriter(new FileOutputStream(file), "UTF-8");
+                            OutputStreamWriter osw = new OutputStreamWriter(new FileOutputStream(file), "UTF-8");
 
-                        ICsvMapWriter writer = new CsvMapWriter(osw, CsvPreference.EXCEL_NORTH_EUROPE_PREFERENCE);
-                        try {
-                            final String[] header = createHeader(sLocale);
-                            writer.writeHeader(header);
+                            ICsvMapWriter writer = new CsvMapWriter(osw, CsvPreference.EXCEL_NORTH_EUROPE_PREFERENCE);
+                            try {
+                                final String[] header = createHeader(sLocale);
+                                writer.writeHeader(header);
 
-                            int rowIndex = 0;
-                            while (rs.next()) {
-                                rowIndex++;
-                                ExcelBestandUpload.logger.debug("row:" + rowIndex);
+                                int rowIndex = 0;
+                                while (rs.next()) {
+                                    rowIndex++;
+                                    ExcelBestandUpload.logger.debug("row:" + rowIndex);
 
-                                final HashMap<String, ? super Object> data = new HashMap<String, Object>();
+                                    final HashMap<String, ? super Object> data = new HashMap<String, Object>();
 
-                                data.put(header[0], rs.getString("ARTGROESSEID") == null ? "" : rs.getString("ARTGROESSEID")); // A
-                                data.put(header[1], rs.getString("FREMDID") == null ? "" : rs.getString("FREMDID"));
-                                data.put(header[2], rs.getString("NEU") == null ? "" : rs.getString("NEU"));
-                                data.put(header[3], rs.getString("MARKE") == null ? "" : rs.getString("MARKE"));
-                                data.put(header[4], rs.getString("ARTIKEL") == null ? "" : rs.getString("ARTIKEL"));    // E
-                                data.put(header[5], rs.getString("FARBE") == null ? "" : rs.getString("FARBE"));
-                                data.put(header[6], rs.getString("FARBKUERZEL") == null ? "" : rs.getString("FARBKUERZEL"));
-                                data.put(header[7], rs.getString("GROESSE") == null ? "" : rs.getString("GROESSE"));
-                                data.put(header[8], rs.getString("ARTIKELBEZECIHNUNG") == null ? "" : rs.getString("ARTIKELBEZECIHNUNG"));
-                                data.put(header[9], rs.getString("KURZBESCHREIBUNG") == null ? "" : rs.getString("KURZBESCHREIBUNG")); // J
+                                    data.put(header[0], rs.getString("ARTGROESSEID") == null ? "" : rs.getString("ARTGROESSEID")); // A
+                                    data.put(header[1], rs.getString("FREMDID") == null ? "" : rs.getString("FREMDID"));
+                                    data.put(header[2], rs.getString("NEU") == null ? "" : rs.getString("NEU"));
+                                    data.put(header[3], rs.getString("MARKE") == null ? "" : rs.getString("MARKE"));
+                                    data.put(header[4], rs.getString("ARTIKEL") == null ? "" : rs.getString("ARTIKEL"));    // E
+                                    data.put(header[5], rs.getString("FARBE") == null ? "" : rs.getString("FARBE"));
+                                    data.put(header[6], rs.getString("FARBKUERZEL") == null ? "" : rs.getString("FARBKUERZEL"));
+                                    data.put(header[7], rs.getString("GROESSE") == null ? "" : rs.getString("GROESSE"));
+                                    data.put(header[8], rs.getString("ARTIKELBEZECIHNUNG") == null ? "" : rs.getString("ARTIKELBEZECIHNUNG"));
+                                    data.put(header[9], rs.getString("KURZBESCHREIBUNG") == null ? "" : rs.getString("KURZBESCHREIBUNG")); // J
 
-                                // K
-                                DecimalFormat dformat = new DecimalFormat("########0");
-                                try {
-                                    int lagermenge = rs.getInt("LAGERMENGE");
-                                    data.put(header[10], dformat.format(lagermenge));
-                                } catch (Exception e) {
-                                    ExcelBestandUpload.logger.error(e, e);
-                                    data.put(header[10], "N/A");
-                                }
+                                    // K
+                                    DecimalFormat dformat = new DecimalFormat("########0");
+                                    try {
+                                        int lagermenge = rs.getInt("LAGERMENGE");
+                                        data.put(header[10], dformat.format(lagermenge));
+                                    } catch (Exception e) {
+                                        ExcelBestandUpload.logger.error(e, e);
+                                        data.put(header[10], "N/A");
+                                    }
 
-                                // L und M, je Customer unterschiedlich
-                                if ("FARE".equalsIgnoreCase(ApplicationConfig.getValue("customer", ""))) {
-                                    Zulauf naechsterZulauf = getNaechsteZulaufinfo(con, rs.getInt("ARTGROESSEID"));
+                                    // L und M, je Customer unterschiedlich
+                                    if ("FARE".equalsIgnoreCase(ApplicationConfig.getValue("customer", ""))) {
+                                        Zulauf naechsterZulauf = getNaechsteZulaufinfo(con, rs.getInt("ARTGROESSEID"));
 
-                                    if (naechsterZulauf != null) {
-                                        if (naechsterZulauf.isStatusIndispatch()) {
-                                            data.put(header[11], naechsterZulauf.getMenge()); // L
-                                            data.put(header[12], naechsterZulauf.getKalenderwoche()); // M
+                                        if (naechsterZulauf != null) {
+                                            if (naechsterZulauf.isStatusIndispatch()) {
+                                                data.put(header[11], naechsterZulauf.getMenge()); // L
+                                                data.put(header[12], naechsterZulauf.getKalenderwoche()); // M
+                                            } else {
+                                                data.put(header[11], "");
+                                                data.put(header[12], naechsterZulauf.getKalenderwoche());
+                                            }
                                         } else {
                                             data.put(header[11], "");
-                                            data.put(header[12], naechsterZulauf.getKalenderwoche());
+                                            data.put(header[12], "");
                                         }
                                     } else {
-                                        data.put(header[11], "");
-                                        data.put(header[12], "");
-                                    }
-                                } else {
 
-                                    try {
-                                        int zulaufmenge_sh = rs.getInt("ZULAUFMENGE_SH");
-                                        if (zulaufmenge_sh != 0) {
-                                            data.put(header[11], dformat.format(zulaufmenge_sh));
-                                        } else {
-                                            data.put(header[11], "");
+                                        try {
+                                            int zulaufmenge_sh = rs.getInt("ZULAUFMENGE_SH");
+                                            if (zulaufmenge_sh != 0) {
+                                                data.put(header[11], dformat.format(zulaufmenge_sh));
+                                            } else {
+                                                data.put(header[11], "");
+                                            }
+                                        } catch (Exception e) {
+                                            ExcelBestandUpload.logger.error(e, e);
+                                            data.put(header[11], "N/A");
                                         }
-                                    } catch (Exception e) {
-                                        ExcelBestandUpload.logger.error(e, e);
-                                        data.put(header[11], "N/A");
+
+                                        try {
+                                            data.put(header[12], rs.getString("ZULAUFSTATUS_SH"));
+                                        } catch (Exception e) {
+                                            ExcelBestandUpload.logger.error(e, e);
+                                            data.put(header[12], "N/A");
+                                        }
                                     }
 
                                     try {
-                                        data.put(header[12], rs.getString("ZULAUFSTATUS_SH"));
+                                        writer.write(data, header);
                                     } catch (Exception e) {
+                                        ExcelBestandUpload.logger.error("writer: " + writer + " data: " + data + " header: " + header);
                                         ExcelBestandUpload.logger.error(e, e);
-                                        data.put(header[12], "N/A");
+
                                     }
                                 }
 
+                            } finally {
                                 try {
-                                    writer.write(data, header);
+                                    writer.close();
+                                } catch (Exception ignore) {
+                                    ExcelBestandUpload.logger.error(ignore, ignore);
+                                }
+
+                            }
+
+                            try {
+                                ExcelBestandUpload.logger.info("SoapHandler.sendFileData: " + file.getAbsolutePath());
+                                SoapHandler.sendFileData(null, "bestandexcel", spracheid, file);
+                            } catch (RemoteCallException ex) {
+                                ExcelBestandUpload.logger.error(ex, ex);
+                            }
+
+                            File ftpUploadFile = null;
+
+                            if (!ApplicationConfig.getValue("excelbestand.ftphost", "").equals("")) {
+                                ExcelBestandUpload.logger.info("ftpUpload: " + file.getAbsolutePath());
+                                try {
+                                    ExcelBestandUpload.logger.debug("file absolutePath: " + file.getAbsolutePath());
+                                    ExcelBestandUpload.logger.debug("file path: " + file.getPath());
+                                    ExcelBestandUpload.logger.debug("file name: " + file.getName());
+
+                                    ftpUploadFile = new File("bestand_" + rsSprachen.getString("KUERZEL") + ".csv");
+                                    ExcelBestandUpload.logger.debug(ftpUploadFile.getAbsolutePath() + " - " + ftpUploadFile.getName());
+
+                                    FileUtils.copyFile(file, ftpUploadFile);
+
+                                    ExcelBestandUpload.logger.debug("file: " + file);
+                                    ExcelBestandUpload.logger.debug("ftpUploadFile: " + ftpUploadFile);
+
+                                    String ftphost = ApplicationConfig.getValue("excelbestand.ftphost", "");
+                                    String username = ApplicationConfig.getValue("excelbestand.username", "");
+                                    String password = ApplicationConfig.getValue("excelbestand.password", "");
+                                    String remotepath = ApplicationConfig.getValue("excelbestand.remotepath", ".");
+
+                                    ClxFtp ftp = new ClxFtp(ftphost, username, password);
+                                    if (!ftp.uploadFile(ftpUploadFile, remotepath)) {
+                                        ExcelBestandUpload.logger.error("ftp Upload fehler");
+                                    }
                                 } catch (Exception e) {
-                                    ExcelBestandUpload.logger.error("writer: " + writer + " data: " + data + " header: " + header);
                                     ExcelBestandUpload.logger.error(e, e);
-
                                 }
+                            } else {
+                                ExcelBestandUpload.logger.debug("Kein Ftp-Upload. Ftp-Zugang nicht konfiguriert.");
                             }
 
-                        } finally {
                             try {
-                                writer.close();
+                                if (file != null && file.exists()) {
+                                    file.delete();
+                                }
                             } catch (Exception ignore) {
-                                ExcelBestandUpload.logger.error(ignore, ignore);
                             }
 
-                        }
-
-                        try {
-                            ExcelBestandUpload.logger.info("SoapHandler.sendFileData: " + file.getAbsolutePath());
-                            SoapHandler.sendFileData(null, "bestandexcel", spracheid, file);
-                        } catch (RemoteCallException ex) {
-                            ExcelBestandUpload.logger.error(ex, ex);
-                        }
-
-                        File ftpUploadFile = null;
-
-                        if (!ApplicationConfig.getValue("excelbestand.ftphost", "").equals("")) {
-                            ExcelBestandUpload.logger.info("ftpUpload: " + file.getAbsolutePath());
                             try {
-                                ExcelBestandUpload.logger.debug("file absolutePath: " + file.getAbsolutePath());
-                                ExcelBestandUpload.logger.debug("file path: " + file.getPath());
-                                ExcelBestandUpload.logger.debug("file name: " + file.getName());
-
-                                ftpUploadFile = new File("bestand_" + rsSprachen.getString("KUERZEL") + ".csv");
-                                ExcelBestandUpload.logger.debug(ftpUploadFile.getAbsolutePath() + " - " + ftpUploadFile.getName());
-
-                                FileUtils.copyFile(file, ftpUploadFile);
-
-                                ExcelBestandUpload.logger.debug("file: " + file);
-                                ExcelBestandUpload.logger.debug("ftpUploadFile: " + ftpUploadFile);
-
-                                String ftphost = ApplicationConfig.getValue("excelbestand.ftphost", "");
-                                String username = ApplicationConfig.getValue("excelbestand.username", "");
-                                String password = ApplicationConfig.getValue("excelbestand.password", "");
-                                String remotepath = ApplicationConfig.getValue("excelbestand.remotepath", ".");
-
-                                ClxFtp ftp = new ClxFtp(ftphost, username, password);
-                                if (!ftp.uploadFile(ftpUploadFile, remotepath)) {
-                                    ExcelBestandUpload.logger.error("ftp Upload fehler");
+                                if (ftpUploadFile != null && ftpUploadFile.exists()) {
+                                    ftpUploadFile.delete();
                                 }
-                            } catch (Exception e) {
-                                ExcelBestandUpload.logger.error(e, e);
+                            } catch (Exception ignore) {
                             }
-                        } else {
-                            ExcelBestandUpload.logger.debug("Kein Ftp-Upload. Ftp-Zugang nicht konfiguriert.");
-                        }
 
-                        try {
-                            if (file != null && file.exists()) {
-                                file.delete();
-                            }
-                        } catch (Exception ignore) {
-                        }
-
-                        try {
-                            if (ftpUploadFile != null && ftpUploadFile.exists()) {
-                                ftpUploadFile.delete();
-                            }
-                        } catch (Exception ignore) {
-                        }
-
+                        } while (rsSprachen.next());
                     }
 
                     con.commit();
@@ -413,7 +447,8 @@ public class ExcelBestandUpload extends Thread {
         BasicConfigurator.configure();
         Logger.getRootLogger().setLevel(Level.DEBUG);
 
-        String iniFilename = "./conf/clxProductSync_fare.properties";
+//        String iniFilename = "./conf/clxProductSync_fare.properties";
+        String iniFilename = "./conf/clxProductSync.properties";
         ApplicationConfig.loadConfig(iniFilename);
 
         Properties prop = new Properties();
