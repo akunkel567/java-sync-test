@@ -19,53 +19,54 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name = "table")
 public class TableConfig {
-	@XmlAttribute(name="name")
-	private String tableName = "";
-   @XmlElement(name="procedure")
-	private List<ProcedureConfig> procedureConfigs = new ArrayList<ProcedureConfig>();
 
-	public TableConfig() {
-	}
+    @XmlAttribute(name = "name")
+    private String tableName = "";
+    @XmlElement(name = "procedure")
+    private List<ProcedureConfig> procedureConfigs = new ArrayList<ProcedureConfig>();
 
-	public TableConfig(String tableName) {
-		this.tableName = tableName;
-	}
+    public TableConfig() {
+    }
 
-	public List<ProcedureConfig> getProcedureConfigs() {
-		return procedureConfigs;
-	}
+    public TableConfig(String tableName) {
+        this.tableName = tableName;
+    }
 
-	public void setProcedureConfigs(List<ProcedureConfig> procedureConfigs) {
-		this.procedureConfigs = procedureConfigs;
-	}
+    public List<ProcedureConfig> getProcedureConfigs() {
+        return procedureConfigs;
+    }
 
-	public String getTableName() {
-		return tableName;
-	}
+    public void setProcedureConfigs(List<ProcedureConfig> procedureConfigs) {
+        this.procedureConfigs = procedureConfigs;
+    }
 
-	public void setTableName(String tableName) {
-		this.tableName = tableName;
-	}
+    public String getTableName() {
+        return tableName;
+    }
 
-	@Override
-	public boolean equals(Object obj) {
-		if (obj == null) {
-			return false;
-		}
-		if (getClass() != obj.getClass()) {
-			return false;
-		}
-		final TableConfig other = (TableConfig) obj;
-		if ((this.tableName == null) ? (other.tableName != null) : !this.tableName.equals(other.tableName)) {
-			return false;
-		}
-		return true;
-	}
+    public void setTableName(String tableName) {
+        this.tableName = tableName;
+    }
 
-	@Override
-	public int hashCode() {
-		int hash = 3;
-		hash = 13 * hash + (this.tableName != null ? this.tableName.hashCode() : 0);
-		return hash;
-	}
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final TableConfig other = (TableConfig) obj;
+        if ((this.tableName == null) ? (other.tableName != null) : !this.tableName.equals(other.tableName)) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 13 * hash + (this.tableName != null ? this.tableName.hashCode() : 0);
+        return hash;
+    }
 }

@@ -10,21 +10,21 @@ package de.complex.clxproductsync.soap;
  */
 public class RemoteCallException extends Exception {
 
-	/**
-	 * Constructs an instance of
-	 * <code>ClxSoapTransferException</code> with the specified detail message.
-	 *
-	 * @param msg the detail message.
-	 */
-	public RemoteCallException(String msg) {
-		super(msg);
-	}
+    /**
+     * Constructs an instance of <code>ClxSoapTransferException</code> with the
+     * specified detail message.
+     *
+     * @param msg the detail message.
+     */
+    public RemoteCallException(String msg) {
+        super(msg);
+    }
 
-	public RemoteCallException(String message, Throwable cause) {
-		super(message, cause);
-	}
+    public RemoteCallException(String message, Throwable cause) {
+        super(message, cause);
+    }
 
-	public RemoteCallException(Throwable cause) {
-		super(cause);
-	}
+    public RemoteCallException(Throwable cause) {
+        super(cause);
+    }
 }

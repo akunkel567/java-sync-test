@@ -18,17 +18,18 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name = "socketconfig")
 public class SocketConfig {
-   @XmlElement(name="table")
-	private List<TableConfig> tableConfigs = new ArrayList<TableConfig>();
 
-	public SocketConfig() {
-	}
+    @XmlElement(name = "table")
+    private List<TableConfig> tableConfigs = new ArrayList<TableConfig>();
 
-	public List<TableConfig> getTableConfigs() {
-		return tableConfigs;
-	}
+    public SocketConfig() {
+    }
 
-	public void setTableConfigs(List<TableConfig> tableConfigs) {
-		this.tableConfigs = tableConfigs;
-	}
+    public List<TableConfig> getTableConfigs() {
+        return tableConfigs;
+    }
+
+    public void setTableConfigs(List<TableConfig> tableConfigs) {
+        this.tableConfigs = tableConfigs;
+    }
 }

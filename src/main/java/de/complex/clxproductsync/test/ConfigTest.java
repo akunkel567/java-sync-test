@@ -2,7 +2,6 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package de.complex.clxproductsync.test;
 
 import java.util.logging.Level;
@@ -22,17 +21,17 @@ public class ConfigTest {
      */
     public static void main(String[] args) {
 
-			// TODO code application logic here
-			Configuration config;
-		try {
-			config = new PropertiesConfiguration("./conf/jClxSync.properties");
+        // TODO code application logic here
+        Configuration config;
+        try {
+            config = new PropertiesConfiguration("./conf/jClxSync.properties");
 
-			System.out.println(config.getString("fileRootPath", "hallo"));
-			System.out.println(config.getString("fileSeparator", "hallo"));
-			System.out.println(config.getInt("snjoblimit", 1000));
+            System.out.println(config.getString("fileRootPath", "hallo"));
+            System.out.println(config.getString("fileSeparator", "hallo"));
+            System.out.println(config.getInt("snjoblimit", 1000));
 
-		} catch (ConfigurationException ex) {
-			Logger.getLogger(ConfigTest.class.getName()).log(Level.SEVERE, null, ex);
-		}
-	 }
+        } catch (ConfigurationException ex) {
+            Logger.getLogger(ConfigTest.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
 }

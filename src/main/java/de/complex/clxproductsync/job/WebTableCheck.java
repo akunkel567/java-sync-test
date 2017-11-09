@@ -66,90 +66,89 @@ import org.apache.log4j.Logger;
  */
 public class WebTableCheck extends Thread {
 
-	private static Logger logger = Logger.getLogger(WebTableCheck.class);
-	public static SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd ss:SSS");
+    private static Logger logger = Logger.getLogger(WebTableCheck.class);
+    public static SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd ss:SSS");
 
-	private CommandLine cmdLine = null;
+    private CommandLine cmdLine = null;
 
-	public static void main(String[] args) throws Exception {
-		// TODO code application logic here
+    public static void main(String[] args) throws Exception {
+        // TODO code application logic here
 
-		BasicConfigurator.configure();
-		Logger.getRootLogger().setLevel(Level.INFO);
+        BasicConfigurator.configure();
+        Logger.getRootLogger().setLevel(Level.INFO);
 
-		WebTableCheck tableCheck = new WebTableCheck();
-		tableCheck.runFromCommandLine(args);
-	}
+        WebTableCheck tableCheck = new WebTableCheck();
+        tableCheck.runFromCommandLine(args);
+    }
 
-	private void runFromCommandLine(String[] args) throws Exception {
-		Options options = new Options();
+    private void runFromCommandLine(String[] args) throws Exception {
+        Options options = new Options();
 
-		Option opt = null;
+        Option opt = null;
 
-		opt = OptionBuilder.withDescription("Config-File").hasArg().create("config");
-		options.addOption(opt);
+        opt = OptionBuilder.withDescription("Config-File").hasArg().create("config");
+        options.addOption(opt);
 
-		opt = OptionBuilder.withDescription("Eventconfig-File").hasArg().create("eventconfig");
-		options.addOption(opt);
+        opt = OptionBuilder.withDescription("Eventconfig-File").hasArg().create("eventconfig");
+        options.addOption(opt);
 
-		opt = OptionBuilder.withDescription("Zu prüfenden Tabellen").hasArgs().create("tables");
-		options.addOption(opt);
+        opt = OptionBuilder.withDescription("Zu prüfenden Tabellen").hasArgs().create("tables");
+        options.addOption(opt);
 
-		CommandLineParser parser = new GnuParser();
+        CommandLineParser parser = new GnuParser();
 
-		StringBuilder usage = new StringBuilder();
-		usage.append("java -jar WebTableCheck.jar");
+        StringBuilder usage = new StringBuilder();
+        usage.append("java -jar WebTableCheck.jar");
 
-		StringBuilder footer = new StringBuilder();
-		footer.append("\n\n");
+        StringBuilder footer = new StringBuilder();
+        footer.append("\n\n");
 
-		try {
-			cmdLine = parser.parse(options, args);
+        try {
+            cmdLine = parser.parse(options, args);
 
-			if (args.length == 0) {
-				throw new org.apache.commons.cli.ParseException("");
-			}
-		} catch (org.apache.commons.cli.ParseException ex) {
-			HelpFormatter formatter = new HelpFormatter();
-			formatter.printHelp(180, usage.toString(), "", options, footer.toString(), true);
+            if (args.length == 0) {
+                throw new org.apache.commons.cli.ParseException("");
+            }
+        } catch (org.apache.commons.cli.ParseException ex) {
+            HelpFormatter formatter = new HelpFormatter();
+            formatter.printHelp(180, usage.toString(), "", options, footer.toString(), true);
 
-			return;
-		}
+            return;
+        }
 
-		if (cmdLine.hasOption("config")) {
-			ApplicationConfig.loadConfig(cmdLine.getOptionValue("config", ""));
-		} else {
-			ApplicationConfig.loadConfig("./conf/jClxSync.properties");
-		}
+        if (cmdLine.hasOption("config")) {
+            ApplicationConfig.loadConfig(cmdLine.getOptionValue("config", ""));
+        } else {
+            ApplicationConfig.loadConfig("./conf/jClxSync.properties");
+        }
 
-		FirebirdEventConfig eventconfig = null;
-		if (cmdLine.hasOption("eventconfig")) {
-			eventconfig = FirebirdEventConfig.factory(cmdLine.getOptionValue("eventconfig", ""));
-		} else {
-			if (cmdLine.hasOption("tables")) {
-				eventconfig = new FirebirdEventConfig();
+        FirebirdEventConfig eventconfig = null;
+        if (cmdLine.hasOption("eventconfig")) {
+            eventconfig = FirebirdEventConfig.factory(cmdLine.getOptionValue("eventconfig", ""));
+        } else {
+            if (cmdLine.hasOption("tables")) {
+                eventconfig = new FirebirdEventConfig();
 
-				for (String tablename : cmdLine.getOptionValues("tables")) {
-					eventconfig.getEventConfigs().add(new EventConfig(tablename));
-				}
-			} else {
-				ApplicationConfig.loadConfig("./conf/jClxSync.properties");
-			}
-		}
+                for (String tablename : cmdLine.getOptionValues("tables")) {
+                    eventconfig.getEventConfigs().add(new EventConfig(tablename));
+                }
+            } else {
+                ApplicationConfig.loadConfig("./conf/jClxSync.properties");
+            }
+        }
 
-		ApplicationConfig.setObject("eventconfig", eventconfig);
-		FirebirdDbPool.createInstance();
+        ApplicationConfig.setObject("eventconfig", eventconfig);
+        FirebirdDbPool.createInstance();
 
-		if (ApplicationConfig.hasValue("truststore")) {
-			System.setProperty("javax.net.ssl.trustStore", ApplicationConfig.getValue("truststore", "./conf/jssecacerts"));
-		}
-		
-		if (ApplicationConfig.hasValue("truststorepassword")) {
-			System.setProperty("javax.net.ssl.trustStorePassword", ApplicationConfig.getValue("truststorepassword", "changeit"));
-		}
+        if (ApplicationConfig.hasValue("truststore")) {
+            System.setProperty("javax.net.ssl.trustStore", ApplicationConfig.getValue("truststore", "./conf/jssecacerts"));
+        }
+
+        if (ApplicationConfig.hasValue("truststorepassword")) {
+            System.setProperty("javax.net.ssl.trustStorePassword", ApplicationConfig.getValue("truststorepassword", "changeit"));
+        }
 
 //		CustomTrustManager trust = new CustomTrustManager("./conf/InternetWidgitsPtyLtd.crt");
-
 //		//noch nicht aktiv muß noch getestet werden		, beim nächsten update beim kunden testen		...
 //		//Create a trust manager that does not validate certificate chains
 //		TrustManager[] trustAllCerts = new TrustManager[]{
@@ -172,123 +171,122 @@ public class WebTableCheck extends Thread {
 //		SSLContext sc = SSLContext.getInstance("SSL");
 //		sc.init(null, trustAllCerts, new java.security.SecureRandom());
 //		HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
-		
-		run();
-	}
+        run();
+    }
 
-	@Override
-	public void run() {
-		Thread.currentThread().setName("TableCheck " + sdf.format(new Date()));
-		WebTableCheck.logger.info("TableCheck run");
-		Thread.setDefaultUncaughtExceptionHandler(new ClxUncaughtExceptionHandler());
+    @Override
+    public void run() {
+        Thread.currentThread().setName("TableCheck " + sdf.format(new Date()));
+        WebTableCheck.logger.info("TableCheck run");
+        Thread.setDefaultUncaughtExceptionHandler(new ClxUncaughtExceptionHandler());
 
-		FirebirdDb db = null;
-		java.sql.Connection c = null;
-		java.sql.PreparedStatement pStmt = null;
-		java.sql.Statement stmt = null;
+        FirebirdDb db = null;
+        java.sql.Connection c = null;
+        java.sql.PreparedStatement pStmt = null;
+        java.sql.Statement stmt = null;
 
-		java.sql.ResultSet rs = null;
+        java.sql.ResultSet rs = null;
 
-		try {
-			db = FirebirdDbPool.getInstance();
-			c = db.getConnection();
+        try {
+            db = FirebirdDbPool.getInstance();
+            c = db.getConnection();
 
-			String sql = null;
+            String sql = null;
 
-			FirebirdEventConfig eventconfig = (FirebirdEventConfig) ApplicationConfig.getObject("eventconfig");
+            FirebirdEventConfig eventconfig = (FirebirdEventConfig) ApplicationConfig.getObject("eventconfig");
 
-			WebTableCheck.logger.info("Anzahl Tabellen: " + eventconfig.getEventConfigs().size());
+            WebTableCheck.logger.info("Anzahl Tabellen: " + eventconfig.getEventConfigs().size());
 
-			List<EventConfig> events = eventconfig.getEventConfigs();
+            List<EventConfig> events = eventconfig.getEventConfigs();
 
-			for (EventConfig event : events) {
-				String tablename = event.getEventName().toUpperCase();
-				WebTableCheck.logger.info("Tabelle: " + event.getEventName());
+            for (EventConfig event : events) {
+                String tablename = event.getEventName().toUpperCase();
+                WebTableCheck.logger.info("Tabelle: " + event.getEventName());
 
-				TableIdList tableIdList = TablesyncHandler.getTableIdList(tablename);
-				WebTableCheck.logger.info("Anzahl Id's: " + tableIdList.getSize());
+                TableIdList tableIdList = TablesyncHandler.getTableIdList(tablename);
+                WebTableCheck.logger.info("Anzahl Id's: " + tableIdList.getSize());
 
-				stmt = c.createStatement();
-				stmt.executeUpdate("delete from WEBTABLESYNC where upper(WEBTABLESYNC.TABLENAME)=upper('" + tablename + "')");
+                stmt = c.createStatement();
+                stmt.executeUpdate("delete from WEBTABLESYNC where upper(WEBTABLESYNC.TABLENAME)=upper('" + tablename + "')");
 
-				sql = "insert into WEBTABLESYNC (TABLENAME, TABLEID) values (?, ?)";
-				pStmt = c.prepareStatement(sql);
+                sql = "insert into WEBTABLESYNC (TABLENAME, TABLEID) values (?, ?)";
+                pStmt = c.prepareStatement(sql);
 
-				String[] ids = tableIdList.getIdList().split(";");
+                String[] ids = tableIdList.getIdList().split(";");
 
-				for (String id : ids) {
-					if (!"".equals(id)) {
-						pStmt.setString(1, tablename);
-						pStmt.setString(2, id);
-						//pStmt.execute();
-						pStmt.addBatch();
-					}
-				}
-				pStmt.executeBatch();
+                for (String id : ids) {
+                    if (!"".equals(id)) {
+                        pStmt.setString(1, tablename);
+                        pStmt.setString(2, id);
+                        //pStmt.execute();
+                        pStmt.addBatch();
+                    }
+                }
+                pStmt.executeBatch();
 
-				stmt = c.createStatement();
-				stmt.executeUpdate("delete from WEBTABLESYNCDIFF where upper(WEBTABLESYNCDIFF.TABLENAME)=upper('" + tablename + "')");
+                stmt = c.createStatement();
+                stmt.executeUpdate("delete from WEBTABLESYNCDIFF where upper(WEBTABLESYNCDIFF.TABLENAME)=upper('" + tablename + "')");
 
-				sql = "insert into WEBTABLESYNCDIFF (TABLENAME, TABLEIDOFFLINE, TABLEIDONLINE) values (?, ?, ?)";
-				pStmt = c.prepareStatement(sql);
+                sql = "insert into WEBTABLESYNCDIFF (TABLENAME, TABLEIDOFFLINE, TABLEIDONLINE) values (?, ?, ?)";
+                pStmt = c.prepareStatement(sql);
 
-				sql = createDiffSql(tablename);
+                sql = createDiffSql(tablename);
 
-				//System.out.println("SQL: " + sql);
-				rs = stmt.executeQuery(sql);
+                //System.out.println("SQL: " + sql);
+                rs = stmt.executeQuery(sql);
 
-				while (rs.next()) {
-					pStmt.setString(1, tablename);
+                while (rs.next()) {
+                    pStmt.setString(1, tablename);
 
-					pStmt.setInt(2, rs.getInt("TABLEIDOFFLINE"));
-					if (rs.wasNull()) {
-						pStmt.setNull(2, java.sql.Types.INTEGER);
-					}
+                    pStmt.setInt(2, rs.getInt("TABLEIDOFFLINE"));
+                    if (rs.wasNull()) {
+                        pStmt.setNull(2, java.sql.Types.INTEGER);
+                    }
 
-					pStmt.setInt(3, rs.getInt("TABLEIDONLINE"));
-					if (rs.wasNull()) {
-						pStmt.setNull(3, java.sql.Types.INTEGER);
-					}
+                    pStmt.setInt(3, rs.getInt("TABLEIDONLINE"));
+                    if (rs.wasNull()) {
+                        pStmt.setNull(3, java.sql.Types.INTEGER);
+                    }
 
-					pStmt.execute();
-				}
+                    pStmt.execute();
+                }
 
-				c.commit();
-			}
+                c.commit();
+            }
 
-		} catch (Exception e) {
-			WebTableCheck.logger.error(e, e);
+        } catch (Exception e) {
+            WebTableCheck.logger.error(e, e);
 
-			try {
-				if (c != null && !c.isClosed()) {
-					c.rollback();
-				}
-			} catch (SQLException ex) {
-				WebTableCheck.logger.warn(ex, ex);
-			}
+            try {
+                if (c != null && !c.isClosed()) {
+                    c.rollback();
+                }
+            } catch (SQLException ex) {
+                WebTableCheck.logger.warn(ex, ex);
+            }
 
-		} finally {
-			FirebirdDb.close(null, pStmt, c);
-		}
+        } finally {
+            FirebirdDb.close(null, pStmt, c);
+        }
 
-		WebTableCheck.logger.info("TableCheck fertig");
-	}
+        WebTableCheck.logger.info("TableCheck fertig");
+    }
 
-	private String createDiffSql(String tablename) {
-		String sql;
-		sql = "select TABLEIDOFFLINE, TABLEIDONLINE"
-				  + " from ("
-				  + " select A." + tablename + "ID AS TABLEIDOFFLINE, WEBTABLESYNC.TABLEID AS TABLEIDONLINE"
-				  + " from " + tablename + " A"
-				  + " left outer join WEBTABLESYNC on (WEBTABLESYNC.TABLEID = A." + tablename + "ID and WEBTABLESYNC.TABLENAME = '" + tablename + "')"
-				  + " union all"
-				  + " select B." + tablename + "ID AS TABLEIDOFFLINE, WEBTABLESYNC.TABLEID AS TABLEIDONLINE"
-				  + " from WEBTABLESYNC"
-				  + " left outer join " + tablename + " B on (B." + tablename + "ID = WEBTABLESYNC.TABLEID)"
-				  + " where WEBTABLESYNC.TABLENAME = '" + tablename + "')"
-				  + " where (TABLEIDOFFLINE is null) or (TABLEIDONLINE is null)";
-		return sql;
-	}
+    private String createDiffSql(String tablename) {
+        String sql;
+        sql = "select TABLEIDOFFLINE, TABLEIDONLINE"
+                + " from ("
+                + " select A." + tablename + "ID AS TABLEIDOFFLINE, WEBTABLESYNC.TABLEID AS TABLEIDONLINE"
+                + " from " + tablename + " A"
+                + " left outer join WEBTABLESYNC on (WEBTABLESYNC.TABLEID = A." + tablename + "ID and WEBTABLESYNC.TABLENAME = '" + tablename + "')"
+                + " union all"
+                + " select B." + tablename + "ID AS TABLEIDOFFLINE, WEBTABLESYNC.TABLEID AS TABLEIDONLINE"
+                + " from WEBTABLESYNC"
+                + " left outer join " + tablename + " B on (B." + tablename + "ID = WEBTABLESYNC.TABLEID)"
+                + " where WEBTABLESYNC.TABLENAME = '" + tablename + "')"
+                + " where (TABLEIDOFFLINE is null) or (TABLEIDONLINE is null)";
+        return sql;
+    }
 
 //	private class CustomTrustManager {
 //

@@ -6,7 +6,6 @@
  * To change this template, choose Tools | Template Manager
  * and open the template in the editor.
  */
-
 package de.complex.clxproductsync.eventhandler.socketevent;
 
 /**
@@ -14,6 +13,7 @@ package de.complex.clxproductsync.eventhandler.socketevent;
  * @author kunkel
  */
 public class SocketEventTypes {
-   public final static String PONG		=	"PONG";
-   public final static String WEBDATA	=	"newsnjobweb";
+
+    public final static String PONG = "PONG";
+    public final static String WEBDATA = "newsnjobweb";
 }

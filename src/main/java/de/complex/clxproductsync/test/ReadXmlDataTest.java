@@ -21,78 +21,78 @@ import javax.xml.bind.Unmarshaller;
  * @author kunkel
  */
 public class ReadXmlDataTest {
-	public static int i = 0;
 
-	/**
-	 * @param args the command line arguments
-	 */
-	public static void main(String[] args) {
-		// TODO code application logic here
-		new ReadXmlDataTest();
-	}
+    public static int i = 0;
 
-	public ReadXmlDataTest() {
-	 System.out.println("running...!");
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String[] args) {
+        // TODO code application logic here
+        new ReadXmlDataTest();
+    }
 
-		XmlData xmlData = null;
+    public ReadXmlDataTest() {
+        System.out.println("running...!");
 
-		try {
-			JAXBContext context = null;
-			context = JAXBContext.newInstance(XmlData.class);
+        XmlData xmlData = null;
 
-			Unmarshaller um = context.createUnmarshaller();
+        try {
+            JAXBContext context = null;
+            context = JAXBContext.newInstance(XmlData.class);
 
-			xmlData = (XmlData) um.unmarshal(new FileReader("bjTest.xml"));
-		} catch (JAXBException ex) {
-			System.out.println(ExceptionHelper.ExceptionToString(ex));
-			System.out.println("geht net...");
-		} catch (FileNotFoundException ex) {
-			System.out.println(ExceptionHelper.ExceptionToString(ex));
-		}
+            Unmarshaller um = context.createUnmarshaller();
 
-		showXmlData(xmlData);
-	}
-	
-	private void showXmlData(XmlData xmlData){
-		showTable(xmlData.getTable());
-	}
-	
-	
-	private void showTable(XmlTable tbl){
-		i++;
+            xmlData = (XmlData) um.unmarshal(new FileReader("bjTest.xml"));
+        } catch (JAXBException ex) {
+            System.out.println(ExceptionHelper.ExceptionToString(ex));
+            System.out.println("geht net...");
+        } catch (FileNotFoundException ex) {
+            System.out.println(ExceptionHelper.ExceptionToString(ex));
+        }
 
-		String p = "";
+        showXmlData(xmlData);
+    }
 
-		for(int j=0;j<i;j++){
-			p += "    ";
-		}
-		Iterator<XmlRow> rowItr = null;
-		Iterator<XmlCol> colItr = null;
-		Iterator<XmlTable> subItr = null;
-		System.out.println(p + "Table name: " + tbl.getName() + " pkname: " + tbl.getPkName());
-		
-		if (!tbl.getRows().isEmpty()){
-			rowItr = tbl.getRows().iterator();
-			
-			while(rowItr.hasNext()){
-				XmlRow row = rowItr.next();
-				
-				System.out.println(p + "  row pkValue" + row.getPkValue());
-				colItr = row.getCol().iterator();
-				while(colItr.hasNext()){
-					XmlCol col = colItr.next();
-					System.out.println(p + "    col name: " + col.getName() + " value :" + col.getValue() );
-				}
+    private void showXmlData(XmlData xmlData) {
+        showTable(xmlData.getTable());
+    }
 
-				subItr = row.getSubTables().iterator();
-				while(subItr.hasNext()) {
-					XmlTable subTbl = subItr.next();
-					System.out.println("\n" + p + "    Subtable: " + subTbl.getName());
-					showTable(subTbl);
-				}
-			}
-		}
+    private void showTable(XmlTable tbl) {
+        i++;
 
-		i--;
-	}
+        String p = "";
+
+        for (int j = 0; j < i; j++) {
+            p += "    ";
+        }
+        Iterator<XmlRow> rowItr = null;
+        Iterator<XmlCol> colItr = null;
+        Iterator<XmlTable> subItr = null;
+        System.out.println(p + "Table name: " + tbl.getName() + " pkname: " + tbl.getPkName());
+
+        if (!tbl.getRows().isEmpty()) {
+            rowItr = tbl.getRows().iterator();
+
+            while (rowItr.hasNext()) {
+                XmlRow row = rowItr.next();
+
+                System.out.println(p + "  row pkValue" + row.getPkValue());
+                colItr = row.getCol().iterator();
+                while (colItr.hasNext()) {
+                    XmlCol col = colItr.next();
+                    System.out.println(p + "    col name: " + col.getName() + " value :" + col.getValue());
+                }
+
+                subItr = row.getSubTables().iterator();
+                while (subItr.hasNext()) {
+                    XmlTable subTbl = subItr.next();
+                    System.out.println("\n" + p + "    Subtable: " + subTbl.getName());
+                    showTable(subTbl);
+                }
+            }
+        }
+
+        i--;
+    }
 }

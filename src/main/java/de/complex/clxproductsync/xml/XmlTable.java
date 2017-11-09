@@ -21,57 +21,57 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement(name = "table")
 public class XmlTable {
 
-	@XmlAttribute(name = "name")
-	private String name;
-	@XmlAttribute(name = "pkname")
-	private String pkName;
-	@XmlElementWrapper(name = "rows")
-	@XmlElement(name = "row")
-	private List<XmlRow> rows = new ArrayList<XmlRow>();
+    @XmlAttribute(name = "name")
+    private String name;
+    @XmlAttribute(name = "pkname")
+    private String pkName;
+    @XmlElementWrapper(name = "rows")
+    @XmlElement(name = "row")
+    private List<XmlRow> rows = new ArrayList<XmlRow>();
 
-	public XmlTable() {
-	}
+    public XmlTable() {
+    }
 
-	public XmlTable(String name, String pkName) {
-		this.name = name;
-		this.pkName = pkName;
-	}
+    public XmlTable(String name, String pkName) {
+        this.name = name;
+        this.pkName = pkName;
+    }
 
-	public List<XmlRow> getRows() {
-		return this.rows;
-	}
+    public List<XmlRow> getRows() {
+        return this.rows;
+    }
 
-	public void setRows(List<XmlRow> rows) {
-		this.rows = rows;
-	}
+    public void setRows(List<XmlRow> rows) {
+        this.rows = rows;
+    }
 
-	public void addRow(XmlRow row) {
-		this.rows.add(row);
-	}
+    public void addRow(XmlRow row) {
+        this.rows.add(row);
+    }
 
-	/**
-	 * Get the value of name
-	 *
-	 * @return the value of name
-	 */
-	public String getName() {
-		return name;
-	}
+    /**
+     * Get the value of name
+     *
+     * @return the value of name
+     */
+    public String getName() {
+        return name;
+    }
 
-	/**
-	 * Set the value of name
-	 *
-	 * @param name new value of name
-	 */
-	public void setName(String name) {
-		this.name = name;
-	}
+    /**
+     * Set the value of name
+     *
+     * @param name new value of name
+     */
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	public String getPkName() {
-		return pkName;
-	}
+    public String getPkName() {
+        return pkName;
+    }
 
-	public void setPkName(String pkName) {
-		this.pkName = pkName;
-	}
+    public void setPkName(String pkName) {
+        this.pkName = pkName;
+    }
 }

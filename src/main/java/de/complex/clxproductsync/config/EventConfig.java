@@ -16,68 +16,68 @@ import javax.xml.bind.annotation.XmlValue;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class EventConfig {
 
-	@XmlAttribute(name = "name")
-	private String eventName = "";
-	@XmlValue
-	private String actionName = "";
+    @XmlAttribute(name = "name")
+    private String eventName = "";
+    @XmlValue
+    private String actionName = "";
 
-	public EventConfig() {
-	}
+    public EventConfig() {
+    }
 
-	public EventConfig(String eventName) {
-		this.eventName = eventName;
-	}
+    public EventConfig(String eventName) {
+        this.eventName = eventName;
+    }
 
-	public EventConfig(String eventName, String actionName) {
-		this.eventName = eventName;
-		this.actionName = actionName;
-	}
+    public EventConfig(String eventName, String actionName) {
+        this.eventName = eventName;
+        this.actionName = actionName;
+    }
 
-	public String getActionName() {
+    public String getActionName() {
 
-		if ((actionName == null) || (actionName.equalsIgnoreCase(""))) {
-			return this.eventName.toLowerCase();
-		}
+        if ((actionName == null) || (actionName.equalsIgnoreCase(""))) {
+            return this.eventName.toLowerCase();
+        }
 
-		return actionName;
-	}
+        return actionName;
+    }
 
-	public void setActionName(String actionName) {
-		this.actionName = actionName;
-	}
+    public void setActionName(String actionName) {
+        this.actionName = actionName;
+    }
 
-	public String getEventName() {
-		return eventName;
-	}
+    public String getEventName() {
+        return eventName;
+    }
 
-	public void setEventName(String eventName) {
-		this.eventName = eventName;
-	}
+    public void setEventName(String eventName) {
+        this.eventName = eventName;
+    }
 
-	@Override
-	public boolean equals(Object obj) {
-		if (obj == null) {
-			return false;
-		}
-		if (getClass() != obj.getClass()) {
-			return false;
-		}
-		final EventConfig other = (EventConfig) obj;
-		if ((this.eventName == null) ? (other.eventName != null) : !this.eventName.equals(other.eventName)) {
-			return false;
-		}
-		return true;
-	}
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final EventConfig other = (EventConfig) obj;
+        if ((this.eventName == null) ? (other.eventName != null) : !this.eventName.equals(other.eventName)) {
+            return false;
+        }
+        return true;
+    }
 
-	@Override
-	public int hashCode() {
-		int hash = 7;
-		hash = 97 * hash + (this.eventName != null ? this.eventName.hashCode() : 0);
-		return hash;
-	}
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 97 * hash + (this.eventName != null ? this.eventName.hashCode() : 0);
+        return hash;
+    }
 
-	@Override
-	public String toString() {
-		return "eventName: " + this.getEventName() + " actionName: " + this.getActionName();
-	}
+    @Override
+    public String toString() {
+        return "eventName: " + this.getEventName() + " actionName: " + this.getActionName();
+    }
 }

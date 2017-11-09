@@ -33,102 +33,102 @@ import org.apache.log4j.Logger;
  */
 public class WebsyncEventHandler {
 
-	private static Logger logger = Logger.getLogger(WebsyncEventHandler.class);
-	private Properties prop = null;
-	private String eventname = null;
-	private FirebirdDb db = null;
+    private static Logger logger = Logger.getLogger(WebsyncEventHandler.class);
+    private Properties prop = null;
+    private String eventname = null;
+    private FirebirdDb db = null;
 
-	public WebsyncEventHandler(FirebirdDb db) {
-		this.db = db;
-	}
+    public WebsyncEventHandler(FirebirdDb db) {
+        this.db = db;
+    }
 
 //	public EventConfig getEventConfig(String eventName) {
 //		EventConfig evc = this.eventConfigs.get(eventName.toUpperCase());
 //		return (EventConfig) this.eventConfigs.get(eventName);
 //	}
-	public void run(String eventName) {
-		WebsyncEventHandler.logger.info("ActionName: " + eventName + " start");
-		ActiveRecord ar = null;
-		ActiveRecord[] ars = null;
-		String xml = null;
+    public void run(String eventName) {
+        WebsyncEventHandler.logger.info("ActionName: " + eventName + " start");
+        ActiveRecord ar = null;
+        ActiveRecord[] ars = null;
+        String xml = null;
 
-		int limit = Integer.parseInt(ApplicationConfig.getValue("snjoblimit", "1000"));
+        int limit = Integer.parseInt(ApplicationConfig.getValue("snjoblimit", "1000"));
 
-		if (limit == 0) {
-			limit = 1000;
-		}
+        if (limit == 0) {
+            limit = 1000;
+        }
 
-		FirebirdEventConfig eventconfigs = (FirebirdEventConfig) ApplicationConfig.getObject("eventconfig");
-		int evcIndex = eventconfigs.getEventConfigs().indexOf(new EventConfig(eventName));
-		EventConfig eventconfig = eventconfigs.getEventConfigs().get(evcIndex);
+        FirebirdEventConfig eventconfigs = (FirebirdEventConfig) ApplicationConfig.getObject("eventconfig");
+        int evcIndex = eventconfigs.getEventConfigs().indexOf(new EventConfig(eventName));
+        EventConfig eventconfig = eventconfigs.getEventConfigs().get(evcIndex);
 
-		SnJob[] snJobs = null;
-		int debugcount = 0;
-		XmlConverter xmlConverter = new XmlConverter();
+        SnJob[] snJobs = null;
+        int debugcount = 0;
+        XmlConverter xmlConverter = new XmlConverter();
 
-		SnJobDAO snjobDAO = new SnJobDAO(this.db);
-		SnJob currJob = null;
-		try {
+        SnJobDAO snjobDAO = new SnJobDAO(this.db);
+        SnJob currJob = null;
+        try {
 
-			do {
-				debugcount = 0;
-				WebsyncEventHandler.logger.debug("getNextJobs eventname: " + eventName + " limit: " + limit);
-				snJobs = snjobDAO.getNextJobs(eventName, limit);
-				WebsyncEventHandler.logger.debug("Snjobs limit: " + limit + " aktualCount: " + snJobs.length);
-				for (SnJob job : snJobs) {
-					
-					currJob = job;
-					WebsyncEventHandler.logger.info("Job start - " + job.toString());
-					WebsyncEventHandler.logger.debug("Debugcount: " + debugcount + " snjobCount: " + snJobs.length);
-					debugcount++;
+            do {
+                debugcount = 0;
+                WebsyncEventHandler.logger.debug("getNextJobs eventname: " + eventName + " limit: " + limit);
+                snJobs = snjobDAO.getNextJobs(eventName, limit);
+                WebsyncEventHandler.logger.debug("Snjobs limit: " + limit + " aktualCount: " + snJobs.length);
+                for (SnJob job : snJobs) {
 
-					if (eventconfig == null) {
-						throw new EventConfigException("EventConfig prüfen: " + job.getEventName() + " ist nicht konfiguriert");
-					}
+                    currJob = job;
+                    WebsyncEventHandler.logger.info("Job start - " + job.toString());
+                    WebsyncEventHandler.logger.debug("Debugcount: " + debugcount + " snjobCount: " + snJobs.length);
+                    debugcount++;
 
-					if (job.getSnJobTyp().equalsIgnoreCase("d")) {
-						// Delete
+                    if (eventconfig == null) {
+                        throw new EventConfigException("EventConfig prüfen: " + job.getEventName() + " ist nicht konfiguriert");
+                    }
 
-						ar = new ActiveRecord(this.db, eventconfig.getActionName());
+                    if (job.getSnJobTyp().equalsIgnoreCase("d")) {
+                        // Delete
 
-						SoapHandler.sendXmlData(job, xmlConverter.fromBlankActiveRecord(ar, job.getSnJobFremdId()));
-						snjobDAO.setSnJobDone(job);
-						WebsyncEventHandler.logger.info("Job done - " + job.toString() + " done");
-					} else {
-						// Insert und Update
-						Connection con = null;
-						try {
-							con = this.db.getConnection();
-							ar = new ActiveRecord(this.db, eventconfig.getActionName(), con);
+                        ar = new ActiveRecord(this.db, eventconfig.getActionName());
 
-							ars = ar.findAllById(job.getSnJobFremdId());
-							if ((ars != null) && (ars.length != 0)) {
-								xml = xmlConverter.fromActiveRecords(ars);
+                        SoapHandler.sendXmlData(job, xmlConverter.fromBlankActiveRecord(ar, job.getSnJobFremdId()));
+                        snjobDAO.setSnJobDone(job);
+                        WebsyncEventHandler.logger.info("Job done - " + job.toString() + " done");
+                    } else {
+                        // Insert und Update
+                        Connection con = null;
+                        try {
+                            con = this.db.getConnection();
+                            ar = new ActiveRecord(this.db, eventconfig.getActionName(), con);
 
-								SoapHandler.sendXmlData(job, xml);
-								snjobDAO.setSnJobDone(job);
-								WebsyncEventHandler.logger.info("Job done - " + job.toString());
-							} else {
-								snjobDAO.setSnJobDoneWhileNotExists(job);
-								WebsyncEventHandler.logger.warn("Job done, Datensatz nicht vorhanden - " + job);
-							}
-						} catch (NullPointerException npe) {
-							WebsyncEventHandler.logger.error(npe, npe);
-						} catch (SQLException sqlex) {
-							WebsyncEventHandler.logger.error(sqlex, sqlex);
-						} finally {
-							FirebirdDb.close(null, null, con);
-						}
-					}
-				}
+                            ars = ar.findAllById(job.getSnJobFremdId());
+                            if ((ars != null) && (ars.length != 0)) {
+                                xml = xmlConverter.fromActiveRecords(ars);
 
-				WebsyncEventHandler.logger.debug("vor While snJobs.length: " + snJobs.length + " limit: " + limit);
-			} while (snJobs.length == limit);
+                                SoapHandler.sendXmlData(job, xml);
+                                snjobDAO.setSnJobDone(job);
+                                WebsyncEventHandler.logger.info("Job done - " + job.toString());
+                            } else {
+                                snjobDAO.setSnJobDoneWhileNotExists(job);
+                                WebsyncEventHandler.logger.warn("Job done, Datensatz nicht vorhanden - " + job);
+                            }
+                        } catch (NullPointerException npe) {
+                            WebsyncEventHandler.logger.error(npe, npe);
+                        } catch (SQLException sqlex) {
+                            WebsyncEventHandler.logger.error(sqlex, sqlex);
+                        } finally {
+                            FirebirdDb.close(null, null, con);
+                        }
+                    }
+                }
 
-		} catch (Exception ex) {
-			WebsyncEventHandler.logger.error("Job error - " + currJob,ex);
-		} 
+                WebsyncEventHandler.logger.debug("vor While snJobs.length: " + snJobs.length + " limit: " + limit);
+            } while (snJobs.length == limit);
 
-		WebsyncEventHandler.logger.info("ActionName: " + eventName + " ende");
-	}
+        } catch (Exception ex) {
+            WebsyncEventHandler.logger.error("Job error - " + currJob, ex);
+        }
+
+        WebsyncEventHandler.logger.info("ActionName: " + eventName + " ende");
+    }
 }

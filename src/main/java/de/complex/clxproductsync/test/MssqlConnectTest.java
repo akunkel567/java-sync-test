@@ -2,7 +2,6 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package de.complex.clxproductsync.test;
 
 /**
@@ -16,16 +15,12 @@ public class MssqlConnectTest {
      */
     public static void main(String[] args) {
         // TODO code application logic here
-		 new MssqlConnectTest().test();
+        new MssqlConnectTest().test();
 
     }
 
+    public void test() {
 
-	 public void test() {
-
-
-
-
-	 }
+    }
 
 }

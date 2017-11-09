@@ -10,13 +10,13 @@ package de.complex.clxproductsync.exception;
  */
 public class JobException extends Exception {
 
-	/**
-	 * Constructs an instance of
-	 * <code>JobException</code> with the specified detail message.
-	 *
-	 * @param msg the detail message.
-	 */
-	public JobException(String msg) {
-		super(msg);
-	}
+    /**
+     * Constructs an instance of <code>JobException</code> with the specified
+     * detail message.
+     *
+     * @param msg the detail message.
+     */
+    public JobException(String msg) {
+        super(msg);
+    }
 }

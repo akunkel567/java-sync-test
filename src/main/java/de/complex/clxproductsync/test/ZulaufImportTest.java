@@ -18,25 +18,20 @@ import org.apache.log4j.BasicConfigurator;
  */
 public class ZulaufImportTest {
 
-	/**
-	 * @param args the command line arguments
-	 */
-	public static void main(String[] args) throws FileNotFoundException, IOException {
-		// TODO code application logic here
-	
-	ApplicationConfig.loadConfig("conf/jClxSync.properties");
-	BasicConfigurator.configure();
-	
-	//Properties prop = new Properties();
-	//prop.load(new FileReader("f/conjClxSync.properties"));
-	
-	CDHZulaufinfo zi = new CDHZulaufinfo(null);
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String[] args) throws FileNotFoundException, IOException {
+        // TODO code application logic here
 
-	zi.run();
-	
-	
-	
-	
-	
-	}
+        ApplicationConfig.loadConfig("conf/jClxSync.properties");
+        BasicConfigurator.configure();
+
+        //Properties prop = new Properties();
+        //prop.load(new FileReader("f/conjClxSync.properties"));
+        CDHZulaufinfo zi = new CDHZulaufinfo(null);
+
+        zi.run();
+
+    }
 }

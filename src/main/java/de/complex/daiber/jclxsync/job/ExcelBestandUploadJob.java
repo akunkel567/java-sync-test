@@ -16,25 +16,25 @@ import org.quartz.JobExecutionException;
  */
 public class ExcelBestandUploadJob implements org.quartz.StatefulJob {
 
-	private static Logger logger = Logger.getLogger(ExcelBestandUploadJob.class);
+    private static Logger logger = Logger.getLogger(ExcelBestandUploadJob.class);
 
-	public ExcelBestandUploadJob() {
-		ExcelBestandUploadJob.logger.debug(this + " create " + ExcelBestandUploadJob.class.getName());
-	}
+    public ExcelBestandUploadJob() {
+        ExcelBestandUploadJob.logger.debug(this + " create " + ExcelBestandUploadJob.class.getName());
+    }
 
-	public void execute(JobExecutionContext context) throws JobExecutionException {
-		try {
-			ExcelBestandUploadJob.logger.info("ExcelBestandUplaodJob execute");
-			JobDataMap dataMap = context.getJobDetail().getJobDataMap();
-			Properties prop = (Properties) dataMap.get("prop");
+    public void execute(JobExecutionContext context) throws JobExecutionException {
+        try {
+            ExcelBestandUploadJob.logger.info("ExcelBestandUplaodJob execute");
+            JobDataMap dataMap = context.getJobDetail().getJobDataMap();
+            Properties prop = (Properties) dataMap.get("prop");
 
-			new ExcelBestandUpload(prop).start();
-			ExcelBestandUploadJob.logger.info("ExcelBestandUplaodJob done");
-		} catch (Exception e) {
-			ExcelBestandUploadJob.logger.error("Error in ExcelBestandUplaodJob!");
-			JobExecutionException e2 = new JobExecutionException(e);
-			throw e2;
-		}
+            new ExcelBestandUpload(prop).start();
+            ExcelBestandUploadJob.logger.info("ExcelBestandUplaodJob done");
+        } catch (Exception e) {
+            ExcelBestandUploadJob.logger.error("Error in ExcelBestandUplaodJob!");
+            JobExecutionException e2 = new JobExecutionException(e);
+            throw e2;
+        }
 
-	}
+    }
 }

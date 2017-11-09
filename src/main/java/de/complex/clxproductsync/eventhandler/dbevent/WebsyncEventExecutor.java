@@ -17,46 +17,46 @@ import org.apache.log4j.Logger;
  */
 public class WebsyncEventExecutor extends Thread {
 
-	private static Logger logger = Logger.getLogger(WebsyncEventExecutor.class);
-	private String name;
-	public static SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss:SSS");
-	String eventname = null;
+    private static Logger logger = Logger.getLogger(WebsyncEventExecutor.class);
+    private String name;
+    public static SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss:SSS");
+    String eventname = null;
 
-	public WebsyncEventExecutor(String eventname) {
-		this.eventname = eventname;
-		this.name = "WebsyncEventExecutor " + eventname + " " + sdf.format(new Date());
-		WebsyncEventExecutor.logger.debug("EventExecutor new: " + this.name);
-	}
+    public WebsyncEventExecutor(String eventname) {
+        this.eventname = eventname;
+        this.name = "WebsyncEventExecutor " + eventname + " " + sdf.format(new Date());
+        WebsyncEventExecutor.logger.debug("EventExecutor new: " + this.name);
+    }
 
-	public String getEventname() {
-		return eventname;
-	}
+    public String getEventname() {
+        return eventname;
+    }
 
-	@Override
-	public synchronized void run() {
-		WebsyncEventExecutor.logger.debug("run");
+    @Override
+    public synchronized void run() {
+        WebsyncEventExecutor.logger.debug("run");
 
-		Thread.currentThread().setName(this.name);
-		Thread.setDefaultUncaughtExceptionHandler(new ClxUncaughtExceptionHandler());
+        Thread.currentThread().setName(this.name);
+        Thread.setDefaultUncaughtExceptionHandler(new ClxUncaughtExceptionHandler());
 
-		FirebirdDb db = null;
-		try {
-			db = FirebirdDbPool.getInstance();
+        FirebirdDb db = null;
+        try {
+            db = FirebirdDbPool.getInstance();
 
-			WebsyncEventHandler wevh = new WebsyncEventHandler(db);
-			try {
-				if (wevh != null) {
-					WebsyncEventExecutor.logger.debug("Execute :" + wevh.getClass().getSimpleName());
-					wevh.run(eventname);
-				} else {
-					WebsyncEventExecutor.logger.fatal("EventHandler is null...!");
-				}
-			} catch (Exception e) {
-				WebsyncEventExecutor.logger.error(e,e);
-			}
-		} finally {
-		}
+            WebsyncEventHandler wevh = new WebsyncEventHandler(db);
+            try {
+                if (wevh != null) {
+                    WebsyncEventExecutor.logger.debug("Execute :" + wevh.getClass().getSimpleName());
+                    wevh.run(eventname);
+                } else {
+                    WebsyncEventExecutor.logger.fatal("EventHandler is null...!");
+                }
+            } catch (Exception e) {
+                WebsyncEventExecutor.logger.error(e, e);
+            }
+        } finally {
+        }
 
-		WebsyncEventExecutor.logger.debug("ende...");
-	}
+        WebsyncEventExecutor.logger.debug("ende...");
+    }
 }

@@ -41,181 +41,175 @@ import org.apache.log4j.Logger;
  */
 public class CDHZulaufinfo extends Thread {
 
-	private static Logger logger = Logger.getLogger(CDHZulaufinfo.class);
-	public static SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd ss:SSS");
-	private Properties prop;
+    private static Logger logger = Logger.getLogger(CDHZulaufinfo.class);
+    public static SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd ss:SSS");
+    private Properties prop;
 
-	/**
-	 * Creates a new instance of BundlePreisUpload
-	 */
-	public CDHZulaufinfo(Properties prop) {
-		this.prop = prop;
-	}
+    /**
+     * Creates a new instance of BundlePreisUpload
+     */
+    public CDHZulaufinfo(Properties prop) {
+        this.prop = prop;
+    }
 
-	@Override
-	public void run() {
-		Thread.currentThread().setName("CDHZulaufinfo " + sdf.format(new Date()));
-		CDHZulaufinfo.logger.info("CDHZulaufinfo run");
-		Thread.setDefaultUncaughtExceptionHandler(new ClxUncaughtExceptionHandler());
+    @Override
+    public void run() {
+        Thread.currentThread().setName("CDHZulaufinfo " + sdf.format(new Date()));
+        CDHZulaufinfo.logger.info("CDHZulaufinfo run");
+        Thread.setDefaultUncaughtExceptionHandler(new ClxUncaughtExceptionHandler());
 
-		FirebirdDb db = null;
-		MssqlDb msdb = null;
+        FirebirdDb db = null;
+        MssqlDb msdb = null;
 
-		Date lastupdate = new Date();
+        Date lastupdate = new Date();
 
-		int commitNach = 500;
-		int commitCount = 0;
+        int commitNach = 500;
+        int commitCount = 0;
 
-		String cdh_username = ApplicationConfig.getValue("cdh.username", "");
-		String cdh_password = ApplicationConfig.getValue("cdh.password", "");
-		String cdh_hostname = ApplicationConfig.getValue("cdh.hostname", "");
-		String cdh_database = ApplicationConfig.getValue("cdh.database", "");
-		String cdh_instanceName = ApplicationConfig.getValue("cdh.instance", "");
+        String cdh_username = ApplicationConfig.getValue("cdh.username", "");
+        String cdh_password = ApplicationConfig.getValue("cdh.password", "");
+        String cdh_hostname = ApplicationConfig.getValue("cdh.hostname", "");
+        String cdh_database = ApplicationConfig.getValue("cdh.database", "");
+        String cdh_instanceName = ApplicationConfig.getValue("cdh.instance", "");
 
+        try {
+            db = FirebirdDbPool.getInstance();
+            CDHZulaufinfo.logger.debug("FirebirdDb: " + db);
 
-		try {
-			db = FirebirdDbPool.getInstance();
-			CDHZulaufinfo.logger.debug("FirebirdDb: " + db);
+            msdb = new MssqlDb(cdh_hostname, cdh_database, cdh_username, cdh_password, cdh_instanceName);
+            CDHZulaufinfo.logger.debug("Mssql-Db: " + msdb);
 
-			msdb = new MssqlDb(cdh_hostname, cdh_database, cdh_username, cdh_password, cdh_instanceName);
-			CDHZulaufinfo.logger.debug("Mssql-Db: " + msdb);
+            String cdhSql = "select ORDER_DETAIL.ORDER_NO_REP"
+                    + " , ORDER_DETAIL.QUANTITY"
+                    + " , ORDER_DETAIL.DELIVERY_WEEK_NO"
+                    + " , ORDER_DETAIL.ORDD_RES_FLD_ALPHA12"
+                    + " , ORDER_DETAIL.ARTICLE_SERIAL_NO"
+                    + " from ORDER_DETAIL"
+                    + " where ORDER_DETAIL.ORDER_OFFER_TYPE=8";
 
-			String cdhSql = "select ORDER_DETAIL.ORDER_NO_REP"
-					  + " , ORDER_DETAIL.QUANTITY"
-					  + " , ORDER_DETAIL.DELIVERY_WEEK_NO"
-					  + " , ORDER_DETAIL.ORDD_RES_FLD_ALPHA12"
-					  + " , ORDER_DETAIL.ARTICLE_SERIAL_NO"
-					  + " from ORDER_DETAIL"
-					  + " where ORDER_DETAIL.ORDER_OFFER_TYPE=8";
+            String fbInsert = "INSERT INTO ARTGROESSEZULAUF ("
+                    + " ARTGROESSEZULAUF.ARTGROESSEID," //1
+                    + " ARTGROESSEZULAUF.MENGE,"//2
+                    + " ARTGROESSEZULAUF.LIEFERKW,"//3
+                    + " ARTGROESSEZULAUF.STATUS"//4
+                    + ") VALUES "
+                    + "(?,?,?,?)";
 
-			String fbInsert = "INSERT INTO ARTGROESSEZULAUF ("
-					  + " ARTGROESSEZULAUF.ARTGROESSEID," //1
-					  + " ARTGROESSEZULAUF.MENGE,"//2
-					  + " ARTGROESSEZULAUF.LIEFERKW,"//3
-					  + " ARTGROESSEZULAUF.STATUS"//4
-					  + ") VALUES "
-					  + "(?,?,?,?)";
+            java.sql.Connection con = null;
 
-			java.sql.Connection con = null;
+            java.sql.PreparedStatement pStmt = null;
+            java.sql.Statement stmt = null;
+            java.sql.Statement updtStmt = null;
+            java.sql.ResultSet rs = null;
 
-			java.sql.PreparedStatement pStmt = null;
-			java.sql.Statement stmt = null;
-			java.sql.Statement updtStmt = null;
-			java.sql.ResultSet rs = null;
+            java.sql.Connection cdhCon = null;
+            java.sql.Statement cdhStmt = null;
+            java.sql.ResultSet cdhRs = null;
 
-			java.sql.Connection cdhCon = null;
-			java.sql.Statement cdhStmt = null;
-			java.sql.ResultSet cdhRs = null;
+            try {
+                con = db.getConnection();
+                con.setAutoCommit(false);
+                con.setReadOnly(false);
 
-			try {
-				con = db.getConnection();
-				con.setAutoCommit(false);
-				con.setReadOnly(false);
-				
-				CDHZulaufinfo.logger.debug("FirebirdDb Connection:" + con);
-				cdhCon = msdb.getConnection();
-				CDHZulaufinfo.logger.debug("Mssql-Db Connection: " + cdhCon);
+                CDHZulaufinfo.logger.debug("FirebirdDb Connection:" + con);
+                cdhCon = msdb.getConnection();
+                CDHZulaufinfo.logger.debug("Mssql-Db Connection: " + cdhCon);
 
+                // erst mal alles alte löschen
+                stmt = con.createStatement();
+                stmt.executeUpdate("DELETE FROM ARTGROESSEZULAUF");
 
-				// erst mal alles alte löschen
-				stmt = con.createStatement();
-				stmt.executeUpdate("DELETE FROM ARTGROESSEZULAUF");
+                SQLLog.logger.debug("CdhSql-Query :" + cdhSql);
 
-				SQLLog.logger.debug("CdhSql-Query :" + cdhSql);
+                cdhStmt = cdhCon.createStatement();
+                cdhRs = cdhStmt.executeQuery(cdhSql);
+                while (cdhRs.next()) {
+                    int artgroesseid = 0;
 
-				cdhStmt = cdhCon.createStatement();
-				cdhRs = cdhStmt.executeQuery(cdhSql);
-				while (cdhRs.next()) {
-					int artgroesseid = 0;
+                    String sql = "SELECT ARTGROESSE.ARTGROESSEID FROM ARTGROESSE"
+                            + " WHERE ARTGROESSE.FREMDID=" + cdhRs.getInt("ARTICLE_SERIAL_NO");
 
-					String sql = "SELECT ARTGROESSE.ARTGROESSEID FROM ARTGROESSE"
-							  + " WHERE ARTGROESSE.FREMDID=" + cdhRs.getInt("ARTICLE_SERIAL_NO");
+                    stmt = con.createStatement();
+                    rs = stmt.executeQuery(sql);
+                    if (rs.next()) {
+                        artgroesseid = rs.getInt(1);
+                    }
 
-					stmt = con.createStatement();
-					rs = stmt.executeQuery(sql);
-					if (rs.next()) {
-						artgroesseid = rs.getInt(1);
-					}
+                    if (artgroesseid != 0) {
+                        pStmt = con.prepareStatement(fbInsert);
 
-					if (artgroesseid != 0) {
-						pStmt = con.prepareStatement(fbInsert);
+                        int i = 1;
+                        pStmt.setInt(i++, artgroesseid);
+                        pStmt.setInt(i++, cdhRs.getInt("QUANTITY"));
+                        pStmt.setInt(i++, cdhRs.getInt("DELIVERY_WEEK_NO"));
+                        pStmt.setString(i++, cdhRs.getString("ORDD_RES_FLD_ALPHA12"));
 
-						int i = 1;
-						pStmt.setInt(i++, artgroesseid);
-						pStmt.setInt(i++, cdhRs.getInt("QUANTITY"));
-						pStmt.setInt(i++, cdhRs.getInt("DELIVERY_WEEK_NO"));
-						pStmt.setString(i++, cdhRs.getString("ORDD_RES_FLD_ALPHA12"));
+                        pStmt.execute();
+                    }
+                }
 
-						pStmt.execute();
-					}
-				}
+                updtStmt = con.createStatement();
+                ResultSet udtRs = updtStmt.executeQuery("SELECT OUT FROM UPDATE_ARTGROESSEBESTAND");
 
-				updtStmt = con.createStatement();
-				ResultSet udtRs = updtStmt.executeQuery("SELECT OUT FROM UPDATE_ARTGROESSEBESTAND");
+                while (udtRs.next()) {
+                    CDHZulaufinfo.logger.info("anzahl upgedatet: " + udtRs.getString(1));
+                }
 
-				while (udtRs.next()) {
-					CDHZulaufinfo.logger.info("anzahl upgedatet: " + udtRs.getString(1));
-				}
+                con.commit();
 
-				con.commit();
+                CDHZulaufinfo.logger.info("und Fertig...!");
+            } catch (java.sql.SQLException e) {
+                CDHZulaufinfo.logger.error("SQL Error", e);
+                SQLLog.logger.error("SQL Error.", e);
+                return;
+            } catch (Exception ex) {
+                CDHZulaufinfo.logger.error(ex, ex);
+            } finally {
+                try {
 
-				CDHZulaufinfo.logger.info("und Fertig...!");
-			} catch (java.sql.SQLException e) {
-				CDHZulaufinfo.logger.error("SQL Error", e);
-				SQLLog.logger.error("SQL Error.", e);
-				return;
-			} catch (Exception ex) {
-				CDHZulaufinfo.logger.error(ex, ex);
-			} finally {
-				try {
+                    if (updtStmt != null) {
+                        updtStmt.close();
+                    }
+                    if (pStmt != null) {
+                        pStmt.close();
+                    }
 
-					if (updtStmt != null) {
-						updtStmt.close();
-					}
-					if (pStmt != null) {
-						pStmt.close();
-					}
+                    if (cdhCon != null) {
+                        cdhCon.close();
+                    }
 
+                } catch (java.sql.SQLException e) {
+                    SQLLog.logger.error("SQL Error.", e);
+                }
 
-					if (cdhCon != null) {
-						cdhCon.close();
-					}
+                FirebirdDb.close(rs, stmt, con);
 
-				} catch (java.sql.SQLException e) {
-					SQLLog.logger.error("SQL Error.", e);
-				}
+            }
 
-				FirebirdDb.close(rs, stmt, con);
+        } catch (Exception ex) {
+            CDHZulaufinfo.logger.error(ex, ex);
+        }
 
-			}
+        CDHZulaufinfo.logger.info("CDHZulaufinfo fertig");
+    }
 
-		} catch (Exception ex) {
-			CDHZulaufinfo.logger.error(ex, ex);
-		}
+    public static void main(String[] args) throws IOException {
+        // TODO code application logic here
 
-		CDHZulaufinfo.logger.info("CDHZulaufinfo fertig");
-	}
-	
-	public static void main(String[] args) throws IOException {
-		// TODO code application logic here
+        BasicConfigurator.configure();
+        Logger.getRootLogger().setLevel(Level.DEBUG);
 
-		BasicConfigurator.configure();
-		Logger.getRootLogger().setLevel(Level.DEBUG);
+        String iniFilename = "./conf/clxProductSync.properties";
+        ApplicationConfig.loadConfig(iniFilename);
 
+        Properties prop = new Properties();
+        prop.load(new FileInputStream(new File(iniFilename)));
 
-		String iniFilename = "./conf/clxProductSync.properties";
-		ApplicationConfig.loadConfig(iniFilename);
+        FirebirdDbPool.createInstance();
 
-		Properties prop = new Properties();
-		prop.load(new FileInputStream(new File(iniFilename)));
-		
-		FirebirdDbPool.createInstance();
+        CDHZulaufinfo job = new CDHZulaufinfo(prop);
 
+        job.run();
 
-		CDHZulaufinfo job = new CDHZulaufinfo(prop);
-
-		job.run();
-
-
-	}
+    }
 }

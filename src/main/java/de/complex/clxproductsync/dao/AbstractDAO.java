@@ -22,81 +22,81 @@ import org.apache.log4j.*;
  */
 public abstract class AbstractDAO {
 
-	private static Logger logger = Logger.getLogger(AbstractDAO.class);
-	protected FirebirdDb db;
-	protected Properties prop;
+    private static Logger logger = Logger.getLogger(AbstractDAO.class);
+    protected FirebirdDb db;
+    protected Properties prop;
 
-	/**
-	 * Creates a new instance of AbstractDAO
-	 */
-	public AbstractDAO(FirebirdDb db) {
-		this.setDatabase(db);
-	}
+    /**
+     * Creates a new instance of AbstractDAO
+     */
+    public AbstractDAO(FirebirdDb db) {
+        this.setDatabase(db);
+    }
 
-	public void setDatabase(FirebirdDb db) {
-		this.db = db;
-	}
+    public void setDatabase(FirebirdDb db) {
+        this.db = db;
+    }
 
-	protected Integer[] getIdList(String qry, String idFieldName) {
-		java.sql.Connection c = null;
-		java.sql.Statement stmt = null;
-		java.sql.ResultSet rs = null;
+    protected Integer[] getIdList(String qry, String idFieldName) {
+        java.sql.Connection c = null;
+        java.sql.Statement stmt = null;
+        java.sql.ResultSet rs = null;
 
-		Vector vec = new Vector();
+        Vector vec = new Vector();
 
-		try {
-			c = this.db.getConnection();
-			if (c != null) {
-				stmt = c.createStatement();
+        try {
+            c = this.db.getConnection();
+            if (c != null) {
+                stmt = c.createStatement();
 
-				SQLLog.logger.debug("SQL-Query :" + qry);
+                SQLLog.logger.debug("SQL-Query :" + qry);
 
-				rs = stmt.executeQuery(qry);
-				while (rs.next()) { // Schleife Artikel A
-					vec.add(new Integer(rs.getInt(idFieldName)));
-				} // Schleife Artikel E
-			}
-		} catch (java.sql.SQLException e) {
-			SQLLog.logger.error("SQL Error.");
-			FirebirdDb.showSQLException(e, qry, this.getClass().getName());
-			return null;
-		} finally {
-			FirebirdDb.close(rs, stmt, c);
-		}
+                rs = stmt.executeQuery(qry);
+                while (rs.next()) { // Schleife Artikel A
+                    vec.add(new Integer(rs.getInt(idFieldName)));
+                } // Schleife Artikel E
+            }
+        } catch (java.sql.SQLException e) {
+            SQLLog.logger.error("SQL Error.");
+            FirebirdDb.showSQLException(e, qry, this.getClass().getName());
+            return null;
+        } finally {
+            FirebirdDb.close(rs, stmt, c);
+        }
 
-		return (Integer[]) vec.toArray(new Integer[0]);
-	}
+        return (Integer[]) vec.toArray(new Integer[0]);
+    }
 
-	public Integer getIntegerValue(String qry, String idFieldName) {
-		java.sql.Connection c = null;
-		java.sql.Statement stmt = null;
-		java.sql.ResultSet rs = null;
+    public Integer getIntegerValue(String qry, String idFieldName) {
+        java.sql.Connection c = null;
+        java.sql.Statement stmt = null;
+        java.sql.ResultSet rs = null;
 
-		Integer i = null;
+        Integer i = null;
 
-		try {
-			c = this.db.getConnection();
-			if (c != null) {
-				stmt = c.createStatement();
+        try {
+            c = this.db.getConnection();
+            if (c != null) {
+                stmt = c.createStatement();
 
-				SQLLog.logger.debug("SQL-Query :" + qry);
+                SQLLog.logger.debug("SQL-Query :" + qry);
 
-				rs = stmt.executeQuery(qry);
+                rs = stmt.executeQuery(qry);
 
-				while (rs.next()) { // Schleife Artikel A
-					i = new Integer(rs.getInt(idFieldName));
-				} // Schleife Artikel E
-			}
-		} catch (java.sql.SQLException e) {
-			SQLLog.logger.error("SQL Error.");
-			FirebirdDb.showSQLException(e, qry, this.getClass().getName());
-			return null;
-		} finally {
-			FirebirdDb.close(rs, stmt, c);
-		}
+                while (rs.next()) { // Schleife Artikel A
+                    i = new Integer(rs.getInt(idFieldName));
+                } // Schleife Artikel E
+            }
+        } catch (java.sql.SQLException e) {
+            SQLLog.logger.error("SQL Error.");
+            FirebirdDb.showSQLException(e, qry, this.getClass().getName());
+            return null;
+        } finally {
+            FirebirdDb.close(rs, stmt, c);
+        }
 
-		return i;
-	}
+        return i;
+    }
 
-	public abstract Integer[] getIdList();
+    public abstract Integer[] getIdList();
 }

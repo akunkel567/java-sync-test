@@ -24,40 +24,39 @@ import org.apache.log4j.SimpleLayout;
  */
 public class CreateXmlDataTest {
 
-	/**
-	 * @param args the command line arguments
-	 */
-	public static void main(String[] args) throws SQLException, FileConvertException {
-		new CreateXmlDataTest();
-	}
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String[] args) throws SQLException, FileConvertException {
+        new CreateXmlDataTest();
+    }
 
-	public CreateXmlDataTest() throws SQLException, FileConvertException {
-		Logger logger = Logger.getRootLogger();
+    public CreateXmlDataTest() throws SQLException, FileConvertException {
+        Logger logger = Logger.getRootLogger();
 
-		logger.addAppender(new ConsoleAppender(new SimpleLayout()));
-		logger.setLevel(Level.DEBUG);
+        logger.addAppender(new ConsoleAppender(new SimpleLayout()));
+        logger.setLevel(Level.DEBUG);
 
+        ActiveRecordConfig.configFilePath = "activerecord";
 
-		ActiveRecordConfig.configFilePath = "activerecord";
+        FirebirdDb db = new FirebirdDb("SYSDBA", "hippo", "192.168.50.63", "clxProdukt", "", "UTF8", "UTF8");
 
-		FirebirdDb db = new FirebirdDb("SYSDBA", "hippo", "192.168.50.63", "clxProdukt", "","UTF8","UTF8");
+        ActiveRecord ar = new ActiveRecord(db, "ada");
+        ActiveRecord[] ars = ar.findAllById(10000);
 
-		ActiveRecord ar = new ActiveRecord(db, "ada");
-		ActiveRecord[] ars = ar.findAllById(10000);
+        for (ActiveRecord a : ars) {
+            System.out.println(a.getValue("ada_anschrift"));
 
-		for (ActiveRecord a : ars) {
-			System.out.println(a.getValue("ada_anschrift"));
+            String xmlStr = new XmlConverter().fromActiveRecords(ars);
+            System.out.println(xmlStr);
+            try {
+                FileWriter fw = new FileWriter(new File("fileXml.xml"));
+                fw.write(xmlStr);
+                fw.close();
 
-			String xmlStr = new XmlConverter().fromActiveRecords(ars);
-			System.out.println(xmlStr);
-			try {
-				FileWriter fw = new FileWriter(new File("fileXml.xml"));
-				fw.write(xmlStr);
-				fw.close();
-
-			} catch (IOException ex) {
-				logger.error("", ex);
-			}
-		}
-	}
+            } catch (IOException ex) {
+                logger.error("", ex);
+            }
+        }
+    }
 }

@@ -10,23 +10,22 @@ package de.complex.clxproductsync.eventhandler.fileevent;
  */
 public class FileConvertException extends Exception {
 
-	/**
-	 * Constructs an instance of
-	 * <code>ClxFileException</code> with the specified detail message.
-	 *
-	 * @param msg the detail message.
-	 */
-	public FileConvertException(String msg) {
-		super(msg);
-	}
+    /**
+     * Constructs an instance of <code>ClxFileException</code> with the
+     * specified detail message.
+     *
+     * @param msg the detail message.
+     */
+    public FileConvertException(String msg) {
+        super(msg);
+    }
 
-	public FileConvertException(String message, Throwable cause) {
-		super(message, cause);
-	}
+    public FileConvertException(String message, Throwable cause) {
+        super(message, cause);
+    }
 
-	public FileConvertException(Throwable cause) {
-		super(cause);
-	}
-	
-	
+    public FileConvertException(Throwable cause) {
+        super(cause);
+    }
+
 }

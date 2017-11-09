@@ -27,123 +27,120 @@ import org.apache.log4j.Logger;
  */
 public class FileEventManager extends Thread {
 
-	private static Logger logger = Logger.getLogger(FileEventManager.class);
-	private Properties prop;
-	
-		public static int jobCheckInterval = 10 * 1000;
-	
-	
+    private static Logger logger = Logger.getLogger(FileEventManager.class);
+    private Properties prop;
 
-	public FileEventManager() {
-	}
+    public static int jobCheckInterval = 10 * 1000;
 
-	@Override
-	public void run() {
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmm");
-		FileEventManager.currentThread().setName("FileEventManager" + "_" + sdf.format(new Date()));
-		FileEventManager.logger.info("FileEventManager start...!");
+    public FileEventManager() {
+    }
 
-		ExecutorService tPool = Executors.newFixedThreadPool(10);
-		HashMap<String, Future> futureList = new HashMap<String, Future>();
+    @Override
+    public void run() {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmm");
+        FileEventManager.currentThread().setName("FileEventManager" + "_" + sdf.format(new Date()));
+        FileEventManager.logger.info("FileEventManager start...!");
 
-		boolean firstrun = true;
+        ExecutorService tPool = Executors.newFixedThreadPool(10);
+        HashMap<String, Future> futureList = new HashMap<String, Future>();
 
-		try {
-			while (!this.isInterrupted()) {
-				try {
-					FirebirdDb db = null;
+        boolean firstrun = true;
 
-					try {
-						db = FirebirdDbPool.getInstance();
+        try {
+            while (!this.isInterrupted()) {
+                try {
+                    FirebirdDb db = null;
 
-						try {
-							// DatenbankEvents ausfuehren
-							FileEventChecker eventChecker = new FileEventChecker(db, "FileEventChecker");
+                    try {
+                        db = FirebirdDbPool.getInstance();
 
-							if (firstrun) {
-								eventChecker.getEventList().add(FileEventChecker.EVENTNAME);
-								firstrun = false;
-							}
+                        try {
+                            // DatenbankEvents ausfuehren
+                            FileEventChecker eventChecker = new FileEventChecker(db, "FileEventChecker");
 
-							if (eventChecker.isEventOccured()) {
-								LinkedList<String> dbEvents = (LinkedList) eventChecker.getEventList().clone();
+                            if (firstrun) {
+                                eventChecker.getEventList().add(FileEventChecker.EVENTNAME);
+                                firstrun = false;
+                            }
 
-								for (String eventname : dbEvents) {
-									eventname = eventname.toUpperCase();
-									FileEventManager.logger.debug("next Event is: " + eventname);
+                            if (eventChecker.isEventOccured()) {
+                                LinkedList<String> dbEvents = (LinkedList) eventChecker.getEventList().clone();
 
-									Future f = futureList.get(eventname);
-									FileEventManager.logger.debug("Event Future :" + f);
-									if (f != null) {
-										FileEventManager.logger.debug("f: Event Future isDone :" + f.isDone());
-									}
-									if ((f == null) || (f.isDone())) {
-										FileEventManager.logger.debug("Event: " + eventname + " neu erzeugen");
-										futureList.put(eventname, tPool.submit(new FileEventExecutor(eventname)));
-										eventChecker.getEventList().remove(eventname);
-									} else {
-										FileEventManager.logger.debug("Event :" + eventname + " ist noch aktiv");
-									}
-								}
+                                for (String eventname : dbEvents) {
+                                    eventname = eventname.toUpperCase();
+                                    FileEventManager.logger.debug("next Event is: " + eventname);
 
-								dbEvents = null;
-							} else {
-								FileEventManager.logger.debug("kein Event occured");
-							}
+                                    Future f = futureList.get(eventname);
+                                    FileEventManager.logger.debug("Event Future :" + f);
+                                    if (f != null) {
+                                        FileEventManager.logger.debug("f: Event Future isDone :" + f.isDone());
+                                    }
+                                    if ((f == null) || (f.isDone())) {
+                                        FileEventManager.logger.debug("Event: " + eventname + " neu erzeugen");
+                                        futureList.put(eventname, tPool.submit(new FileEventExecutor(eventname)));
+                                        eventChecker.getEventList().remove(eventname);
+                                    } else {
+                                        FileEventManager.logger.debug("Event :" + eventname + " ist noch aktiv");
+                                    }
+                                }
 
-						} catch (Exception ex) {
-							FileEventManager.logger.fatal("Hauptschleife Error", ex);
-						}
+                                dbEvents = null;
+                            } else {
+                                FileEventManager.logger.debug("kein Event occured");
+                            }
 
-					} finally {
-						if (db != null) {
-							//db.shutdown();
-						}
-						db = null;
-					}
+                        } catch (Exception ex) {
+                            FileEventManager.logger.fatal("Hauptschleife Error", ex);
+                        }
 
-					yield();
-					try {
-						Thread.sleep(jobCheckInterval);
-					} catch (InterruptedException e) {
-						interrupt();
-					}
-				} catch (Exception ex) {
-					FileEventManager.logger.fatal("Main Hauptschleife Error", ex);
-				}
+                    } finally {
+                        if (db != null) {
+                            //db.shutdown();
+                        }
+                        db = null;
+                    }
 
-				// SocketEventThread check...
-			}
+                    yield();
+                    try {
+                        Thread.sleep(jobCheckInterval);
+                    } catch (InterruptedException e) {
+                        interrupt();
+                    }
+                } catch (Exception ex) {
+                    FileEventManager.logger.fatal("Main Hauptschleife Error", ex);
+                }
 
-		} finally {
-			tPool.shutdown(); // Disable new tasks from being submitted
-			try {
-				// Wait a while for existing tasks to terminate
-				if (!tPool.awaitTermination(10, TimeUnit.SECONDS)) {
-					tPool.shutdownNow(); // Cancel currently executing tasks
-					// Wait a while for tasks to respond to being cancelled
-					if (!tPool.awaitTermination(10, TimeUnit.SECONDS)) {
-						System.err.println("Pool did not terminate");
-					}
-				}
-			} catch (InterruptedException ie) {
-				// (Re-)Cancel if current thread also interrupted
-				tPool.shutdownNow();
-				// Preserve interrupt status
-				Thread.currentThread().interrupt();
-			}
-		}
+                // SocketEventThread check...
+            }
 
-		FileEventManager.logger.info("FileEventManager stopped...!");
-	}
+        } finally {
+            tPool.shutdown(); // Disable new tasks from being submitted
+            try {
+                // Wait a while for existing tasks to terminate
+                if (!tPool.awaitTermination(10, TimeUnit.SECONDS)) {
+                    tPool.shutdownNow(); // Cancel currently executing tasks
+                    // Wait a while for tasks to respond to being cancelled
+                    if (!tPool.awaitTermination(10, TimeUnit.SECONDS)) {
+                        System.err.println("Pool did not terminate");
+                    }
+                }
+            } catch (InterruptedException ie) {
+                // (Re-)Cancel if current thread also interrupted
+                tPool.shutdownNow();
+                // Preserve interrupt status
+                Thread.currentThread().interrupt();
+            }
+        }
 
-	public static int getJobCheckInterval() {
-		return jobCheckInterval;
-	}
+        FileEventManager.logger.info("FileEventManager stopped...!");
+    }
 
-	public static void setJobCheckInterval(int jobCheckInterval) {
-		FileEventManager.jobCheckInterval = jobCheckInterval;
-	}
-	
-	
+    public static int getJobCheckInterval() {
+        return jobCheckInterval;
+    }
+
+    public static void setJobCheckInterval(int jobCheckInterval) {
+        FileEventManager.jobCheckInterval = jobCheckInterval;
+    }
+
 }

@@ -24,31 +24,31 @@ import org.apache.log4j.Logger;
  */
 public class TablesyncHandler {
 
-	private static Logger logger = Logger.getLogger(TablesyncHandler.class);
+    private static Logger logger = Logger.getLogger(TablesyncHandler.class);
 
-	public static TableIdList getTableIdList(final String tablename) throws RemoteCallException {
-		TablesyncHandler.logger.debug("call getTableIdList");
-		RemoteCall<TableIdList> r = new TablesyncRemoteCall<TableIdList>() {
-			@Override
-			public TableIdList runTablesync(TablesyncPort stub) throws AxisFault, ServiceException, MalformedURLException, RemoteException, RemoteCallException {
-				return  stub.getTableIdList(ApplicationConfig.getValue("ws_username").trim(), ApplicationConfig.getValue("ws_password").trim(), tablename.toLowerCase());
-			}
-		};
+    public static TableIdList getTableIdList(final String tablename) throws RemoteCallException {
+        TablesyncHandler.logger.debug("call getTableIdList");
+        RemoteCall<TableIdList> r = new TablesyncRemoteCall<TableIdList>() {
+            @Override
+            public TableIdList runTablesync(TablesyncPort stub) throws AxisFault, ServiceException, MalformedURLException, RemoteException, RemoteCallException {
+                return stub.getTableIdList(ApplicationConfig.getValue("ws_username").trim(), ApplicationConfig.getValue("ws_password").trim(), tablename.toLowerCase());
+            }
+        };
 
-		return r.start();
-	}
+        return r.start();
+    }
 
-	private static class TablesyncRemoteCall<T> extends RemoteCall {
+    private static class TablesyncRemoteCall<T> extends RemoteCall {
 
-		protected T runTablesync(TablesyncPort stub) throws AxisFault, ServiceException, MalformedURLException, RemoteException, RemoteCallException {
-			throw new IllegalStateException("implement me");
-		}
+        protected T runTablesync(TablesyncPort stub) throws AxisFault, ServiceException, MalformedURLException, RemoteException, RemoteCallException {
+            throw new IllegalStateException("implement me");
+        }
 
-		protected T run() throws AxisFault, ServiceException, MalformedURLException, RemoteException, RemoteCallException {
-			TablesyncService service = new TablesyncServiceLocator();
-			TablesyncPort stub = service.getTablesyncPort(new URL(ApplicationConfig.getValue("ws_url").trim() + "/tablesync"));
+        protected T run() throws AxisFault, ServiceException, MalformedURLException, RemoteException, RemoteCallException {
+            TablesyncService service = new TablesyncServiceLocator();
+            TablesyncPort stub = service.getTablesyncPort(new URL(ApplicationConfig.getValue("ws_url").trim() + "/tablesync"));
 
-			return runTablesync(stub);
-		}
-	}
+            return runTablesync(stub);
+        }
+    }
 }

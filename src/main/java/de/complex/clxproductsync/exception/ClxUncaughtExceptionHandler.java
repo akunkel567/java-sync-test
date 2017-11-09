@@ -12,11 +12,9 @@ import org.apache.log4j.Logger;
  */
 public class ClxUncaughtExceptionHandler implements Thread.UncaughtExceptionHandler {
 
-	Logger logger = Logger.getLogger(ClxUncaughtExceptionHandler.class);
+    Logger logger = Logger.getLogger(ClxUncaughtExceptionHandler.class);
 
-	public void uncaughtException(Thread t, Throwable e) {
-		logger.error(t.getName(), e);
-	}
+    public void uncaughtException(Thread t, Throwable e) {
+        logger.error(t.getName(), e);
+    }
 }
-
-

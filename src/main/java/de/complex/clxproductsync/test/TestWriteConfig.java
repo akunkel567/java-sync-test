@@ -15,26 +15,23 @@ import java.io.File;
  */
 public class TestWriteConfig {
 
-	/**
-	 * @param args the command line arguments
-	 */
-	public static void main(String[] args) {
-		// TODO code application logic here
-		new TestWriteConfig();
-	}
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String[] args) {
+        // TODO code application logic here
+        new TestWriteConfig();
+    }
 
-	public TestWriteConfig() {
+    public TestWriteConfig() {
 
-		FirebirdEventConfig c = new FirebirdEventConfig();
+        FirebirdEventConfig c = new FirebirdEventConfig();
 
-		c.getEventConfigs().add(new EventConfig("eventname", "actionname"));
+        c.getEventConfigs().add(new EventConfig("eventname", "actionname"));
 
-		XmlHelper xmlH = new XmlHelper();
-		System.out.println(xmlH.toXml(c));
-		xmlH.toFile(c, new File("configTest.xml"));
-
-
-
+        XmlHelper xmlH = new XmlHelper();
+        System.out.println(xmlH.toXml(c));
+        xmlH.toFile(c, new File("configTest.xml"));
 
 //		XmlConverterConfig conf = new XmlConverterConfig();
 //
@@ -48,5 +45,5 @@ public class TestWriteConfig {
 //		XmlHelper xmlH = new XmlHelper();
 //		System.out.println(xmlH.toXml(conf));
 //		xmlH.toFile(conf, new File("configTest.xml"));
-	}
+    }
 }

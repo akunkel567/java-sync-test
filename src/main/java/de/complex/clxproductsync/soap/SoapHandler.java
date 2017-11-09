@@ -30,188 +30,188 @@ import org.apache.axis.AxisFault;
  */
 public class SoapHandler {
 
-	private static Logger logger = Logger.getLogger(SoapHandler.class);
+    private static Logger logger = Logger.getLogger(SoapHandler.class);
 
-	public SoapHandler() {
-	}
+    public SoapHandler() {
+    }
 
-	public static void sendXmlData(final SnJob snJob, final String xmlData) throws RemoteCallException {
-		SoapHandler.logger.debug("call sendXmlData");
+    public static void sendXmlData(final SnJob snJob, final String xmlData) throws RemoteCallException {
+        SoapHandler.logger.debug("call sendXmlData");
 
-		RemoteCall<Void> r = new TransferRemoteCall<Void>() {
-			@Override
-			public Void runTransfer(TransferPort stub) throws AxisFault, ServiceException, MalformedURLException, RemoteException, RemoteCallException {
-				int errorCount = 0;
+        RemoteCall<Void> r = new TransferRemoteCall<Void>() {
+            @Override
+            public Void runTransfer(TransferPort stub) throws AxisFault, ServiceException, MalformedURLException, RemoteException, RemoteCallException {
+                int errorCount = 0;
 
-				SnjobIn snjobIn = new SnjobIn();
-				snjobIn.setEventname(snJob.getEventName());
-				snjobIn.setFremdid(snJob.getSnJobFremdId());
-				snjobIn.setHerkunft(snJob.getHerkunft() == null ? "" : snJob.getHerkunft());
-				snjobIn.setJobtyp(snJob.getSnJobTyp() == null ? "" : snJob.getSnJobTyp());
-				snjobIn.setSnjobid(snJob.getSnJobId());
-				snjobIn.setSau(snJob.getSau() == null ? "" : snJob.getSau());
-				snjobIn.setSadt(snJob.getSadt() == null ? "" : snJob.getSadt());
-				snjobIn.setScu(snJob.getScu() == null ? "" : snJob.getScu());
-				snjobIn.setScdt(snJob.getScdt() == null ? "" : snJob.getScdt());
+                SnjobIn snjobIn = new SnjobIn();
+                snjobIn.setEventname(snJob.getEventName());
+                snjobIn.setFremdid(snJob.getSnJobFremdId());
+                snjobIn.setHerkunft(snJob.getHerkunft() == null ? "" : snJob.getHerkunft());
+                snjobIn.setJobtyp(snJob.getSnJobTyp() == null ? "" : snJob.getSnJobTyp());
+                snjobIn.setSnjobid(snJob.getSnJobId());
+                snjobIn.setSau(snJob.getSau() == null ? "" : snJob.getSau());
+                snjobIn.setSadt(snJob.getSadt() == null ? "" : snJob.getSadt());
+                snjobIn.setScu(snJob.getScu() == null ? "" : snJob.getScu());
+                snjobIn.setScdt(snJob.getScdt() == null ? "" : snJob.getScdt());
 
-				SoapAnswer[] answers = stub.setDataFromXml(ApplicationConfig.getValue("ws_username").trim(), ApplicationConfig.getValue("ws_password").trim(), snjobIn, xmlData);
+                SoapAnswer[] answers = stub.setDataFromXml(ApplicationConfig.getValue("ws_username").trim(), ApplicationConfig.getValue("ws_password").trim(), snjobIn, xmlData);
 
-				if (answers != null) {
-					for (SoapAnswer answer : answers) {
-						if (answer.getStatus() != 0) {
-							errorCount++;
-						}
-					}
-					if (errorCount != 0) {
-						throw new RemoteCallException(snJob.toString());
-					}
-				}
+                if (answers != null) {
+                    for (SoapAnswer answer : answers) {
+                        if (answer.getStatus() != 0) {
+                            errorCount++;
+                        }
+                    }
+                    if (errorCount != 0) {
+                        throw new RemoteCallException(snJob.toString());
+                    }
+                }
 
-				return null;
-			}
-		};
+                return null;
+            }
+        };
 
-		r.start();
-	}
+        r.start();
+    }
 
-	public static void sendFileData(SnJob snJob, final String fremdkz, final int fremdid, final File file) throws RemoteCallException {
-		SoapHandler.logger.debug("call sendFileData fremdkz: " + fremdkz + " fremdid: " + fremdid + " file: " + file.getAbsolutePath());
+    public static void sendFileData(SnJob snJob, final String fremdkz, final int fremdid, final File file) throws RemoteCallException {
+        SoapHandler.logger.debug("call sendFileData fremdkz: " + fremdkz + " fremdid: " + fremdid + " file: " + file.getAbsolutePath());
 
-		RemoteCall<Void> r = new TransferRemoteCall<Void>() {
-			@Override
-			public Void runTransfer(TransferPort stub) throws AxisFault, ServiceException, MalformedURLException, RemoteException, RemoteCallException {
+        RemoteCall<Void> r = new TransferRemoteCall<Void>() {
+            @Override
+            public Void runTransfer(TransferPort stub) throws AxisFault, ServiceException, MalformedURLException, RemoteException, RemoteCallException {
 
-				byte[] fileData;
+                byte[] fileData;
 
-				try {
-					fileData = FileConverter.toBase64byteArray(file);
-				} catch (FileConvertException ex) {
-					throw new RemoteCallException(ex);
-				}
+                try {
+                    fileData = FileConverter.toBase64byteArray(file);
+                } catch (FileConvertException ex) {
+                    throw new RemoteCallException(ex);
+                }
 
-				SoapHandler.logger.debug("SendFileData fileData length: " + fileData.length);
+                SoapHandler.logger.debug("SendFileData fileData length: " + fileData.length);
 
-				if (fileData != null) {
+                if (fileData != null) {
 
-					FiledataIn fileDataIn = new FiledataIn();
-					fileDataIn.setFremdid(fremdid);
-					fileDataIn.setFremdkz(fremdkz);
-					fileDataIn.setFilename(file.getName());
-					fileDataIn.setContent(fileData);
+                    FiledataIn fileDataIn = new FiledataIn();
+                    fileDataIn.setFremdid(fremdid);
+                    fileDataIn.setFremdkz(fremdkz);
+                    fileDataIn.setFilename(file.getName());
+                    fileDataIn.setContent(fileData);
 
-					SoapAnswer answer = stub.setFile(ApplicationConfig.getValue("ws_username").trim(), ApplicationConfig.getValue("ws_password").trim(), fileDataIn);
-					SoapHandler.logger.debug("SendFileData answer: " + answer);
+                    SoapAnswer answer = stub.setFile(ApplicationConfig.getValue("ws_username").trim(), ApplicationConfig.getValue("ws_password").trim(), fileDataIn);
+                    SoapHandler.logger.debug("SendFileData answer: " + answer);
 
-					if (answer != null) {
-						SoapHandler.logger.debug("SendFileData answer status: " + answer.getStatus());
+                    if (answer != null) {
+                        SoapHandler.logger.debug("SendFileData answer status: " + answer.getStatus());
 
-						if (answer.getStatus() != 0) {
-							SoapHandler.logger.error("SendFileData answer.status " + answer.getStatus());
-							throw new RemoteCallException("SendFileData answer.status " + answer.getStatus());
-						}
-					} else {
-						throw new RemoteCallException("SendFileData answer is null");
-					}
-				}
-				return null;
-			}
-		};
+                        if (answer.getStatus() != 0) {
+                            SoapHandler.logger.error("SendFileData answer.status " + answer.getStatus());
+                            throw new RemoteCallException("SendFileData answer.status " + answer.getStatus());
+                        }
+                    } else {
+                        throw new RemoteCallException("SendFileData answer is null");
+                    }
+                }
+                return null;
+            }
+        };
 
-		r.start();
-	}
+        r.start();
+    }
 
-	public static void deleteFile(SnJob snJob, final String fremdkz, final int fremdid, final String filename) throws RemoteCallException {
-		SoapHandler.logger.debug("call deleteFile");
+    public static void deleteFile(SnJob snJob, final String fremdkz, final int fremdid, final String filename) throws RemoteCallException {
+        SoapHandler.logger.debug("call deleteFile");
 
-		RemoteCall<Void> r = new TransferRemoteCall<Void>() {
-			@Override
-			public Void runTransfer(TransferPort stub) throws AxisFault, ServiceException, MalformedURLException, RemoteException, RemoteCallException {
+        RemoteCall<Void> r = new TransferRemoteCall<Void>() {
+            @Override
+            public Void runTransfer(TransferPort stub) throws AxisFault, ServiceException, MalformedURLException, RemoteException, RemoteCallException {
 
-				FiledataIn fileDataIn = new FiledataIn();
-				fileDataIn.setFremdid(fremdid);
-				fileDataIn.setFremdkz(fremdkz);
-				fileDataIn.setFilename(filename);
-				fileDataIn.setContent(new byte[0]);
+                FiledataIn fileDataIn = new FiledataIn();
+                fileDataIn.setFremdid(fremdid);
+                fileDataIn.setFremdkz(fremdkz);
+                fileDataIn.setFilename(filename);
+                fileDataIn.setContent(new byte[0]);
 
-				SoapAnswer answer = stub.deleteFile(ApplicationConfig.getValue("ws_username").trim(), ApplicationConfig.getValue("ws_password").trim(), fileDataIn);
+                SoapAnswer answer = stub.deleteFile(ApplicationConfig.getValue("ws_username").trim(), ApplicationConfig.getValue("ws_password").trim(), fileDataIn);
 
-				if (answer != null) {
-					if (answer.getStatus() != 0) {
-						throw new RemoteCallException("deleteFile answer.status " + answer.getStatus());
-					}
-				} else {
-					throw new RemoteCallException("deleteFile - answer is null");
-				}
+                if (answer != null) {
+                    if (answer.getStatus() != 0) {
+                        throw new RemoteCallException("deleteFile answer.status " + answer.getStatus());
+                    }
+                } else {
+                    throw new RemoteCallException("deleteFile - answer is null");
+                }
 
-				return null;
-			}
-		};
+                return null;
+            }
+        };
 
-		r.start();
-	}
+        r.start();
+    }
 
-	public static Snjobweb[] getSnJobWebList(final int limit) throws RemoteCallException {
-		SoapHandler.logger.debug("call getSnJobWebList");
-		RemoteCall<Snjobweb[]> r = new TransferRemoteCall<Snjobweb[]>() {
-			@Override
-			public Snjobweb[] runTransfer(TransferPort stub) throws AxisFault, ServiceException, MalformedURLException, RemoteException {
+    public static Snjobweb[] getSnJobWebList(final int limit) throws RemoteCallException {
+        SoapHandler.logger.debug("call getSnJobWebList");
+        RemoteCall<Snjobweb[]> r = new TransferRemoteCall<Snjobweb[]>() {
+            @Override
+            public Snjobweb[] runTransfer(TransferPort stub) throws AxisFault, ServiceException, MalformedURLException, RemoteException {
 
-				return stub.getListFromSnjobweb(ApplicationConfig.getValue("ws_username").trim(), ApplicationConfig.getValue("ws_password").trim(), limit);
+                return stub.getListFromSnjobweb(ApplicationConfig.getValue("ws_username").trim(), ApplicationConfig.getValue("ws_password").trim(), limit);
 
-			}
-		};
+            }
+        };
 
-		return r.start();
-	}
+        return r.start();
+    }
 
-	public static XmlOut getXmlData(final long snjobwebid) throws RemoteCallException {
+    public static XmlOut getXmlData(final long snjobwebid) throws RemoteCallException {
 
-		RemoteCall<XmlOut> r = new TransferRemoteCall<XmlOut>() {
-			@Override
-			public XmlOut runTransfer(TransferPort stub) throws AxisFault, ServiceException, MalformedURLException, RemoteException {
+        RemoteCall<XmlOut> r = new TransferRemoteCall<XmlOut>() {
+            @Override
+            public XmlOut runTransfer(TransferPort stub) throws AxisFault, ServiceException, MalformedURLException, RemoteException {
 
-				return stub.getXmlFromSnjobweb(ApplicationConfig.getValue("ws_username").trim(), ApplicationConfig.getValue("ws_password").trim(), snjobwebid);
+                return stub.getXmlFromSnjobweb(ApplicationConfig.getValue("ws_username").trim(), ApplicationConfig.getValue("ws_password").trim(), snjobwebid);
 
-			}
-		};
-		return r.start();
-	}
+            }
+        };
+        return r.start();
+    }
 
-	public static void setSnJobWebOK(final long snjobwebid) throws RemoteCallException {
+    public static void setSnJobWebOK(final long snjobwebid) throws RemoteCallException {
 
-		RemoteCall<Void> r = new TransferRemoteCall<Void>() {
-			@Override
-			public Void runTransfer(TransferPort stub) throws AxisFault, ServiceException, MalformedURLException, RemoteException, RemoteCallException {
+        RemoteCall<Void> r = new TransferRemoteCall<Void>() {
+            @Override
+            public Void runTransfer(TransferPort stub) throws AxisFault, ServiceException, MalformedURLException, RemoteException, RemoteCallException {
 
-				SoapAnswer answer = stub.setSnjobwebOk(ApplicationConfig.getValue("ws_username").trim(), ApplicationConfig.getValue("ws_password").trim(), snjobwebid);
+                SoapAnswer answer = stub.setSnjobwebOk(ApplicationConfig.getValue("ws_username").trim(), ApplicationConfig.getValue("ws_password").trim(), snjobwebid);
 
-				if (answer != null) {
-					if (answer.getStatus() != 0) {
-						throw new RemoteCallException("setSnJobWebOK answer.status " + answer.getStatus());
-					}
-				} else {
-					throw new RemoteCallException("setSnJobWebOK - answer is null");
-				}
+                if (answer != null) {
+                    if (answer.getStatus() != 0) {
+                        throw new RemoteCallException("setSnJobWebOK answer.status " + answer.getStatus());
+                    }
+                } else {
+                    throw new RemoteCallException("setSnJobWebOK - answer is null");
+                }
 
-				return null;
-			}
-		};
+                return null;
+            }
+        };
 
-		r.start();
-	}
+        r.start();
+    }
 
-	private static class TransferRemoteCall<T> extends RemoteCall {
+    private static class TransferRemoteCall<T> extends RemoteCall {
 
-		protected T runTransfer(TransferPort stub) throws AxisFault, ServiceException, MalformedURLException, RemoteException, RemoteCallException {
-			throw new IllegalStateException("implement me");
-		}
+        protected T runTransfer(TransferPort stub) throws AxisFault, ServiceException, MalformedURLException, RemoteException, RemoteCallException {
+            throw new IllegalStateException("implement me");
+        }
 
-		@Override
-		protected T run() throws AxisFault, ServiceException, MalformedURLException, RemoteException, RemoteCallException {
-			TransferService service = new TransferServiceLocator();
-			TransferPort stub = service.getTransferPort(new URL(ApplicationConfig.getValue("ws_url").trim() + "/transfer"));
+        @Override
+        protected T run() throws AxisFault, ServiceException, MalformedURLException, RemoteException, RemoteCallException {
+            TransferService service = new TransferServiceLocator();
+            TransferPort stub = service.getTransferPort(new URL(ApplicationConfig.getValue("ws_url").trim() + "/transfer"));
 
-			return runTransfer(stub);
-		}
-	}
+            return runTransfer(stub);
+        }
+    }
 };

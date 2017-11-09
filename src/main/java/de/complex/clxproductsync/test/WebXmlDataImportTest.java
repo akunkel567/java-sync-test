@@ -2,7 +2,6 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package de.complex.clxproductsync.test;
 
 import de.complex.activerecord.config.ActiveRecordConfig;
@@ -30,10 +29,10 @@ public class WebXmlDataImportTest {
         new WebXmlDataImportTest().run();
     }
 
-	public WebXmlDataImportTest() {
-	}
+    public WebXmlDataImportTest() {
+    }
 
-	public void run() {
+    public void run() {
 
 //		if (!ApplicationConfig.loadConfig("conf/jClxWebSync.conf")) {
 //			System.err.println("Config Error...!");
@@ -50,8 +49,6 @@ public class WebXmlDataImportTest {
 //		XmlData xmlData = (XmlData) new XmlHelper().factory(new File("testimport.xml"), XmlData.class );
 //
 //		System.out.println(evh.saveXmlTable(xmlData.getTable(), null));
-
-	}
-
+    }
 
 }

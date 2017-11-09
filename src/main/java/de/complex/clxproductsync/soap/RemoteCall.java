@@ -17,27 +17,27 @@ import org.apache.log4j.Logger;
  */
 abstract class RemoteCall<T> {
 
-	private static Logger logger = Logger.getLogger(RemoteCall.class);
+    private static Logger logger = Logger.getLogger(RemoteCall.class);
 
-	protected T run() throws AxisFault, ServiceException, MalformedURLException, RemoteException, RemoteCallException {
-		throw new IllegalStateException("implement me");
-	}
+    protected T run() throws AxisFault, ServiceException, MalformedURLException, RemoteException, RemoteCallException {
+        throw new IllegalStateException("implement me");
+    }
 
-	public T start() throws RemoteCallException {
-		try {
-			return run();
-		} catch (AxisFault af) {
-			logger.debug(AxisHelper.getAxisFaultString(af), af);
-			throw new RemoteCallException(af);
-		} catch (javax.xml.rpc.ServiceException se) {
-			logger.debug(se);
-			throw new RemoteCallException(se);
-		} catch (java.net.MalformedURLException mue) {
-			logger.debug(mue);
-			throw new RemoteCallException(mue);
-		} catch (java.rmi.RemoteException re) {
-			logger.debug(re);
-			throw new RemoteCallException(re);
-		}
-	}
+    public T start() throws RemoteCallException {
+        try {
+            return run();
+        } catch (AxisFault af) {
+            logger.debug(AxisHelper.getAxisFaultString(af), af);
+            throw new RemoteCallException(af);
+        } catch (javax.xml.rpc.ServiceException se) {
+            logger.debug(se);
+            throw new RemoteCallException(se);
+        } catch (java.net.MalformedURLException mue) {
+            logger.debug(mue);
+            throw new RemoteCallException(mue);
+        } catch (java.rmi.RemoteException re) {
+            logger.debug(re);
+            throw new RemoteCallException(re);
+        }
+    }
 }

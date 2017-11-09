@@ -16,32 +16,30 @@ import java.io.File;
  */
 public class TestWriteSocketConfig {
 
-	/**
-	 * @param args the command line arguments
-	 */
-	public static void main(String[] args) {
-		// TODO code application logic here
-		new TestWriteSocketConfig();
-	}
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String[] args) {
+        // TODO code application logic here
+        new TestWriteSocketConfig();
+    }
 
-	public TestWriteSocketConfig() {
+    public TestWriteSocketConfig() {
 
-		SocketConfig sc = new SocketConfig();
+        SocketConfig sc = new SocketConfig();
 
-		TableConfig tc = new TableConfig("HalloTable");
-		tc.getProcedureConfigs().add(new ProcedureConfig("procname1", "paramname1"));
-		tc.getProcedureConfigs().add(new ProcedureConfig("procname2", "paramname2"));
-		tc.getProcedureConfigs().add(new ProcedureConfig("procname3", "paramname3"));
-		
-		sc.getTableConfigs().add(tc);
-      sc.getTableConfigs().add(tc);
+        TableConfig tc = new TableConfig("HalloTable");
+        tc.getProcedureConfigs().add(new ProcedureConfig("procname1", "paramname1"));
+        tc.getProcedureConfigs().add(new ProcedureConfig("procname2", "paramname2"));
+        tc.getProcedureConfigs().add(new ProcedureConfig("procname3", "paramname3"));
 
+        sc.getTableConfigs().add(tc);
+        sc.getTableConfigs().add(tc);
 
-		XmlHelper xmlH = new XmlHelper();
-		System.out.println(xmlH.toXml(sc));
+        XmlHelper xmlH = new XmlHelper();
+        System.out.println(xmlH.toXml(sc));
 
-
-		//		XmlConverterConfig conf = new XmlConverterConfig();
+        //		XmlConverterConfig conf = new XmlConverterConfig();
 //
 //		conf.setTablename("ada");
 //		conf.setMappingname("mappname");
@@ -53,5 +51,5 @@ public class TestWriteSocketConfig {
 //		XmlHelper xmlH = new XmlHelper();
 //		System.out.println(xmlH.toXml(conf));
 //		xmlH.toFile(conf, new File("configTest.xml"));
-}
+    }
 }

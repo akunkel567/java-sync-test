@@ -37,59 +37,59 @@ import org.apache.log4j.Logger;
  */
 public class FileEventHandler {
 
-	private static Logger logger = Logger.getLogger(FileEventHandler.class);
-	private FirebirdDb db = null;
-	private SnJobDAO snJobDAO = null;
+    private static Logger logger = Logger.getLogger(FileEventHandler.class);
+    private FirebirdDb db = null;
+    private SnJobDAO snJobDAO = null;
 
-	/**
-	 * Creates a new instance of ImageEventHandler
-	 */
-	public FileEventHandler(FirebirdDb db) {
-		this.db = db;
-		this.snJobDAO = new SnJobDAO(db);
-	}
+    /**
+     * Creates a new instance of ImageEventHandler
+     */
+    public FileEventHandler(FirebirdDb db) {
+        this.db = db;
+        this.snJobDAO = new SnJobDAO(db);
+    }
 
-	public void run() {
-		FileEventHandler.logger.debug("FileEvent run");
-		Integer idList[] = null;
-		boolean uploadOK;
+    public void run() {
+        FileEventHandler.logger.debug("FileEvent run");
+        Integer idList[] = null;
+        boolean uploadOK;
 
-		SnJob snJobs[] = snJobDAO.getNextJobs(FileEventChecker.EVENTNAME, 100);
-		SnJob currJob = null;
-		if (snJobs.length != 0) {
-			for (SnJob job: snJobs) { // schleife snjob's
-				currJob = job;
-				FileEventHandler.logger.info("Job start - " + currJob);
-				try {
-					if (job.getSnJobFremdId() != 0) {
-						// mit id
-						if (!job.getFileName().equals("")) { // mit Filename, einzelnes Upload
-							// Einzelner Artikel - BilderUpload
-							if (job.getSnJobTyp().equalsIgnoreCase("D")) {
-								// delete
-								this.deleteFile(job, job.getSnJobFremdId(), job.getHerkunft(), job.getFileName());
-								snJobDAO.setSnJobDone(job);
-								FileEventHandler.logger.info("Job done - " + job);
+        SnJob snJobs[] = snJobDAO.getNextJobs(FileEventChecker.EVENTNAME, 100);
+        SnJob currJob = null;
+        if (snJobs.length != 0) {
+            for (SnJob job : snJobs) { // schleife snjob's
+                currJob = job;
+                FileEventHandler.logger.info("Job start - " + currJob);
+                try {
+                    if (job.getSnJobFremdId() != 0) {
+                        // mit id
+                        if (!job.getFileName().equals("")) { // mit Filename, einzelnes Upload
+                            // Einzelner Artikel - BilderUpload
+                            if (job.getSnJobTyp().equalsIgnoreCase("D")) {
+                                // delete
+                                this.deleteFile(job, job.getSnJobFremdId(), job.getHerkunft(), job.getFileName());
+                                snJobDAO.setSnJobDone(job);
+                                FileEventHandler.logger.info("Job done - " + job);
 
-							} else {
-								// upload
-								try {
-									this.uploadFile(job, job.getSnJobFremdId(), job.getHerkunft(), job.getFileName());
-								} catch(FileNotFoundException fnf){
-								
-									if (!snJobDAO.isDeleteJobAvailable(job)) {
-										throw fnf;
-									} else {
-										logger.info("Es ist bereits ein Delete Job für Datei vorhanden. Upload nicht notwendig.");
-									}
-								}
-								
-								snJobDAO.setSnJobDone(job);
-								FileEventHandler.logger.info("Job done - " + job);
-							}
-						} else {
-							throw new Exception("uebertragung/loeschen aller Files zu einem Detsail ist nicht implementiert!");
-							// ohne Filename - alle Files zu id
+                            } else {
+                                // upload
+                                try {
+                                    this.uploadFile(job, job.getSnJobFremdId(), job.getHerkunft(), job.getFileName());
+                                } catch (FileNotFoundException fnf) {
+
+                                    if (!snJobDAO.isDeleteJobAvailable(job)) {
+                                        throw fnf;
+                                    } else {
+                                        logger.info("Es ist bereits ein Delete Job für Datei vorhanden. Upload nicht notwendig.");
+                                    }
+                                }
+
+                                snJobDAO.setSnJobDone(job);
+                                FileEventHandler.logger.info("Job done - " + job);
+                            }
+                        } else {
+                            throw new Exception("uebertragung/loeschen aller Files zu einem Detsail ist nicht implementiert!");
+                            // ohne Filename - alle Files zu id
 //							if (job.getSnJobTyp().equalsIgnoreCase("D")) {
 //								// delete
 //								FileEventHandler.logger.info("Delete Alle Files zu einer Id ist nicht implementiert. Snjob Done...!");
@@ -102,48 +102,47 @@ public class FileEventHandler {
 //									snJobDAO.setSnJobDone(job);
 //								}
 //							}
-						}
-					} else {
-						FileEventHandler.logger.debug("FileEvent-Job ohne Fremdid " + currJob);
-						throw new JobException("FileEvent-Job ohne Fremdid");
-					}
-				} catch (Exception e) {
-					FileEventHandler.logger.error("Job error - " + currJob, e);
-				}
-			}
-		} else {
-			FileEventHandler.logger.info("FileEvent nothing to do");
-		}
-	}
-	
-	private void uploadFile(SnJob job, int fremdId, String herkunft, String fileName) throws RemoteCallException, FileNotFoundException {
-		String rootPath = ApplicationConfig.getValue("fileRootPath", ".");
-		String fileSeparator = ApplicationConfig.getValue("fileSeparator", "\\");
+                        }
+                    } else {
+                        FileEventHandler.logger.debug("FileEvent-Job ohne Fremdid " + currJob);
+                        throw new JobException("FileEvent-Job ohne Fremdid");
+                    }
+                } catch (Exception e) {
+                    FileEventHandler.logger.error("Job error - " + currJob, e);
+                }
+            }
+        } else {
+            FileEventHandler.logger.info("FileEvent nothing to do");
+        }
+    }
 
-		String path = rootPath + fileSeparator + herkunft + fileSeparator + fremdId + fileSeparator + fileName;
+    private void uploadFile(SnJob job, int fremdId, String herkunft, String fileName) throws RemoteCallException, FileNotFoundException {
+        String rootPath = ApplicationConfig.getValue("fileRootPath", ".");
+        String fileSeparator = ApplicationConfig.getValue("fileSeparator", "\\");
 
-		FileEventHandler.logger.debug("FilePath: " + path);
+        String path = rootPath + fileSeparator + herkunft + fileSeparator + fremdId + fileSeparator + fileName;
 
-		File file = new File(path);
-		FileEventHandler.logger.debug("File: " + file.getAbsolutePath());
-		
-		if(!file.exists()){
-			throw new FileNotFoundException("File: " + file.getAbsolutePath() + " not found");
-		}
+        FileEventHandler.logger.debug("FilePath: " + path);
 
-		SoapHandler.sendFileData(job, herkunft, fremdId, file);
-	}
+        File file = new File(path);
+        FileEventHandler.logger.debug("File: " + file.getAbsolutePath());
 
-	private void deleteFile(SnJob job, int fremdId, String herkunft, String fileName) throws RemoteCallException {
-		SoapHandler.deleteFile(job, herkunft, fremdId, fileName);
-	}
+        if (!file.exists()) {
+            throw new FileNotFoundException("File: " + file.getAbsolutePath() + " not found");
+        }
 
-	// Upload alle Files zu einer Angk
-	private boolean uploadFiles(int fremdId, String herkunft) {
-		boolean result = true;
+        SoapHandler.sendFileData(job, herkunft, fremdId, file);
+    }
 
-		throw new IllegalStateException("not implemented yet");
+    private void deleteFile(SnJob job, int fremdId, String herkunft, String fileName) throws RemoteCallException {
+        SoapHandler.deleteFile(job, herkunft, fremdId, fileName);
+    }
 
+    // Upload alle Files zu einer Angk
+    private boolean uploadFiles(int fremdId, String herkunft) {
+        boolean result = true;
+
+        throw new IllegalStateException("not implemented yet");
 
 //		String filePath;
 //		InputStream inStream = null;
@@ -215,17 +214,17 @@ public class FileEventHandler {
 //			result = false;
 //		}
 //		return result;
-	}
+    }
 
-	public void uploadAll() {
-	}
+    public void uploadAll() {
+    }
 
-	protected int delete(int dataId) {
-		return -1;
-	}
+    protected int delete(int dataId) {
+        return -1;
+    }
 
-	protected int upload(int dataId) {
-		return -1;
-	}
+    protected int upload(int dataId) {
+        return -1;
+    }
 
 }

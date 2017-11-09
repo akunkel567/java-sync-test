@@ -16,25 +16,25 @@ import org.quartz.JobExecutionException;
  */
 public class CDHZulaufinfoJob implements org.quartz.StatefulJob {
 
-	private static Logger logger = Logger.getLogger(CDHZulaufinfoJob.class);
+    private static Logger logger = Logger.getLogger(CDHZulaufinfoJob.class);
 
-	public CDHZulaufinfoJob() {
-		CDHZulaufinfoJob.logger.debug(this + " create " + CDHZulaufinfoJob.class.getName());
-	}
+    public CDHZulaufinfoJob() {
+        CDHZulaufinfoJob.logger.debug(this + " create " + CDHZulaufinfoJob.class.getName());
+    }
 
-	public void execute(JobExecutionContext context) throws JobExecutionException {
-		try {
-			CDHZulaufinfoJob.logger.info("CDHZulaufinfo execute");
-			JobDataMap dataMap = context.getJobDetail().getJobDataMap();
-			Properties prop = (Properties) dataMap.get("prop");
+    public void execute(JobExecutionContext context) throws JobExecutionException {
+        try {
+            CDHZulaufinfoJob.logger.info("CDHZulaufinfo execute");
+            JobDataMap dataMap = context.getJobDetail().getJobDataMap();
+            Properties prop = (Properties) dataMap.get("prop");
 
-			new CDHZulaufinfo(prop).start();
-			CDHZulaufinfoJob.logger.info("CDHZulaufinfo done");
-		} catch (Exception e) {
-			CDHZulaufinfoJob.logger.error("Error in CDHZulaufinfo!");
-			JobExecutionException e2 = new JobExecutionException(e);
-			throw e2;
-		}
+            new CDHZulaufinfo(prop).start();
+            CDHZulaufinfoJob.logger.info("CDHZulaufinfo done");
+        } catch (Exception e) {
+            CDHZulaufinfoJob.logger.error("Error in CDHZulaufinfo!");
+            JobExecutionException e2 = new JobExecutionException(e);
+            throw e2;
+        }
 
-	}
+    }
 }

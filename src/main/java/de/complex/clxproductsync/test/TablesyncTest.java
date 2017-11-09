@@ -20,20 +20,20 @@ import javax.xml.rpc.ServiceException;
  */
 public class TablesyncTest {
 
-	/**
-	 * @param args the command line arguments
-	 */
-	public static void main(String[] args) throws ServiceException, MalformedURLException, RemoteException {
-		// TODO code application logic here
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String[] args) throws ServiceException, MalformedURLException, RemoteException {
+        // TODO code application logic here
 
-		TablesyncService service = new TablesyncServiceLocator();
-		TablesyncPort stub = service.getTablesyncPort(new URL("http://backend.daibersync.ak/tablesync"));
+        TablesyncService service = new TablesyncServiceLocator();
+        TablesyncPort stub = service.getTablesyncPort(new URL("http://backend.daibersync.ak/tablesync"));
 
-		TableIdList sa = stub.getTableIdList("test", "test123", "webartpreistyppreise");
-		
-		System.out.println("->" + sa.getSize());
-		System.out.println("->" + sa.getIdList());
+        TableIdList sa = stub.getTableIdList("test", "test123", "webartpreistyppreise");
 
-	}
+        System.out.println("->" + sa.getSize());
+        System.out.println("->" + sa.getIdList());
+
+    }
 
 }

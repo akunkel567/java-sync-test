@@ -4,10 +4,10 @@
  * This file was auto-generated from WSDL
  * by the Apache Axis 1.4 Apr 22, 2006 (06:55:48 PDT) WSDL2Java emitter.
  */
-
 package de.complex.clxproductsync.soap.datacheck;
 
-public class Status  implements java.io.Serializable {
+public class Status implements java.io.Serializable {
+
     private java.lang.String sadt;
 
     private java.lang.String now;
@@ -24,134 +24,122 @@ public class Status  implements java.io.Serializable {
     }
 
     public Status(
-           java.lang.String sadt,
-           java.lang.String now,
-           int sekunden,
-           int countsnjobs,
-           int countwebspools,
-           int countsnjobwebs) {
-           this.sadt = sadt;
-           this.now = now;
-           this.sekunden = sekunden;
-           this.countsnjobs = countsnjobs;
-           this.countwebspools = countwebspools;
-           this.countsnjobwebs = countsnjobwebs;
+            java.lang.String sadt,
+            java.lang.String now,
+            int sekunden,
+            int countsnjobs,
+            int countwebspools,
+            int countsnjobwebs) {
+        this.sadt = sadt;
+        this.now = now;
+        this.sekunden = sekunden;
+        this.countsnjobs = countsnjobs;
+        this.countwebspools = countwebspools;
+        this.countsnjobwebs = countsnjobwebs;
     }
-
 
     /**
      * Gets the sadt value for this Status.
-     * 
+     *
      * @return sadt
      */
     public java.lang.String getSadt() {
         return sadt;
     }
 
-
     /**
      * Sets the sadt value for this Status.
-     * 
+     *
      * @param sadt
      */
     public void setSadt(java.lang.String sadt) {
         this.sadt = sadt;
     }
 
-
     /**
      * Gets the now value for this Status.
-     * 
+     *
      * @return now
      */
     public java.lang.String getNow() {
         return now;
     }
 
-
     /**
      * Sets the now value for this Status.
-     * 
+     *
      * @param now
      */
     public void setNow(java.lang.String now) {
         this.now = now;
     }
 
-
     /**
      * Gets the sekunden value for this Status.
-     * 
+     *
      * @return sekunden
      */
     public int getSekunden() {
         return sekunden;
     }
 
-
     /**
      * Sets the sekunden value for this Status.
-     * 
+     *
      * @param sekunden
      */
     public void setSekunden(int sekunden) {
         this.sekunden = sekunden;
     }
 
-
     /**
      * Gets the countsnjobs value for this Status.
-     * 
+     *
      * @return countsnjobs
      */
     public int getCountsnjobs() {
         return countsnjobs;
     }
 
-
     /**
      * Sets the countsnjobs value for this Status.
-     * 
+     *
      * @param countsnjobs
      */
     public void setCountsnjobs(int countsnjobs) {
         this.countsnjobs = countsnjobs;
     }
 
-
     /**
      * Gets the countwebspools value for this Status.
-     * 
+     *
      * @return countwebspools
      */
     public int getCountwebspools() {
         return countwebspools;
     }
 
-
     /**
      * Sets the countwebspools value for this Status.
-     * 
+     *
      * @param countwebspools
      */
     public void setCountwebspools(int countwebspools) {
         this.countwebspools = countwebspools;
     }
 
-
     /**
      * Gets the countsnjobwebs value for this Status.
-     * 
+     *
      * @return countsnjobwebs
      */
     public int getCountsnjobwebs() {
         return countsnjobwebs;
     }
 
-
     /**
      * Sets the countsnjobwebs value for this Status.
-     * 
+     *
      * @param countsnjobwebs
      */
     public void setCountsnjobwebs(int countsnjobwebs) {
@@ -159,32 +147,40 @@ public class Status  implements java.io.Serializable {
     }
 
     private java.lang.Object __equalsCalc = null;
+
     public synchronized boolean equals(java.lang.Object obj) {
-        if (!(obj instanceof Status)) return false;
+        if (!(obj instanceof Status)) {
+            return false;
+        }
         Status other = (Status) obj;
-        if (obj == null) return false;
-        if (this == obj) return true;
+        if (obj == null) {
+            return false;
+        }
+        if (this == obj) {
+            return true;
+        }
         if (__equalsCalc != null) {
             return (__equalsCalc == obj);
         }
         __equalsCalc = obj;
         boolean _equals;
-        _equals = true && 
-            ((this.sadt==null && other.getSadt()==null) || 
-             (this.sadt!=null &&
-              this.sadt.equals(other.getSadt()))) &&
-            ((this.now==null && other.getNow()==null) || 
-             (this.now!=null &&
-              this.now.equals(other.getNow()))) &&
-            this.sekunden == other.getSekunden() &&
-            this.countsnjobs == other.getCountsnjobs() &&
-            this.countwebspools == other.getCountwebspools() &&
-            this.countsnjobwebs == other.getCountsnjobwebs();
+        _equals = true
+                && ((this.sadt == null && other.getSadt() == null)
+                || (this.sadt != null
+                && this.sadt.equals(other.getSadt())))
+                && ((this.now == null && other.getNow() == null)
+                || (this.now != null
+                && this.now.equals(other.getNow())))
+                && this.sekunden == other.getSekunden()
+                && this.countsnjobs == other.getCountsnjobs()
+                && this.countwebspools == other.getCountwebspools()
+                && this.countsnjobwebs == other.getCountsnjobwebs();
         __equalsCalc = null;
         return _equals;
     }
 
     private boolean __hashCodeCalc = false;
+
     public synchronized int hashCode() {
         if (__hashCodeCalc) {
             return 0;
@@ -206,8 +202,8 @@ public class Status  implements java.io.Serializable {
     }
 
     // Type metadata
-    private static org.apache.axis.description.TypeDesc typeDesc =
-        new org.apache.axis.description.TypeDesc(Status.class, true);
+    private static org.apache.axis.description.TypeDesc typeDesc
+            = new org.apache.axis.description.TypeDesc(Status.class, true);
 
     static {
         typeDesc.setXmlType(new javax.xml.namespace.QName("urn:Datacheck", "Status"));
@@ -260,24 +256,22 @@ public class Status  implements java.io.Serializable {
      * Get Custom Serializer
      */
     public static org.apache.axis.encoding.Serializer getSerializer(
-           java.lang.String mechType, 
-           java.lang.Class _javaType,  
-           javax.xml.namespace.QName _xmlType) {
-        return 
-          new  org.apache.axis.encoding.ser.BeanSerializer(
-            _javaType, _xmlType, typeDesc);
+            java.lang.String mechType,
+            java.lang.Class _javaType,
+            javax.xml.namespace.QName _xmlType) {
+        return new org.apache.axis.encoding.ser.BeanSerializer(
+                _javaType, _xmlType, typeDesc);
     }
 
     /**
      * Get Custom Deserializer
      */
     public static org.apache.axis.encoding.Deserializer getDeserializer(
-           java.lang.String mechType, 
-           java.lang.Class _javaType,  
-           javax.xml.namespace.QName _xmlType) {
-        return 
-          new  org.apache.axis.encoding.ser.BeanDeserializer(
-            _javaType, _xmlType, typeDesc);
+            java.lang.String mechType,
+            java.lang.Class _javaType,
+            javax.xml.namespace.QName _xmlType) {
+        return new org.apache.axis.encoding.ser.BeanDeserializer(
+                _javaType, _xmlType, typeDesc);
     }
 
 }

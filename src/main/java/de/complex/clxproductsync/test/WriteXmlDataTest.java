@@ -22,24 +22,21 @@ import javax.xml.bind.Marshaller;
 
 //import org.apache.xml.serialize.OutputFormat;
 //import org.apache.xml.serialize.XMLSerializer;
-
-
-
 /**
  *
  * @author kunkel
  */
 public class WriteXmlDataTest {
 
-	/**
-	 * @param args the command line arguments
-	 */
-	public static void main(String[] args) {
-		// TODO code application logic here
-		new WriteXmlDataTest();
-	}
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String[] args) {
+        // TODO code application logic here
+        new WriteXmlDataTest();
+    }
 
-	public WriteXmlDataTest() {
+    public WriteXmlDataTest() {
 
 //		System.out.println("running...!\n");
 //
@@ -127,7 +124,7 @@ public class WriteXmlDataTest {
 //		} catch (IOException ex) {
 //			System.out.println(ExceptionHelper.ExceptionToString(ex));
 //		}
-	}
+    }
 
 //	private static XMLSerializer getXMLSerializer() {
 //		// configure an OutputFormat to handle CDATA
@@ -153,6 +150,4 @@ public class WriteXmlDataTest {
 //
 //        return serializer;
 //    }
-
-
 }

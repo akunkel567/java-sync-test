@@ -37,5 +37,3 @@ public class SpLeck {
         return "SpLeck value: " + i;
     }
 }
-
-

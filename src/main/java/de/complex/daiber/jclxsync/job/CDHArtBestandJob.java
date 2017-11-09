@@ -16,25 +16,25 @@ import org.quartz.JobExecutionException;
  */
 public class CDHArtBestandJob implements org.quartz.StatefulJob {
 
-	private static Logger logger = Logger.getLogger(CDHArtBestandJob.class);
+    private static Logger logger = Logger.getLogger(CDHArtBestandJob.class);
 
-	public CDHArtBestandJob() {
-		CDHArtBestandJob.logger.debug(this + " create " + CDHArtBestandJob.class.getName());
-	}
+    public CDHArtBestandJob() {
+        CDHArtBestandJob.logger.debug(this + " create " + CDHArtBestandJob.class.getName());
+    }
 
-	public void execute(JobExecutionContext context) throws JobExecutionException {
-		try {
-			CDHArtBestandJob.logger.info("CDHArtBestandJob execute");
-			JobDataMap dataMap = context.getJobDetail().getJobDataMap();
-			Properties prop = (Properties) dataMap.get("prop");
+    public void execute(JobExecutionContext context) throws JobExecutionException {
+        try {
+            CDHArtBestandJob.logger.info("CDHArtBestandJob execute");
+            JobDataMap dataMap = context.getJobDetail().getJobDataMap();
+            Properties prop = (Properties) dataMap.get("prop");
 
-			new CDHArtBestand(prop).start();
-			CDHArtBestandJob.logger.info("CDHArtBestandJob done");
-		} catch (Exception e) {
-			CDHArtBestandJob.logger.error("Error in CDHArtBestandJob!");
-			JobExecutionException e2 = new JobExecutionException(e);
-			throw e2;
-		}
+            new CDHArtBestand(prop).start();
+            CDHArtBestandJob.logger.info("CDHArtBestandJob done");
+        } catch (Exception e) {
+            CDHArtBestandJob.logger.error("Error in CDHArtBestandJob!");
+            JobExecutionException e2 = new JobExecutionException(e);
+            throw e2;
+        }
 
-	}
+    }
 }

@@ -35,153 +35,157 @@ import org.apache.log4j.Logger;
  */
 public abstract class AbstractSocketEventHandler {
 
-	private static Logger logger = Logger.getLogger(AbstractSocketEventHandler.class);
-	private String handleEventType;
-	private Mailer mailer = null;
-	private Map<String, TableConfig> tableConfigs = new HashMap<String, TableConfig>();
-	private boolean pause = false;
-	public Properties prop;
-	private boolean running = false;
-	public int currentWebid = 0;
-	private HashMap<Integer, Vector> map = new HashMap<Integer, Vector>();
-        public static final String SOCKETCONFIGFILENAME = "socketconfig.xml";
+    private static Logger logger = Logger.getLogger(AbstractSocketEventHandler.class);
+    private String handleEventType;
+    private Mailer mailer = null;
+    private Map<String, TableConfig> tableConfigs = new HashMap<String, TableConfig>();
+    private boolean pause = false;
+    public Properties prop;
+    private boolean running = false;
+    public int currentWebid = 0;
+    private HashMap<Integer, Vector> map = new HashMap<Integer, Vector>();
+    public static final String SOCKETCONFIGFILENAME = "socketconfig.xml";
 
-	public boolean doSendError(int typeId) {
-		return doSendError(typeId, currentWebid);
-	}
+    public boolean doSendError(int typeId) {
+        return doSendError(typeId, currentWebid);
+    }
 
-	public boolean doSendError(int typeId, int webid) {
-		Integer type = new Integer(typeId);
-		Integer id = new Integer(webid);
+    public boolean doSendError(int typeId, int webid) {
+        Integer type = new Integer(typeId);
+        Integer id = new Integer(webid);
 
-		Vector vec = map.get(type);
+        Vector vec = map.get(type);
 
-		if (vec == null) {
-			vec = new Vector();
-			vec.add(id);
-			map.put(type, vec);
-			return true;
-		} else {
-			if (vec.contains(id)) {
-				return false;
-			} else {
-				vec.add(id);
-				return true;
-			}
-		}
-	}
+        if (vec == null) {
+            vec = new Vector();
+            vec.add(id);
+            map.put(type, vec);
+            return true;
+        } else {
+            if (vec.contains(id)) {
+                return false;
+            } else {
+                vec.add(id);
+                return true;
+            }
+        }
+    }
 
-	public AbstractSocketEventHandler(Properties prop) {
-		this.prop = prop;
-	}
+    public AbstractSocketEventHandler(Properties prop) {
+        this.prop = prop;
+    }
 
-	/** Creates a new instance of AbstractSocketEventHandler */
-	public AbstractSocketEventHandler(String handleEventType) {
-		AbstractSocketEventHandler.logger.debug("New AbstractSocketEventHandler handleEventType: " + handleEventType);
+    /**
+     * Creates a new instance of AbstractSocketEventHandler
+     */
+    public AbstractSocketEventHandler(String handleEventType) {
+        AbstractSocketEventHandler.logger.debug("New AbstractSocketEventHandler handleEventType: " + handleEventType);
 
-		this.handleEventType = handleEventType;
+        this.handleEventType = handleEventType;
 
-		SocketConfig sc = null;
+        SocketConfig sc = null;
 
-                String socketConfigFile = null;
-                if (ApplicationConfig.getValue("isDebug", "false").equalsIgnoreCase("true")) {
-                    socketConfigFile = "conf/" + SOCKETCONFIGFILENAME;
-		} else {
-                    socketConfigFile = "../conf/" + SOCKETCONFIGFILENAME;  
-		}
-                
-                File scFile = new File(socketConfigFile);
-                if (scFile.exists()) {
-                    logger.debug("external SocketConfig: " + scFile.getName());
-                    sc = (SocketConfig) new XmlHelper().factory(new File(socketConfigFile), SocketConfig.class);
-                } else {
-                    logger.debug("internal SocketConfig: " + scFile.getName());
-                    try {
-                        sc = (SocketConfig) new XmlHelper().factory(AbstractSocketEventHandler.class.getResourceAsStream("/config/" + SOCKETCONFIGFILENAME), SocketConfig.class);
-                    } catch (JAXBException ex) {
-                        logger.error(ex);
-                        throw new RuntimeException(ex);
-                    }
-                }                
-                
-		if (sc != null) {
-                        AbstractSocketEventHandler.logger.debug("SocketConfig Anzahl TableConfigs: " + sc.getTableConfigs().size());
-			for (TableConfig tc : sc.getTableConfigs()) {
-				tableConfigs.put(tc.getTableName().toLowerCase(), tc);
-				AbstractSocketEventHandler.logger.debug("SocketConfig tablename: " + tc.getTableName());
-			}
-		} else {
-                    AbstractSocketEventHandler.logger.debug("keine SocketConfig vorhanden");
-                }
+        String socketConfigFile = null;
+        if (ApplicationConfig.getValue("isDebug", "false").equalsIgnoreCase("true")) {
+            socketConfigFile = "conf/" + SOCKETCONFIGFILENAME;
+        } else {
+            socketConfigFile = "../conf/" + SOCKETCONFIGFILENAME;
+        }
 
-		AbstractSocketEventHandler.logger.debug("New AbstractSocketEventHandler pause status: " + this.pause);
-	}
+        File scFile = new File(socketConfigFile);
+        if (scFile.exists()) {
+            logger.debug("external SocketConfig: " + scFile.getName());
+            sc = (SocketConfig) new XmlHelper().factory(new File(socketConfigFile), SocketConfig.class);
+        } else {
+            logger.debug("internal SocketConfig: " + scFile.getName());
+            try {
+                sc = (SocketConfig) new XmlHelper().factory(AbstractSocketEventHandler.class.getResourceAsStream("/config/" + SOCKETCONFIGFILENAME), SocketConfig.class);
+            } catch (JAXBException ex) {
+                logger.error(ex);
+                throw new RuntimeException(ex);
+            }
+        }
 
-	/** Creates a new instance of AbstractSocketEventHandler */
-	// für kompatibilität mit dem alten jMobis....
-	public AbstractSocketEventHandler(Properties prop, String handleEventType) {
-		this.prop = prop;
-		this.handleEventType = handleEventType;
-		SocketConfig sc = null;
+        if (sc != null) {
+            AbstractSocketEventHandler.logger.debug("SocketConfig Anzahl TableConfigs: " + sc.getTableConfigs().size());
+            for (TableConfig tc : sc.getTableConfigs()) {
+                tableConfigs.put(tc.getTableName().toLowerCase(), tc);
+                AbstractSocketEventHandler.logger.debug("SocketConfig tablename: " + tc.getTableName());
+            }
+        } else {
+            AbstractSocketEventHandler.logger.debug("keine SocketConfig vorhanden");
+        }
 
-		File xmlFile = null;
+        AbstractSocketEventHandler.logger.debug("New AbstractSocketEventHandler pause status: " + this.pause);
+    }
 
-		if (ApplicationConfig.getValue("isDebug", "false").equalsIgnoreCase("true")) {
-			sc = (SocketConfig) new XmlHelper().factory(new File("conf/socketconfig.xml"), SocketConfig.class);
-		} else {
-			sc = (SocketConfig) new XmlHelper().factory(new File("../conf/socketconfig.xml"), SocketConfig.class);
-		}
+    /**
+     * Creates a new instance of AbstractSocketEventHandler
+     */
+    // für kompatibilität mit dem alten jMobis....
+    public AbstractSocketEventHandler(Properties prop, String handleEventType) {
+        this.prop = prop;
+        this.handleEventType = handleEventType;
+        SocketConfig sc = null;
 
-		if (sc != null) {
-			for (TableConfig tc : sc.getTableConfigs()) {
-				tableConfigs.put(tc.getTableName().toLowerCase(), tc);
-				AbstractSocketEventHandler.logger.debug("SocketConfig tablename: " + tc.getTableName());
-			}
-		}
-	}
+        File xmlFile = null;
 
-	synchronized public static String[] getEventNames() {
-		return new String[]{ WebDataEventHandler.EVENTTYPE };
-	}
+        if (ApplicationConfig.getValue("isDebug", "false").equalsIgnoreCase("true")) {
+            sc = (SocketConfig) new XmlHelper().factory(new File("conf/socketconfig.xml"), SocketConfig.class);
+        } else {
+            sc = (SocketConfig) new XmlHelper().factory(new File("../conf/socketconfig.xml"), SocketConfig.class);
+        }
 
-	public static AbstractSocketEventHandler socketEventHandlerFactory(String eventname, FirebirdDb db) {
-		AbstractSocketEventHandler.logger.debug("socketEventHandlerFactory eventname: " + eventname);
+        if (sc != null) {
+            for (TableConfig tc : sc.getTableConfigs()) {
+                tableConfigs.put(tc.getTableName().toLowerCase(), tc);
+                AbstractSocketEventHandler.logger.debug("SocketConfig tablename: " + tc.getTableName());
+            }
+        }
+    }
 
-		AbstractSocketEventHandler haendler = null;
+    synchronized public static String[] getEventNames() {
+        return new String[]{WebDataEventHandler.EVENTTYPE};
+    }
 
-		if (eventname.equalsIgnoreCase( WebDataEventHandler.EVENTTYPE )) {
-			haendler = new WebDataEventHandler(db);
-		} else {
-			haendler = null;
-		}
+    public static AbstractSocketEventHandler socketEventHandlerFactory(String eventname, FirebirdDb db) {
+        AbstractSocketEventHandler.logger.debug("socketEventHandlerFactory eventname: " + eventname);
 
-		// weil z.Zt. der Eventname mehrfach hintereinander zusammenhängen kommen kann
-		if(haendler == null){
-			AbstractSocketEventHandler.logger.error("Eventname pruefen, ist unbekannt - eventname: " + eventname);
-			if(eventname.toUpperCase().startsWith(WebDataEventHandler.EVENTTYPE.toUpperCase())){
-				haendler = new WebDataEventHandler(db);
-			}
-		}
+        AbstractSocketEventHandler haendler = null;
 
-		AbstractSocketEventHandler.logger.debug("HandlerType: " + haendler);
+        if (eventname.equalsIgnoreCase(WebDataEventHandler.EVENTTYPE)) {
+            haendler = new WebDataEventHandler(db);
+        } else {
+            haendler = null;
+        }
 
-		return haendler;
+        // weil z.Zt. der Eventname mehrfach hintereinander zusammenhängen kommen kann
+        if (haendler == null) {
+            AbstractSocketEventHandler.logger.error("Eventname pruefen, ist unbekannt - eventname: " + eventname);
+            if (eventname.toUpperCase().startsWith(WebDataEventHandler.EVENTTYPE.toUpperCase())) {
+                haendler = new WebDataEventHandler(db);
+            }
+        }
 
-	}
+        AbstractSocketEventHandler.logger.debug("HandlerType: " + haendler);
 
-	public boolean isRunning() {
-		return running;
-	}
+        return haendler;
 
-	public void setRunning(boolean running) {
-		this.running = running;
-	}
+    }
 
-	public abstract String getHandleEventType();
+    public boolean isRunning() {
+        return running;
+    }
 
-	public abstract void run();
+    public void setRunning(boolean running) {
+        this.running = running;
+    }
 
-	public void showAxisFault(AxisFault af) {
+    public abstract String getHandleEventType();
+
+    public abstract void run();
+
+    public void showAxisFault(AxisFault af) {
 //		AbstractSocketEventHandler.logger.error("AxisFault " + this.getClass().getName() + " a *******************************************************");
 //		AbstractSocketEventHandler.logger.error("AxisFault " + this.getClass().getName() + " - getFaultCode (LocalPart) :" + af.getFaultCode().getLocalPart());
 //		AbstractSocketEventHandler.logger.error("AxisFault " + this.getClass().getName() + " - getFaultCode (Prefix) :" + af.getFaultCode().getPrefix());
@@ -203,30 +207,30 @@ public abstract class AbstractSocketEventHandler {
 //			this.mailer.postErrorMail(" Axis-Error", errorStr, "AxisFault", af.hashCode());
 //		}
 //
-	}
+    }
 
-	public Mailer getMailer() {
-		return mailer;
-	}
+    public Mailer getMailer() {
+        return mailer;
+    }
 
-	public void setMailer(Mailer mailer) {
-		this.mailer = mailer;
-	}
+    public void setMailer(Mailer mailer) {
+        this.mailer = mailer;
+    }
 
-	public Map<String, TableConfig> getTableConfigs() {
-		return tableConfigs;
-	}
+    public Map<String, TableConfig> getTableConfigs() {
+        return tableConfigs;
+    }
 
-	public void setPause(boolean pause) {
-		AbstractSocketEventHandler.logger.info("****** setPause: " + pause + " *******************");
-		// rausgenommen hat fehlerr verursacht
-		//this.pause = pause;
-	}
+    public void setPause(boolean pause) {
+        AbstractSocketEventHandler.logger.info("****** setPause: " + pause + " *******************");
+        // rausgenommen hat fehlerr verursacht
+        //this.pause = pause;
+    }
 
-	public boolean isPause() {
-		return pause;
-	}
+    public boolean isPause() {
+        return pause;
+    }
 
-	public void reset() {
-	}
+    public void reset() {
+    }
 }

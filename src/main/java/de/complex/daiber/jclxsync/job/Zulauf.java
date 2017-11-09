@@ -13,7 +13,7 @@ public class Zulauf {
 
     public final static String STATUS_ORDERED = "ordered";
     public final static String STATUS_INDISPATCH = "indispatch";
-    
+
     private String status;
     private int menge;
     private String kalenderwoche;
@@ -41,8 +41,8 @@ public class Zulauf {
     public void setKalenderwoche(String kalenderwoche) {
         this.kalenderwoche = kalenderwoche;
     }
-    
-    public boolean isStatusIndispatch(){
+
+    public boolean isStatusIndispatch() {
         return STATUS_INDISPATCH.equalsIgnoreCase(status);
     }
 }

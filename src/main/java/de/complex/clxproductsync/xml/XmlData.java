@@ -2,7 +2,6 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package de.complex.clxproductsync.xml;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -16,16 +15,17 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name = "xmldata")
 public class XmlData {
-private XmlTable table = null;
 
-	public XmlData() {
-	}
+    private XmlTable table = null;
 
-	public XmlTable getTable() {
-		return table;
-	}
+    public XmlData() {
+    }
 
-	public void setTable(XmlTable table) {
-		this.table = table;
-	}
+    public XmlTable getTable() {
+        return table;
+    }
+
+    public void setTable(XmlTable table) {
+        this.table = table;
+    }
 }

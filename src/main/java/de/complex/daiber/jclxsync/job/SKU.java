@@ -14,110 +14,110 @@ import java.sql.SQLException;
  */
 public class SKU {
 
-	private int artgroesseid;
-	private int cdhid;
-	private int artgroesseAuslauf;
-	private int artgroesseWebinaktiv;
-	private int artfarbeId;
-	private int artfarbeAuslauf;
-	private int artfarbeWebinaktiv;
-	private int artid;
-	private int artAuslauf;
-	private int artAktiv;
+    private int artgroesseid;
+    private int cdhid;
+    private int artgroesseAuslauf;
+    private int artgroesseWebinaktiv;
+    private int artfarbeId;
+    private int artfarbeAuslauf;
+    private int artfarbeWebinaktiv;
+    private int artid;
+    private int artAuslauf;
+    private int artAktiv;
 
-	public int getArtgroesseid() {
-		return artgroesseid;
-	}
+    public int getArtgroesseid() {
+        return artgroesseid;
+    }
 
-	public void setArtgroesseid(int artgroesseid) {
-		this.artgroesseid = artgroesseid;
-	}
+    public void setArtgroesseid(int artgroesseid) {
+        this.artgroesseid = artgroesseid;
+    }
 
-	public int getCdhid() {
-		return cdhid;
-	}
+    public int getCdhid() {
+        return cdhid;
+    }
 
-	public void setCdhid(int cdhid) {
-		this.cdhid = cdhid;
-	}
+    public void setCdhid(int cdhid) {
+        this.cdhid = cdhid;
+    }
 
-	public int getArtgroesseAuslauf() {
-		return artgroesseAuslauf;
-	}
+    public int getArtgroesseAuslauf() {
+        return artgroesseAuslauf;
+    }
 
-	public void setArtgroesseAuslauf(int artgroesseAuslauf) {
-		this.artgroesseAuslauf = artgroesseAuslauf;
-	}
+    public void setArtgroesseAuslauf(int artgroesseAuslauf) {
+        this.artgroesseAuslauf = artgroesseAuslauf;
+    }
 
-	public int getArtgroesseWebinaktiv() {
-		return artgroesseWebinaktiv;
-	}
+    public int getArtgroesseWebinaktiv() {
+        return artgroesseWebinaktiv;
+    }
 
-	public void setArtgroesseWebinaktiv(int artgroesseWebinaktiv) {
-		this.artgroesseWebinaktiv = artgroesseWebinaktiv;
-	}
+    public void setArtgroesseWebinaktiv(int artgroesseWebinaktiv) {
+        this.artgroesseWebinaktiv = artgroesseWebinaktiv;
+    }
 
-	public int getArtfarbeId() {
-		return artfarbeId;
-	}
+    public int getArtfarbeId() {
+        return artfarbeId;
+    }
 
-	public void setArtfarbeId(int artfarbeId) {
-		this.artfarbeId = artfarbeId;
-	}
+    public void setArtfarbeId(int artfarbeId) {
+        this.artfarbeId = artfarbeId;
+    }
 
-	public int getArtfarbeAuslauf() {
-		return artfarbeAuslauf;
-	}
+    public int getArtfarbeAuslauf() {
+        return artfarbeAuslauf;
+    }
 
-	public void setArtfarbeAuslauf(int artfarbeAuslauf) {
-		this.artfarbeAuslauf = artfarbeAuslauf;
-	}
+    public void setArtfarbeAuslauf(int artfarbeAuslauf) {
+        this.artfarbeAuslauf = artfarbeAuslauf;
+    }
 
-	public int getArtfarbeWebinaktiv() {
-		return artfarbeWebinaktiv;
-	}
+    public int getArtfarbeWebinaktiv() {
+        return artfarbeWebinaktiv;
+    }
 
-	public void setArtfarbeWebinaktiv(int artfarbeWebinaktiv) {
-		this.artfarbeWebinaktiv = artfarbeWebinaktiv;
-	}
+    public void setArtfarbeWebinaktiv(int artfarbeWebinaktiv) {
+        this.artfarbeWebinaktiv = artfarbeWebinaktiv;
+    }
 
-	public int getArtid() {
-		return artid;
-	}
+    public int getArtid() {
+        return artid;
+    }
 
-	public void setArtid(int artid) {
-		this.artid = artid;
-	}
+    public void setArtid(int artid) {
+        this.artid = artid;
+    }
 
-	public int getArtAuslauf() {
-		return artAuslauf;
-	}
+    public int getArtAuslauf() {
+        return artAuslauf;
+    }
 
-	public void setArtAuslauf(int artAuslauf) {
-		this.artAuslauf = artAuslauf;
-	}
+    public void setArtAuslauf(int artAuslauf) {
+        this.artAuslauf = artAuslauf;
+    }
 
-	public int getArtAktiv() {
-		return artAktiv;
-	}
+    public int getArtAktiv() {
+        return artAktiv;
+    }
 
-	public void setArtAktiv(int artAktiv) {
-		this.artAktiv = artAktiv;
-	}
+    public void setArtAktiv(int artAktiv) {
+        this.artAktiv = artAktiv;
+    }
 
-	public static SKU createSKU(ResultSet rs) throws SQLException {
-		SKU sku = new SKU();
-		sku.setArtgroesseid(rs.getInt("ARTGROESSEID"));
-		sku.setCdhid(rs.getInt("FREMDID"));
-		sku.setArtgroesseAuslauf(rs.getInt("ARTGROESSE_AUSLAUF"));
-		sku.setArtgroesseWebinaktiv(rs.getInt("ARTGROESSE_WEBINAKTIV"));
-		sku.setArtfarbeId(rs.getInt("ARTFARBE_ARTFARBEID"));
-		sku.setArtfarbeAuslauf(rs.getInt("ARTFARBE_AUSLAUF"));
-		sku.setArtfarbeWebinaktiv(rs.getInt("ARTFARBE_WEBINAKTIV"));
-		sku.setArtid(rs.getInt("ART_ARTID"));
-		sku.setArtAktiv(rs.getInt("ART_AKTIV"));
-		sku.setArtAuslauf(rs.getInt("ART_AUSLAUF"));
+    public static SKU createSKU(ResultSet rs) throws SQLException {
+        SKU sku = new SKU();
+        sku.setArtgroesseid(rs.getInt("ARTGROESSEID"));
+        sku.setCdhid(rs.getInt("FREMDID"));
+        sku.setArtgroesseAuslauf(rs.getInt("ARTGROESSE_AUSLAUF"));
+        sku.setArtgroesseWebinaktiv(rs.getInt("ARTGROESSE_WEBINAKTIV"));
+        sku.setArtfarbeId(rs.getInt("ARTFARBE_ARTFARBEID"));
+        sku.setArtfarbeAuslauf(rs.getInt("ARTFARBE_AUSLAUF"));
+        sku.setArtfarbeWebinaktiv(rs.getInt("ARTFARBE_WEBINAKTIV"));
+        sku.setArtid(rs.getInt("ART_ARTID"));
+        sku.setArtAktiv(rs.getInt("ART_AKTIV"));
+        sku.setArtAuslauf(rs.getInt("ART_AUSLAUF"));
 
-		return sku;
-	}
+        return sku;
+    }
 }

@@ -17,53 +17,52 @@ import org.apache.log4j.Logger;
  */
 public class FileEventChecker {
 
-	private static Logger logger = Logger.getLogger(FileEventChecker.class);
-	private String threadName;
-	private FirebirdDb db = null;
+    private static Logger logger = Logger.getLogger(FileEventChecker.class);
+    private String threadName;
+    private FirebirdDb db = null;
 
-	public static final String EVENTNAME = "FILEEVENT";
+    public static final String EVENTNAME = "FILEEVENT";
 
-	private SnJobDAO snjobDAO;
-	private LinkedList<String> eventList = new LinkedList<String>();
+    private SnJobDAO snjobDAO;
+    private LinkedList<String> eventList = new LinkedList<String>();
 
-	public FileEventChecker(FirebirdDb db, String threadName) {
-		this.threadName = threadName;
-		this.db = db;
-		this.snjobDAO = new SnJobDAO(db);
-	}
+    public FileEventChecker(FirebirdDb db, String threadName) {
+        this.threadName = threadName;
+        this.db = db;
+        this.snjobDAO = new SnJobDAO(db);
+    }
 
-	public synchronized boolean isEventOccured() {
-		if (logger.isDebugEnabled()) {
-			logger.debug("isEventOccured - Threadname: " + threadName + "  check Events");
-		}
-		String events[] = null;
-		if ((events = this.snjobDAO.checkEvent( FileEventChecker.EVENTNAME )) != null) {
-			for (String s : events) {
-				if (logger.isDebugEnabled()) {
-					logger.debug("Event: " + s.toUpperCase());
-				}
-				this.eventList.add(s);
-			}
-		}
+    public synchronized boolean isEventOccured() {
+        if (logger.isDebugEnabled()) {
+            logger.debug("isEventOccured - Threadname: " + threadName + "  check Events");
+        }
+        String events[] = null;
+        if ((events = this.snjobDAO.checkEvent(FileEventChecker.EVENTNAME)) != null) {
+            for (String s : events) {
+                if (logger.isDebugEnabled()) {
+                    logger.debug("Event: " + s.toUpperCase());
+                }
+                this.eventList.add(s);
+            }
+        }
 
-		if (logger.isDebugEnabled()) {
-			logger.debug("isEventOccured - Threadname: " + threadName + " hasEvent: " + !this.eventList.isEmpty());
-		}
+        if (logger.isDebugEnabled()) {
+            logger.debug("isEventOccured - Threadname: " + threadName + " hasEvent: " + !this.eventList.isEmpty());
+        }
 
-		return !this.eventList.isEmpty();
-	}
+        return !this.eventList.isEmpty();
+    }
 
-	public String getNextEvent() {
-		return this.eventList.remove();
-	}
+    public String getNextEvent() {
+        return this.eventList.remove();
+    }
 
-	public boolean hasMoreEvents() {
-		return !this.eventList.isEmpty();
-	}
+    public boolean hasMoreEvents() {
+        return !this.eventList.isEmpty();
+    }
 
-	public LinkedList<String> getEventList() {
-		return eventList;
-	}
+    public LinkedList<String> getEventList() {
+        return eventList;
+    }
 
-	
 }

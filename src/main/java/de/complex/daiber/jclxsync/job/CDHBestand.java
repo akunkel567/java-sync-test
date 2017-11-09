@@ -3,7 +3,6 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package de.complex.daiber.jclxsync.job;
 
 /**
@@ -19,44 +18,44 @@ public class CDHBestand {
 //colIndex: 6        colName: SELLING_PRICE        colType: 8        colTypeName: float        colClassName: java.lang.Double
 //colIndex: 7        colName: INDICATOR        colType: -9        colTypeName: nvarchar        colClassName: java.lang.String
 
-		private float actualStock = 0;
-		private float reservedStock = 0;
+    private float actualStock = 0;
+    private float reservedStock = 0;
 
-		public CDHBestand(float actualStock, float reservedStock) {
-			this.actualStock = actualStock;
-			this.reservedStock = reservedStock;
-		}
+    public CDHBestand(float actualStock, float reservedStock) {
+        this.actualStock = actualStock;
+        this.reservedStock = reservedStock;
+    }
 
-		public float getActualStock() {
-			return actualStock;
-		}
+    public float getActualStock() {
+        return actualStock;
+    }
 
-		public void setActualStock(float actualStock) {
-			this.actualStock = actualStock;
-		}
+    public void setActualStock(float actualStock) {
+        this.actualStock = actualStock;
+    }
 
-		public float getReservedStock() {
-			return reservedStock;
-		}
+    public float getReservedStock() {
+        return reservedStock;
+    }
 
-		public void setReservedStock(float reservedStock) {
-			this.reservedStock = reservedStock;
-		}
+    public void setReservedStock(float reservedStock) {
+        this.reservedStock = reservedStock;
+    }
 
-		public float getAktuellerBestand() {
-			return (this.actualStock - this.reservedStock < 0 ? 0 : this.actualStock - this.reservedStock);
-		}
+    public float getAktuellerBestand() {
+        return (this.actualStock - this.reservedStock < 0 ? 0 : this.actualStock - this.reservedStock);
+    }
 
-		@Override
-		public String toString() {
-			StringBuilder builder = new StringBuilder();
-			builder.append(" CdhBestand [");
-			builder.append(" actualStock=");
-			builder.append(actualStock);
-			builder.append(" reservedStock=");
-			builder.append(reservedStock);
-			builder.append(" ]");
-			return builder.toString();
-		}
-	
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append(" CdhBestand [");
+        builder.append(" actualStock=");
+        builder.append(actualStock);
+        builder.append(" reservedStock=");
+        builder.append(reservedStock);
+        builder.append(" ]");
+        return builder.toString();
+    }
+
 }

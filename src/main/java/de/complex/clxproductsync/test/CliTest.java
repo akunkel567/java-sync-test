@@ -3,7 +3,6 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package de.complex.clxproductsync.test;
 
 import org.apache.commons.cli.CommandLine;
@@ -20,50 +19,49 @@ import org.apache.commons.cli.Options;
  */
 public class CliTest {
 
-	/**
-	 * @param args the command line arguments
-	 */
-	public static void main(String[] args) {
-		
-		
-		String[] params = new String[]{"-tables","eins","zwei"};
-		CommandLine cmdLine = null;
-		Options options = new Options();
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String[] args) {
 
-		Option opt = null;
+        String[] params = new String[]{"-tables", "eins", "zwei"};
+        CommandLine cmdLine = null;
+        Options options = new Options();
 
-		opt = OptionBuilder.withDescription("Config-File").hasArg().create("config");
-		options.addOption(opt);
+        Option opt = null;
 
-		opt = OptionBuilder.withDescription("Check Tables").hasArgs().create("tables");
-		options.addOption(opt);
+        opt = OptionBuilder.withDescription("Config-File").hasArg().create("config");
+        options.addOption(opt);
 
-		CommandLineParser parser = new GnuParser();
+        opt = OptionBuilder.withDescription("Check Tables").hasArgs().create("tables");
+        options.addOption(opt);
 
-		StringBuilder usage = new StringBuilder();
-		usage.append("java -jar WebTableCheck.jar");
+        CommandLineParser parser = new GnuParser();
 
-		StringBuilder footer = new StringBuilder();
-		footer.append("\n\n");
+        StringBuilder usage = new StringBuilder();
+        usage.append("java -jar WebTableCheck.jar");
 
-		try {
-			cmdLine = parser.parse(options, params);
+        StringBuilder footer = new StringBuilder();
+        footer.append("\n\n");
 
-			if (params.length == 0) {
-				throw new org.apache.commons.cli.ParseException("");
-			}
-		} catch (org.apache.commons.cli.ParseException ex) {
-			HelpFormatter formatter = new HelpFormatter();
-			formatter.printHelp(180, usage.toString(), "", options, footer.toString(), true);
+        try {
+            cmdLine = parser.parse(options, params);
 
-			//ex.printStackTrace(System.err);
-			return;
-		}
-		
-		for(String table: cmdLine.getOptionValues("tables")){
-		  System.out.println("tables: " + table);
-		}
+            if (params.length == 0) {
+                throw new org.apache.commons.cli.ParseException("");
+            }
+        } catch (org.apache.commons.cli.ParseException ex) {
+            HelpFormatter formatter = new HelpFormatter();
+            formatter.printHelp(180, usage.toString(), "", options, footer.toString(), true);
 
-	}
-	
+            //ex.printStackTrace(System.err);
+            return;
+        }
+
+        for (String table : cmdLine.getOptionValues("tables")) {
+            System.out.println("tables: " + table);
+        }
+
+    }
+
 }

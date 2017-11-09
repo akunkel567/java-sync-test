@@ -18,45 +18,45 @@ import org.apache.log4j.Logger;
  */
 public class FileConverter {
 
-	private static Logger logger = Logger.getLogger(FileConverter.class);
+    private static Logger logger = Logger.getLogger(FileConverter.class);
 
-	public static byte[] toBase64byteArray(File file) throws FileConvertException {
-		byte inByte[] = null;
-		byte b[] = null;
+    public static byte[] toBase64byteArray(File file) throws FileConvertException {
+        byte inByte[] = null;
+        byte b[] = null;
 
-		inByte = getFileAsByteArray(file);
-		if (inByte != null) {
+        inByte = getFileAsByteArray(file);
+        if (inByte != null) {
 
-			Base64 base64 = new Base64();
-			b = base64.encode(inByte);
-		}
+            Base64 base64 = new Base64();
+            b = base64.encode(inByte);
+        }
 
-		return b;
-	}
+        return b;
+    }
 
-	public static String toBase64String(File file) throws FileConvertException {
-		byte inByte[] = null;
-		byte b[] = null;
-		String outString = null;
+    public static String toBase64String(File file) throws FileConvertException {
+        byte inByte[] = null;
+        byte b[] = null;
+        String outString = null;
 
-		inByte = getFileAsByteArray(file);
-		if (inByte != null) {
+        inByte = getFileAsByteArray(file);
+        if (inByte != null) {
 
-			Base64 base64 = new Base64();
-			b = base64.encode(inByte);
-			outString = new String(b);
-		}
+            Base64 base64 = new Base64();
+            b = base64.encode(inByte);
+            outString = new String(b);
+        }
 
-		return outString;
-	}
+        return outString;
+    }
 
-	private static byte[] getFileAsByteArray(File file) throws FileConvertException {
-		InputStream inStream = null;
-		byte b[] = null;
-		String str = null;
-		Base64 base64 = null;
-		byte inByte[] = null;
-		try {
+    private static byte[] getFileAsByteArray(File file) throws FileConvertException {
+        InputStream inStream = null;
+        byte b[] = null;
+        String str = null;
+        Base64 base64 = null;
+        byte inByte[] = null;
+        try {
 
 //			if (!file.exists()) {
 //				throw new FileNotFoundException("File " + file.getAbsolutePath() + " not exists");
@@ -67,32 +67,32 @@ public class FileConverter {
 //			}
 //
 //			if (file.exists() && file.canRead()) {
-				inByte = new byte[(int) file.length()];
+            inByte = new byte[(int) file.length()];
 
-				try {
-					inStream = new FileInputStream(file);
-					inStream.read(inByte);
+            try {
+                inStream = new FileInputStream(file);
+                inStream.read(inByte);
 
-				} finally {
-					try {
-						inStream.close();
-					} catch (IOException ex) {
-						ex.printStackTrace();
-					}
-				}
+            } finally {
+                try {
+                    inStream.close();
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+            }
 
 //			}
-		} catch (NullPointerException npe) {
-			FileConverter.logger.debug("", npe);
-			throw new FileConvertException(npe);
-		} catch (FileNotFoundException fnf) {
-			FileConverter.logger.debug("", fnf);
-			throw new FileConvertException(fnf);
-		} catch (IOException ioe) {
-			FileConverter.logger.debug("", ioe);
-			throw new FileConvertException(ioe);
-		}
+        } catch (NullPointerException npe) {
+            FileConverter.logger.debug("", npe);
+            throw new FileConvertException(npe);
+        } catch (FileNotFoundException fnf) {
+            FileConverter.logger.debug("", fnf);
+            throw new FileConvertException(fnf);
+        } catch (IOException ioe) {
+            FileConverter.logger.debug("", ioe);
+            throw new FileConvertException(ioe);
+        }
 
-		return inByte;
-	}
+        return inByte;
+    }
 }
