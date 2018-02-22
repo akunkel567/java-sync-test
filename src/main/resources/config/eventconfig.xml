@@ -206,5 +206,9 @@
                 <event name="PREISGRUPPEFAKTOREN" />
 				
 				<event name="FEATUREARTSPRACHEN" />
+                                
+                <event name="ARTIKELTYP" />
+                <event name="ARTFARBEDETAIL" />
+                <event name="ZOLLTARIFNUMMER" />
 	</events>
 </eventconfig>
