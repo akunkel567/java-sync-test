@@ -220,7 +220,16 @@ public class ExcelBestandUpload extends Thread {
                                         }
 
                                         try {
-                                            data.put(header[12], rs.getString("ZULAUFSTATUS_SH"));
+                                            final String STATUS_DE = "Lieferung nicht vor KW";
+                                            final String STATUS_EN = "Further addition to stock app. week";
+                                        
+                                            String zulaufstatusSH = rs.getString("ZULAUFSTATUS_SH");
+                                            
+                                            if(!"de_DE".equalsIgnoreCase(sLocale)){
+                                               zulaufstatusSH = zulaufstatusSH.replaceAll(STATUS_DE, STATUS_EN);
+                                            }
+                                            
+                                            data.put(header[12], zulaufstatusSH);
                                         } catch (Exception e) {
                                             ExcelBestandUpload.logger.error(e, e);
                                             data.put(header[12], "N/A");
@@ -338,7 +347,7 @@ public class ExcelBestandUpload extends Thread {
         File exportLabelsBundle = new File(confPath + "/ExportLabelsBundle.properties");
         if (!exportLabelsBundle.exists()) {
             ExcelBestandUpload.logger.warn("ExportLabelsBundle.properties nicht vorhanden. Verwende DefaultHeader. Pfad " + exportLabelsBundle.getAbsolutePath());
-            return new String[]{"clxID", "FK int.", "Neu", "Marke", "Artikel", "Farbe", "Farbkürzel", "Größe", "Artikelbezeichnung", "Kurzbeschreibung", "Lagermenge", "Zulaufmenge", "Zulaufstatus"};
+            return new String[]{"clxSKU-ID", "ERP-SKU-ID", "Neu", "Marke", "Artikel", "Farbe", "Farbkürzel", "Größe", "Artikelbezeichnung", "Kurzbeschreibung", "Lagermenge", "Zulaufmenge", "Zulaufstatus"};
         }
 
         File conf = new File(confPath);
@@ -447,6 +456,8 @@ public class ExcelBestandUpload extends Thread {
 
         BasicConfigurator.configure();
         Logger.getRootLogger().setLevel(Level.DEBUG);
+        
+        MainApp.debug = true;
 
 //        String iniFilename = "./conf/clxProductSync_fare.properties";
         String iniFilename = "./conf/clxProductSync.properties";
