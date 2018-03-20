@@ -154,6 +154,7 @@ public class ExcelBestandUpload extends Thread {
                             File file = new File("bestand.csv");
 
                             OutputStreamWriter osw = new OutputStreamWriter(new FileOutputStream(file), "UTF-8");
+                            osw.write('\uFEFF');
 
                             ICsvMapWriter writer = new CsvMapWriter(osw, CsvPreference.EXCEL_NORTH_EUROPE_PREFERENCE);
                             try {
