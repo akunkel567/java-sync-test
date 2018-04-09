@@ -210,5 +210,9 @@
                 <event name="ARTIKELTYP" />
                 <event name="ARTFARBEDETAIL" />
                 <event name="ZOLLTARIFNUMMER" />
+				
+		<event name="PREISAKTIONENTYP" />
+		<event name="PREISAKTIONEN_SERVICES" />
+		<event name="PREISAKTIONEN_VETECH" />
 	</events>
 </eventconfig>
