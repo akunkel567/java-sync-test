@@ -214,5 +214,13 @@
 		<event name="PREISAKTIONENTYP" />
 		<event name="PREISAKTIONEN_SERVICES" />
 		<event name="PREISAKTIONEN_VETECH" />
+                
+                <event name="ARTMATERIAL" />
+                <event name="ARTMATERIALTEXTIL" />
+                <event name="MATERIAL_TYP" />
+                <event name="MATERIAL_TYP_SPRACHEN" />
+                <event name="MATERIALTYPART" />
+                <event name="TEXTILBEZEICHNUNG" />
+                <event name="TEXTILBEZEICHNUNGSPRACHE" />
 	</events>
 </eventconfig>
