@@ -222,5 +222,6 @@
                 <event name="MATERIALTYPART" />
                 <event name="TEXTILBEZEICHNUNG" />
                 <event name="TEXTILBEZEICHNUNGSPRACHE" />
+                <event name="ARTLIEFERANT" />
 	</events>
 </eventconfig>
