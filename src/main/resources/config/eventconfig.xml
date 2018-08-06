@@ -223,5 +223,6 @@
                 <event name="TEXTILBEZEICHNUNG" />
                 <event name="TEXTILBEZEICHNUNGSPRACHE" />
                 <event name="ARTLIEFERANT" />
+                <event name="ARTGROESSEVPE_SINGLE" />
 	</events>
 </eventconfig>
