@@ -224,5 +224,9 @@
                 <event name="TEXTILBEZEICHNUNGSPRACHE" />
                 <event name="ARTLIEFERANT" />
                 <event name="ARTGROESSEVPE_SINGLE" />
+                
+                <event name="ARTMANGEL" />
+                <event name="MANGEL" />
+                <event name="WARENQUALITAET" />
 	</events>
 </eventconfig>
