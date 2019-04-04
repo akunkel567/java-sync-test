@@ -357,6 +357,11 @@ public class ClxFtp {
         FileInputStream input;
         try {
             input = new FileInputStream(file);
+            
+            if(this.passiveMode){
+                this.ftpclient.enterLocalPassiveMode();
+            }
+            
             this.ftpclient.storeFile(remoteFile, input);
             input.close();
             input = null;
