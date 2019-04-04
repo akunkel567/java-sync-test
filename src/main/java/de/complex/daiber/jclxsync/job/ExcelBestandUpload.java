@@ -282,8 +282,9 @@ public class ExcelBestandUpload extends Thread {
                                     String username = ApplicationConfig.getValue("excelbestand.username", "");
                                     String password = ApplicationConfig.getValue("excelbestand.password", "");
                                     String remotepath = ApplicationConfig.getValue("excelbestand.remotepath", ".");
+                                    boolean passiveMode = Boolean.valueOf(ApplicationConfig.getValue("excelbestand.passivemode", "false"));
 
-                                    ClxFtp ftp = new ClxFtp(ftphost, username, password);
+                                    ClxFtp ftp = new ClxFtp(ftphost, username, password, passiveMode);
                                     if (!ftp.uploadFile(ftpUploadFile, remotepath)) {
                                         ExcelBestandUpload.logger.error("ftp Upload fehler");
                                     }
