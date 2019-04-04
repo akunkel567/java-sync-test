@@ -9,7 +9,7 @@
    
 	<groupId>de.complex</groupId>
 	<artifactId>clxProductSync</artifactId>
-	<version>1.11.1</version>
+	<version>1.11.2-SNMAPSHOT</version>
         
         <name>${project.artifactId} - ${project.version}</name>
 	
