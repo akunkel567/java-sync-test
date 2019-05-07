@@ -46,8 +46,6 @@
 		<event name="INETFARBENSPRACHEN" />
 		<event name="SHOPRABATT" />
 		<event name="SHOPRABATTSPRACHEN" />
-		<event name="ERRORCODE" />
-		<event name="ERRORCODESPRACHE" />
 		<event name="WEBARTPREISTYPPREISE" />
 		<event name="GENDER" />
 		<event name="GENDERSPRACHEN" />
