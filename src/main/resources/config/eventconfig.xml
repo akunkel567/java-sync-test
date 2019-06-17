@@ -226,5 +226,8 @@
                 <event name="ARTMANGEL" />
                 <event name="MANGEL" />
                 <event name="WARENQUALITAET" />
+                
+                <event name="FARBENDETAIL" />
+                <event name="EAN" />
 	</events>
 </eventconfig>
