@@ -21,6 +21,8 @@ public class SKU {
     private int artfarbeId;
     private int artfarbeAuslauf;
     private int artfarbeWebinaktiv;
+    private boolean artfarbeFirstviewfarbe;
+    private boolean artfarbeSeohauptfarbe;
     private int artid;
     private int artAuslauf;
     private int artAktiv;
@@ -105,6 +107,22 @@ public class SKU {
         this.artAktiv = artAktiv;
     }
 
+    public boolean isArtfarbeFirstviewfarbe() {
+        return artfarbeFirstviewfarbe;
+    }
+
+    public void setArtfarbeFirstviewfarbe(boolean artfarbeFirstviewfarbe) {
+        this.artfarbeFirstviewfarbe = artfarbeFirstviewfarbe;
+    }
+
+    public boolean isArtfarbeSeohauptfarbe() {
+        return artfarbeSeohauptfarbe;
+    }
+
+    public void setArtfarbeSeohauptfarbe(boolean artfarbeSeohauptfarbe) {
+        this.artfarbeSeohauptfarbe = artfarbeSeohauptfarbe;
+    }
+
     public static SKU createSKU(ResultSet rs) throws SQLException {
         SKU sku = new SKU();
         sku.setArtgroesseid(rs.getInt("ARTGROESSEID"));
@@ -117,6 +135,8 @@ public class SKU {
         sku.setArtid(rs.getInt("ART_ARTID"));
         sku.setArtAktiv(rs.getInt("ART_AKTIV"));
         sku.setArtAuslauf(rs.getInt("ART_AUSLAUF"));
+        sku.setArtfarbeFirstviewfarbe(rs.getInt("ARTFARBE_FIRSTVIEWFARBE") != 0);
+        sku.setArtfarbeSeohauptfarbe(rs.getInt("ARTFARBE_SEOHAUPTFARBE") != 0);
 
         return sku;
     }

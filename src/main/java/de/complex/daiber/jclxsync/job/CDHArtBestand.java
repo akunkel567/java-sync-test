@@ -20,6 +20,7 @@ import de.complex.clxproductsync.soap.datacheck.DatacheckServiceLocator;
 import de.complex.clxproductsync.soap.datacheck.Returnnok;
 import de.complex.clxproductsync.soap.datacheck.Spoolcheck;
 import de.complex.tools.config.ApplicationConfig;
+import de.complex.util.sql.SqlTool;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -31,6 +32,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Properties;
 import java.util.Vector;
@@ -48,6 +50,7 @@ public class CDHArtBestand extends Thread {
     private static Logger logger = Logger.getLogger(CDHArtBestand.class);
     public static SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd ss:SSS");
     private Properties prop;
+    ArrayList<SKU> deaktivierteArtfarbeSkus = new ArrayList<SKU>();
 
     /**
      * Creates a new instance of BundlePreisUpload
@@ -99,6 +102,8 @@ public class CDHArtBestand extends Thread {
                     + ", ARTFARBE.ARTFARBEID AS ARTFARBE_ARTFARBEID"
                     + ", ARTFARBE.WEBINAKTIV AS ARTFARBE_WEBINAKTIV"
                     + ", ARTFARBE.AUSLAUF AS ARTFARBE_AUSLAUF"
+                    + ", ARTFARBE.FIRSTVIEWFARBE AS ARTFARBE_FIRSTVIEWFARBE"
+                    + ", ARTFARBE.SEOHAUPTFARBE AS ARTFARBE_SEOHAUPTFARBE"
                     + ", ART.ARTID AS ART_ARTID"
                     + ", ART.AUSLAUF AS ART_AUSLAUF"
                     + ", ART.AKTIV AS ART_AKTIV"
@@ -133,6 +138,7 @@ public class CDHArtBestand extends Thread {
                     CDHArtBestand.logger.info("Gesamt Datensaetze: " + countGesamt + "************************************************");
                 }
 
+                deaktivierteArtfarbeSkus.clear();
                 rs = stmt.executeQuery(artgroesseSql);
                 while (rs.next()) { // Schleife Artikel A
                     count++;
@@ -146,6 +152,11 @@ public class CDHArtBestand extends Thread {
                         handleSKU(con, sku, bestand);
                     }
                 } // Schleife Artikel E
+                
+                for (SKU s : deaktivierteArtfarbeSkus) {
+                    checkSeoHauptfarbe(con, s.getArtfarbeId());
+                    checkFirstViewFarbe(con, s.getArtfarbeId());
+                }
 
                 String sql = "INSERT INTO BESTANDLOG (SAU) VALUES ('')";
                 SQLLog.logger.debug("SQL: " + sql);
@@ -200,7 +211,10 @@ public class CDHArtBestand extends Thread {
                     // wenn noch aktiv, Artfarbe inaktiv schalten
                     if (sku.getArtfarbeWebinaktiv() == 0) {
                         setDetailInaktiv(con, Detailtype.artfarbe, sku.getArtfarbeId());
-                        checkSeoHauptfarbe(con, sku.getArtfarbeId());
+                        
+                        if (sku.isArtfarbeFirstviewfarbe() || sku.isArtfarbeSeohauptfarbe()) {
+                            deaktivierteArtfarbeSkus.add(sku);
+                        }
                     }
 
                     // keine weitere Artfarbe aktiv
@@ -369,12 +383,83 @@ public class CDHArtBestand extends Thread {
     }
 
     private void checkSeoHauptfarbe(java.sql.Connection con, int artfarbeid) throws SQLException {
-        CDHArtBestand.logger.debug("checkSeoHauptfarbe artfarbeid: " + artfarbeid);
+        logger.debug("checkSeoHauptfarbe artfarbeid: " + artfarbeid);
         PreparedStatement pstmt = null;
         ResultSet rs = null;
 
         String sqlIsSeohauptfarbe = "select ARTFARBE.SEOHAUPTFARBE from ARTFARBE where ARTFARBE.ARTFARBEID = ?";
-        String sqlGetNewSeohauptfarbe = "select AF2.ARTFARBEID\n"
+        String setNewSeoHauptfarbe = "update ARTFARBE set ARTFARBE.SEOHAUPTFARBE = 1 where ARTFARBE.ARTFARBEID = ?";
+
+        try {
+            // ist es die seohauptfarbe
+            pstmt = con.prepareStatement(sqlIsSeohauptfarbe);
+            pstmt.setInt(1, artfarbeid);
+            rs = pstmt.executeQuery();
+
+            if (rs.next()) {
+                logger.debug("checkSeoHauptfarbe, seohauptfarbe = " + rs.getInt("SEOHAUPTFARBE"));
+                if (rs.getInt("SEOHAUPTFARBE") == 1) {
+
+                    Integer newArtfarbeId = getArtfarbenidMitBestand(con, artfarbeid);
+                    if (newArtfarbeId != null) {
+                        logger.debug("checkSeoHauptfarbe, neue seohauptfarbe: " + newArtfarbeId);
+                        pstmt = con.prepareStatement(setNewSeoHauptfarbe);
+                        pstmt.setInt(1, newArtfarbeId);
+                        pstmt.executeUpdate();
+                    } else {
+                        logger.warn("seohauptartikelfarbe wurde deaktiviert, keine weitere farbe mit Bestand! artfarbeid: " + artfarbeid);
+                    }
+                } else {
+                    logger.debug("checkSeoHauptfarbe artfarbeid: " + artfarbeid + " ist keine seohauptfarbe");
+                }
+            }
+        } finally {
+            SqlTool.safeClose(rs, pstmt);
+        }
+    }
+
+    private void checkFirstViewFarbe(java.sql.Connection con, int artfarbeid) throws SQLException {
+        logger.debug("checkFirstviewFarbe artfarbeid: " + artfarbeid);
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+
+        String sqlIsFirstViewFarbe = "select ARTFARBE.FIRSTVIEWFARBE from ARTFARBE where ARTFARBE.ARTFARBEID = ?";
+        String setNewFirstViewFarbe = "update ARTFARBE set ARTFARBE.FIRSTVIEWFARBE = 1 where ARTFARBE.ARTFARBEID = ?";
+
+        try {
+            // ist es die firstviewfarbe
+            pstmt = con.prepareStatement(sqlIsFirstViewFarbe);
+            pstmt.setInt(1, artfarbeid);
+            rs = pstmt.executeQuery();
+
+            if (rs.next()) {
+                logger.debug("checkFirstViewFarbe, firstViewFarbe = " + rs.getInt("FIRSTVIEWFARBE"));
+                if (rs.getInt("FIRSTVIEWFARBE") == 1) {
+
+                    Integer newArtfarbeId = getArtfarbenidMitBestand(con, artfarbeid);
+                    if (newArtfarbeId != null) {
+                        logger.debug("checkSeoHauptfarbe, neue seohauptfarbe: " + newArtfarbeId);
+                        pstmt = con.prepareStatement(setNewFirstViewFarbe);
+                        pstmt.setInt(1, newArtfarbeId);
+                        pstmt.executeUpdate();
+                    } else {
+                        logger.warn("firstviewfarbe wurde deaktiviert, keine weitere farbe mit Bestand! artfarbeid: " + artfarbeid);
+                    }
+                } else {
+                    logger.debug("checkSeoHauptfarbe artfarbeid: " + artfarbeid + " ist keine seohauptfarbe");
+                }
+            }
+        } finally {
+            SqlTool.safeClose(rs, pstmt);
+        }
+    }
+
+    private Integer getArtfarbenidMitBestand(java.sql.Connection con, int artfarbeid) throws SQLException {
+        logger.debug("getFarbenidMitBestand artfarbeid: " + artfarbeid);
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+
+        String sqlGetNewArtfarbeid = "select AF2.ARTFARBEID\n"
                 + "from ARTFARBE AF1\n"
                 + "inner join ARTFARBE AF2 on (AF2.ARTID = AF1.ARTID and\n"
                 + "      AF2.ARTFARBEID <> AF1.ARTFARBEID)\n"
@@ -385,37 +470,21 @@ public class CDHArtBestand extends Thread {
                 + "      ARTGROESSE.WEBINAKTIV = 0\n"
                 + "group by 1\n"
                 + "order by sum(ARTGROESSEBESTAND.BESTAND) desc ";
-        String setNewSeoHauptfarbe = "update ARTFARBE set ARTFARBE.SEOHAUPTFARBE = 1 where ARTFARBE.ARTFARBEID = ?";
-
         try {
-            // ist es die seohauptfarbe
-            pstmt = con.prepareStatement(sqlIsSeohauptfarbe);
+            pstmt = con.prepareStatement(sqlGetNewArtfarbeid);
             pstmt.setInt(1, artfarbeid);
             rs = pstmt.executeQuery();
 
             if (rs.next()) {
-                CDHArtBestand.logger.debug("checkSeoHauptfarbe, seohauptfarbe = " + rs.getInt("SEOHAUPTFARBE"));
-                if (rs.getInt("SEOHAUPTFARBE") == 1) {
-                    // naechste hauptfarbe nach bestand
-                    pstmt = con.prepareStatement(sqlGetNewSeohauptfarbe);
-                    pstmt.setInt(1, artfarbeid);
-                    rs = pstmt.executeQuery();
-
-                    if (rs.next()) {
-                        int newSeoHauptArtfarbeid = rs.getInt("ARTFARBEID");
-                        CDHArtBestand.logger.debug("checkSeoHauptfarbe, neue seohauptfarbe: " + newSeoHauptArtfarbeid);
-                        pstmt = con.prepareStatement(setNewSeoHauptfarbe);
-                        pstmt.setInt(1, newSeoHauptArtfarbeid);
-                        pstmt.executeUpdate();
-                    } else {
-                        CDHArtBestand.logger.warn("seohauptartikelfarbe wurde deaktiviert, keine weitere farbe mit Bestand! artfarbeid: " + artfarbeid);
-                    }
-                } else {
-                    CDHArtBestand.logger.debug("checkSeoHauptfarbe artfarbeid: " + artfarbeid + " ist keine seohauptfarbe");
-                }
+                Integer newArtfarbeid = rs.getInt("ARTFARBEID");
+                logger.debug("neue Artfarbe mit Bestand: " + newArtfarbeid);
+                return newArtfarbeid;
+            } else {
+                logger.warn("keine weitere Artfarbe mit Bestand! artfarbeid: " + artfarbeid);
+                return null;
             }
         } finally {
-            FirebirdDb.close(rs, pstmt, null);
+            SqlTool.safeClose(rs, pstmt);
         }
     }
 
