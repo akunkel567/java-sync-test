@@ -4,7 +4,6 @@
  */
 package de.complex.clxproductsync;
 
-import com.sun.org.apache.xml.internal.security.utils.XMLUtils;
 import de.complex.activerecord.config.ActiveRecordConfig;
 import de.complex.database.firebird.FirebirdDb;
 import de.complex.exception.ExceptionHelper;
