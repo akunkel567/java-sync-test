@@ -4,6 +4,7 @@
  */
 package de.complex.clxproductsync;
 
+import com.sun.org.apache.xml.internal.security.utils.XMLUtils;
 import de.complex.activerecord.config.ActiveRecordConfig;
 import de.complex.database.firebird.FirebirdDb;
 import de.complex.exception.ExceptionHelper;
@@ -13,6 +14,7 @@ import de.complex.clxproductsync.eventhandler.dbevent.WebsyncEventManager;
 import de.complex.clxproductsync.eventhandler.fileevent.FileEventManager;
 import de.complex.clxproductsync.eventhandler.socketevent.SocketEventManager;
 import de.complex.clxproductsync.exception.ClxUncaughtExceptionHandler;
+import de.complex.clxproductsync.exception.InitException;
 import de.complex.daiber.jclxsync.job.CDHArtBestandJob;
 import de.complex.daiber.jclxsync.job.CDHZulaufinfoJob;
 import de.complex.daiber.jclxsync.job.ExcelBestandUploadJob;
@@ -32,6 +34,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
@@ -266,112 +269,122 @@ public class MainApp extends Thread {
 
         Thread.setDefaultUncaughtExceptionHandler(new ClxUncaughtExceptionHandler());
 
-        ExecutorService tPool = Executors.newFixedThreadPool(10);
-
-        FirebirdDbPool.setMinPoolSize(1);
-        FirebirdDbPool.setMaxPoolSize(30);
-        FirebirdDbPool.setMaxIdleTime(1000 * 20);
-
-        FirebirdDbPool.createInstance();
-
-        WebsyncEventManager.setJobCheckInterval(30 * 1000);
-        FileEventManager.setJobCheckInterval(30 * 1000);
-
-        System.setProperty("complex.axis.default.timeout", String.valueOf(1000 * 60 * 10)); // 10 Minuten
-
-        MainApp.logger.info("***** EventConfig START *****");
-        FirebirdEventConfig eventconfig = (FirebirdEventConfig) ApplicationConfig.getObject("eventconfig");
-        // Eventsteuerung
-        ArrayList list = new ArrayList();
-        String[] eventnames = null;
-        for (EventConfig evc : eventconfig.getEventConfigs()) {
-            String eventname = evc.getEventName();
-            MainApp.logger.info("Eventname: " + eventname);
-            list.add(evc.getEventName());
-        }
-        eventnames = (String[]) list.toArray(new String[0]);
-        list = null;
-        MainApp.logger.info("***** EventConfig ENDE *****");
-
         SchedulerFactory sf = null;
         Scheduler sched = null;
+
+        ExecutorService tPool = Executors.newFixedThreadPool(10);
         try {
-            Properties p = new Properties();
-            p.setProperty("org.quartz.scheduler.instanceName", "QuartzScheduler");
-            p.setProperty("org.quartz.scheduler.instanceId", "1");
-            p.setProperty("org.quartz.scheduler.rmi.export", "false");
-            p.setProperty("org.quartz.scheduler.rmi.proxy", "false");
-            p.setProperty("org.quartz.threadPool.class", "org.quartz.simpl.SimpleThreadPool");
-            p.setProperty("org.quartz.threadPool.threadCount", "4");
-            p.setProperty("org.quartz.threadPool.threadPriority", "5");
-            p.setProperty("org.quartz.jobStore.class", "org.quartz.simpl.RAMJobStore");
 
-            sf = new StdSchedulerFactory(p);
-            sched = sf.getScheduler();
+            FirebirdDbPool.setMinPoolSize(1);
+            FirebirdDbPool.setMaxPoolSize(30);
+            FirebirdDbPool.setMaxIdleTime(1000 * 20);
 
-            CronTrigger trigger = null;
-            JobDetail job = null;
-            Date dt = null;
+            FirebirdDbPool.createInstance();
 
-            // Spoolcheckerupload job
-            job = new JobDetail("spoolcheck_job", "group", SpoolcheckUploadJob.class);
-            //job.setJobDataMap(jobDataMap);
-            trigger = new CronTrigger("spoolchecker_trigger", "group", "spoolcheck_job", "group", "0 * * * * ?");
-            sched.addJob(job, true);
-            dt = sched.scheduleJob(trigger);
-            MainApp.logger.info("SpoolcheckUploadJob: " + dt.toString());
+            WebsyncEventManager.setJobCheckInterval(30 * 1000);
+            FileEventManager.setJobCheckInterval(30 * 1000);
 
-            // CDHBestand job
-            if (!ApplicationConfig.getValue("cdh.artbestand_cron", "").equals("")) {
-                job = new JobDetail("cdhartbestand_job", "group", CDHArtBestandJob.class);
-                //job.setJobDataMap(jobDataMap);
-                trigger = new CronTrigger("cdhbestand_trigger", "group", "cdhartbestand_job", "group", ApplicationConfig.getValue("cdh.artbestand_cron", "0 * * * * ?"));
+            System.setProperty("complex.axis.default.timeout", String.valueOf(1000 * 60 * 10)); // 10 Minuten
+
+            MainApp.logger.info("***** EventConfig START *****");
+            FirebirdEventConfig eventconfig = (FirebirdEventConfig) ApplicationConfig.getObject("eventconfig");
+            // Eventsteuerung
+            ArrayList list = new ArrayList();
+            String[] eventnames = null;
+            for (EventConfig evc : eventconfig.getEventConfigs()) {
+                String eventname = evc.getEventName();
+                MainApp.logger.info("Eventname: " + eventname);
+                list.add(evc.getEventName());
+            }
+            eventnames = (String[]) list.toArray(new String[0]);
+            list = null;
+            MainApp.logger.info("***** EventConfig ENDE *****");
+
+            try {
+                Properties p = new Properties();
+                p.setProperty("org.quartz.scheduler.instanceName", "QuartzScheduler");
+                p.setProperty("org.quartz.scheduler.instanceId", "1");
+                p.setProperty("org.quartz.scheduler.rmi.export", "false");
+                p.setProperty("org.quartz.scheduler.rmi.proxy", "false");
+                p.setProperty("org.quartz.threadPool.class", "org.quartz.simpl.SimpleThreadPool");
+                p.setProperty("org.quartz.threadPool.threadCount", "4");
+                p.setProperty("org.quartz.threadPool.threadPriority", "5");
+                p.setProperty("org.quartz.jobStore.class", "org.quartz.simpl.RAMJobStore");
+
+                sf = new StdSchedulerFactory(p);
+                sched = sf.getScheduler();
+
+                CronTrigger trigger = null;
+                JobDetail job = null;
+                Date dt = null;
+
+                // Spoolcheckerupload job
+                final String DEFAULT_SPOOLCHECK_INTVERVAL = "0 * * * * ?";
+                String spoolcheckInterval = ApplicationConfig.getValue("spoolcheck_interval", DEFAULT_SPOOLCHECK_INTVERVAL);
+                try {
+                    trigger = new CronTrigger("spoolchecker_trigger", "group", "spoolcheck_job", "group", spoolcheckInterval);
+                } catch (ParseException ex) {
+                    throw new InitException("spoolcheck_interval prüfen. ", ex);
+                }
+
+                job = new JobDetail("spoolcheck_job", "group", SpoolcheckUploadJob.class);
                 sched.addJob(job, true);
                 dt = sched.scheduleJob(trigger);
-                MainApp.logger.info("CDHArtBestandJob: " + dt.toString());
-            } else {
-                MainApp.logger.warn("CDHArtBestandJob wird nicht gestartet. Keine Einstellung für 'cdh.artbestand_cron' gesetzt.");
+                MainApp.logger.info("SpoolcheckUploadJob: " + dt.toString());
+
+                // CDHBestand job
+                if (!ApplicationConfig.getValue("cdh.artbestand_cron", "").equals("")) {
+                    job = new JobDetail("cdhartbestand_job", "group", CDHArtBestandJob.class);
+                    //job.setJobDataMap(jobDataMap);
+                    trigger = new CronTrigger("cdhbestand_trigger", "group", "cdhartbestand_job", "group", ApplicationConfig.getValue("cdh.artbestand_cron", "0 * * * * ?"));
+                    sched.addJob(job, true);
+                    dt = sched.scheduleJob(trigger);
+                    MainApp.logger.info("CDHArtBestandJob: " + dt.toString());
+                } else {
+                    MainApp.logger.warn("CDHArtBestandJob wird nicht gestartet. Keine Einstellung für 'cdh.artbestand_cron' gesetzt.");
+                }
+
+                // CDHZulauf job
+                if (!ApplicationConfig.getValue("cdh.zulaufinfo_cron", "").equals("")) {
+                    job = new JobDetail("cdhzulaufinfo_job", "group", CDHZulaufinfoJob.class);
+                    trigger = new CronTrigger("cdhzulaufinfo_trigger", "group", "cdhzulaufinfo_job", "group", ApplicationConfig.getValue("cdh.zulaufinfo_cron", "0 0 0 * * ?"));
+                    sched.addJob(job, true);
+                    dt = sched.scheduleJob(trigger);
+                    MainApp.logger.info("CDHZulaufinfo: " + dt.toString());
+                } else {
+                    MainApp.logger.warn("CDHZulaufinfo wird nicht gestartet. Keine Einstellung für 'cdh.zulaufinfo_cron' gesetzt.");
+
+                }
+
+                // ExcelBestandJob
+                if (!ApplicationConfig.getValue("excelbestandupload", "").equals("")) {
+                    job = new JobDetail("excelbestand_job", "group", ExcelBestandUploadJob.class);
+                    trigger = new CronTrigger("excelbestand_trigger", "group", "excelbestand_job", "group", ApplicationConfig.getValue("excelbestandupload", "0 0 * * * ?"));
+                    sched.addJob(job, true);
+                    dt = sched.scheduleJob(trigger);
+                    MainApp.logger.info("ExcelBestandUploadJob: " + dt.toString());
+                } else {
+                    MainApp.logger.warn("CDHZulaufinfo wird nicht gestartet. Keine Einstellung für 'excelbestandupload' gesetzt.");
+                }
+
+                sched.start();
+
+            } catch (ParseException ex) {
+                System.err.println("FatalError:" + ex.getMessage());
+                MainApp.logger.error(ex, ex);
+
+                throw new InitException(ex);
+            } catch (SchedulerException ex) {
+                System.err.println("FatalError:" + ex.getMessage());
+                MainApp.logger.error(ex, ex);
+
+                throw new InitException(ex);
             }
 
-            // CDHZulauf job
-            if (!ApplicationConfig.getValue("cdh.zulaufinfo_cron", "").equals("")) {
-                job = new JobDetail("cdhzulaufinfo_job", "group", CDHZulaufinfoJob.class);
-                trigger = new CronTrigger("cdhzulaufinfo_trigger", "group", "cdhzulaufinfo_job", "group", ApplicationConfig.getValue("cdh.zulaufinfo_cron", "0 0 0 * * ?"));
-                sched.addJob(job, true);
-                dt = sched.scheduleJob(trigger);
-                MainApp.logger.info("CDHZulaufinfo: " + dt.toString());
-            } else {
-                MainApp.logger.warn("CDHZulaufinfo wird nicht gestartet. Keine Einstellung für 'cdh.zulaufinfo_cron' gesetzt.");
+            Future wemFuture = null;
+            Future semFuture = null;
+            Future fileFuture = null;
 
-            }
-
-            // ExcelBestandJob
-            if (!ApplicationConfig.getValue("excelbestandupload", "").equals("")) {
-                job = new JobDetail("excelbestand_job", "group", ExcelBestandUploadJob.class);
-                trigger = new CronTrigger("excelbestand_trigger", "group", "excelbestand_job", "group", ApplicationConfig.getValue("excelbestandupload", "0 0 * * * ?"));
-                sched.addJob(job, true);
-                dt = sched.scheduleJob(trigger);
-                MainApp.logger.info("ExcelBestandUploadJob: " + dt.toString());
-            } else {
-                MainApp.logger.warn("CDHZulaufinfo wird nicht gestartet. Keine Einstellung für 'excelbestandupload' gesetzt.");
-            }
-
-            sched.start();
-
-        } catch (ParseException ex) {
-            System.err.println("FatalError:" + ex.getMessage());
-            MainApp.logger.error(ex, ex);
-
-        } catch (SchedulerException ex) {
-            System.err.println("FatalError:" + ex.getMessage());
-            MainApp.logger.error(ex, ex);
-        }
-
-        Future wemFuture = null;
-        Future semFuture = null;
-        Future fileFuture = null;
-
-        try {
             // Hauptschleife.... Todo Überwachung der EventManager....
             while (!this.isInterrupted()) {
                 try {
@@ -456,6 +469,10 @@ public class MainApp extends Thread {
                     MainApp.logger.error("Error", e);
                 }
             }
+
+        } catch (InitException ex) {
+            logger.fatal(ex, ex);
+
         } finally {
             tPool.shutdown(); // Disable new tasks from being submitted
             try {
@@ -477,6 +494,15 @@ public class MainApp extends Thread {
             if (!closedIsRunning) {
                 MainApp.logger.error("MainApplication unerwartet beendet...!");
             }
+
+            try {
+                if (sched != null) {
+                    sched.shutdown();
+                }
+            } catch (SchedulerException ignore) {
+                logger.warn(ignore, ignore);
+            }
+
             FirebirdDbPool.getInstance().poolShutdown();
         }
     }
