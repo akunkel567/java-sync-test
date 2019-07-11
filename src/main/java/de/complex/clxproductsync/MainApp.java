@@ -490,10 +490,6 @@ public class MainApp extends Thread {
                 Thread.currentThread().interrupt();
             }
 
-            if (!closedIsRunning) {
-                MainApp.logger.error("MainApplication unerwartet beendet...!");
-            }
-
             try {
                 if (sched != null) {
                     sched.shutdown();
@@ -503,6 +499,12 @@ public class MainApp extends Thread {
             }
 
             FirebirdDbPool.getInstance().poolShutdown();
+
+        }
+
+        if (!closedIsRunning) {
+            MainApp.logger.error("MainApplication unerwartet beendet...!");
+            throw new RuntimeException("MainApplication unerwartet beendet...!");
         }
     }
 
