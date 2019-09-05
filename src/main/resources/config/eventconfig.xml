@@ -229,5 +229,7 @@
                 
                 <event name="FARBENDETAIL" />
                 <event name="EAN" />
+                <event name="ZOLLTARIFSTATUS" />
+                <event name="ZOLLTARIFBERECHBASIS" />
 	</events>
 </eventconfig>
