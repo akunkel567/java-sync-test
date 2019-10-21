@@ -4,5 +4,6 @@
 		<mapping tablename="ada" pkey="adaid">
 		<field name="adaid">adaid</field>		
 		<field name="hausnr">number</field>		
+		<field name="fremdid">cdh_address_id</field>		
 	</mapping>
 </activerecord>
