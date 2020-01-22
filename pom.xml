@@ -9,7 +9,7 @@
    
 	<groupId>de.complex</groupId>
 	<artifactId>clxProductSync</artifactId>
-	<version>1.14.1-SNAPSHOT</version>
+	<version>1.14.1</version>
         
         <name>${project.artifactId} - ${project.version}</name>
 	
