@@ -385,7 +385,7 @@ public class ExcelBestandUpload extends Thread {
                     + " , IIF( coalesce(ARTGROESSEZULAUF.LIEFERKW,0) < F_KALENDERWOCHE('now'), coalesce(ARTGROESSEZULAUF.LIEFERKW,0) + 100, ARTGROESSEZULAUF.LIEFERKW)"
                     + " , ARTGROESSEZULAUF.STATUS"
                     + " FROM ARTGROESSEZULAUF"
-                    + " WHERE ARTGROESSEZULAUF.STATUS='" + Zulauf.STATUS_INDISPATCH + "'"
+                    + " WHERE UPPER(ARTGROESSEZULAUF.STATUS)=UPPER('" + Zulauf.STATUS_INDISPATCH + "')"
                     + " AND ARTGROESSEZULAUF.ARTGROESSEID = ?"
                     + " ORDER BY 3";
 
@@ -410,7 +410,7 @@ public class ExcelBestandUpload extends Thread {
                     + " , IIF( coalesce(ARTGROESSEZULAUF.LIEFERKW,0) < F_KALENDERWOCHE('now'), coalesce(ARTGROESSEZULAUF.LIEFERKW,0) + 100, ARTGROESSEZULAUF.LIEFERKW)"
                     + " , ARTGROESSEZULAUF.STATUS"
                     + " FROM ARTGROESSEZULAUF"
-                    + " WHERE ARTGROESSEZULAUF.STATUS='" + Zulauf.STATUS_ORDERED + "'"
+                    + " WHERE UPPER(ARTGROESSEZULAUF.STATUS)=UPPER('" + Zulauf.STATUS_ORDERED + "')"
                     + " AND ARTGROESSEZULAUF.ARTGROESSEID = ?"
                     + " ORDER BY 3";
 
