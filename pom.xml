@@ -3,8 +3,8 @@
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>de.complex</groupId>
-		<artifactId>ComplexParentPOMWithSvnInfo</artifactId>
-		<version>1.0.1</version>
+		<artifactId>ComplexParentPOM</artifactId>
+		<version>1.0.3</version>
 	</parent>
    
 	<groupId>de.complex</groupId>
