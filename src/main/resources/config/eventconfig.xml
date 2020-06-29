@@ -202,5 +202,6 @@
         <event name="EAN" />
         <event name="ZOLLTARIFSTATUS" />
         <event name="ZOLLTARIFBERECHBASIS" />
+        <event name="MWST" />
     </events>
 </eventconfig>
