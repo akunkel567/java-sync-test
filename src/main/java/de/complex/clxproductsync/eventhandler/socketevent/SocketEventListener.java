@@ -14,6 +14,8 @@ import java.io.IOException;
 import java.net.UnknownHostException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
+import de.complex.util.lang.StringTool;
 import org.apache.log4j.Logger;
 
 /**
@@ -49,7 +51,7 @@ public class SocketEventListener extends Thread {
         SocketEventListener.logger.info("SocketEventListener run...!");
 
         try {
-            String inputLine;
+            String inputString;
             int len;
             byte[] b = new byte[100];
             while (!this.isInterrupted()) {
@@ -57,15 +59,25 @@ public class SocketEventListener extends Thread {
                     if ((len = inputStream.read(b)) == -1) {
                         break;
                     }
-                    inputLine = new String(b, 0, len).replaceAll("\n", "");
-                    inputLine = inputLine.replaceAll("\r", "");
+                    inputString = new String(b, 0, len);
+                    SocketEventListener.logger.debug("inputString :" + inputString + ":");
+                    inputString = StringTool.getNotNullTrim(inputString);
+                    SocketEventListener.logger.debug("inputString trim :" + inputString + ":");
 
-                    if (inputLine.equalsIgnoreCase(SocketEventTypes.PONG)) {
-                        SocketEventListener.logger.debug("Pong");
-                        socketEventManager.pong();
-                    } else {
-                        SocketEventListener.logger.debug("addEvent - inputLine :" + inputLine + ":");
-                        socketEventManager.addEvent(inputLine);
+                    String lines[] = inputString.split("\n");
+                    for (String line : lines) {
+                        SocketEventListener.logger.debug("line :" + line + ":");
+                        line = StringTool.getNotNullTrim(line);
+
+                        if (!StringTool.isEmpty(line)) {
+                            if (line.equalsIgnoreCase(SocketEventTypes.PONG)) {
+                                SocketEventListener.logger.debug("Pong");
+                                socketEventManager.pong();
+                            } else {
+                                SocketEventListener.logger.debug("addEvent :" + line + ":");
+                                socketEventManager.addEvent(line);
+                            }
+                        }
                     }
                 } catch (InterruptedIOException e) {
                     //nochmal versuchen
