@@ -45,7 +45,10 @@
 		<wrapper.ntservice.account.prompt>false</wrapper.ntservice.account.prompt>
 		<wrapper.ntservice.password.prompt>${clxtest.ntservice.password.prompt}</wrapper.ntservice.password.prompt>
 		<wrapper.ntservice.starttype>${clxtest.ntservice.starttype}</wrapper.ntservice.starttype>
-		-->		
+		-->	
+		
+		<maven.compiler.source>1.8</maven.compiler.source>
+		<maven.compiler.target>1.8</maven.compiler.target>
 	</properties>
 	
 	<profiles>
