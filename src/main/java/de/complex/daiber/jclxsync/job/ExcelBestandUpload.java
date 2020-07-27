@@ -9,39 +9,16 @@
 package de.complex.daiber.jclxsync.job;
 
 import de.complex.clxproductsync.MainApp;
-import de.complex.database.SQLLog;
-import de.complex.database.firebird.FirebirdDb;
-import de.complex.database.firebird.FirebirdDbPool;
 import de.complex.clxproductsync.exception.ClxUncaughtExceptionHandler;
 import de.complex.clxproductsync.soap.RemoteCallException;
 import de.complex.clxproductsync.soap.SoapHandler;
 import de.complex.clxproductsync.tools.ClxFtp;
+import de.complex.database.SQLLog;
+import de.complex.database.firebird.FirebirdDb;
+import de.complex.database.firebird.FirebirdDbPool;
 import de.complex.tools.config.ApplicationConfig;
 import de.complex.util.lang.StringTool;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.text.DecimalFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Properties;
-import java.util.ResourceBundle;
-
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.net.ftp.FTPClient;
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -50,6 +27,16 @@ import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.supercsv.io.CsvMapWriter;
 import org.supercsv.io.ICsvMapWriter;
 import org.supercsv.prefs.CsvPreference;
+
+import java.io.*;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 /**
  *
@@ -60,6 +47,9 @@ public class ExcelBestandUpload extends Thread {
     private static Logger logger = Logger.getLogger(ExcelBestandUpload.class);
     public static SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd ss:SSS");
     private Properties prop;
+
+    public static final String INVENTUR_DE = "in Inventur";
+    public static final String INVENTUR_EN = "in inventory";
 
     /**
      * Creates a new instance of BundlePreisUpload
@@ -179,14 +169,23 @@ public class ExcelBestandUpload extends Thread {
                                     data.put(header[8], rs.getString("ARTIKELBEZECIHNUNG") == null ? "" : rs.getString("ARTIKELBEZECIHNUNG"));
                                     data.put(header[9], rs.getString("KURZBESCHREIBUNG") == null ? "" : rs.getString("KURZBESCHREIBUNG")); // J
 
-                                    // K
                                     DecimalFormat dformat = new DecimalFormat("########0");
-                                    try {
-                                        int lagermenge = rs.getInt("LAGERMENGE");
-                                        data.put(header[10], dformat.format(lagermenge));
-                                    } catch (Exception e) {
-                                        ExcelBestandUpload.logger.error(e, e);
-                                        data.put(header[10], "N/A");
+                                    Integer bestandAuslaufartikel = getBestandAuslaufartikel(con, rs.getInt("ARTGROESSEID"));
+                                    if(bestandAuslaufartikel != null && bestandAuslaufartikel.intValue() > 0){
+                                        if(!"de_DE".equalsIgnoreCase(sLocale)){
+                                            data.put(header[10], INVENTUR_EN);
+                                        } else {
+                                            data.put(header[10], INVENTUR_DE);
+                                        }
+                                    } else {
+                                        // K
+                                        try {
+                                            int lagermenge = rs.getInt("LAGERMENGE");
+                                            data.put(header[10], dformat.format(lagermenge));
+                                        } catch (Exception e) {
+                                            ExcelBestandUpload.logger.error(e, e);
+                                            data.put(header[10], "N/A");
+                                        }
                                     }
 
                                     // L und M, je Customer unterschiedlich
@@ -371,6 +370,45 @@ public class ExcelBestandUpload extends Thread {
         ResourceBundle labels = ResourceBundle.getBundle("ExportLabelsBundle", currentLocale, loader, ResourceBundle.Control.getNoFallbackControl(ResourceBundle.Control.FORMAT_PROPERTIES));
 
         return labels.getString(key);
+    }
+
+    private Integer getBestandAuslaufartikel(Connection con, int artgroesseid) throws SQLException {
+
+        Integer bestand = null;
+
+        java.sql.PreparedStatement pStmt = null;
+        java.sql.ResultSet rs = null;
+
+        String sql = "select agb.bestand"
+                + " from artgroesse ag"
+                + " inner join artfarbe af on af.artfarbeid = ag.artfarbeid"
+                + " inner join hauptartgroesse hag on hag.hauptartgroesseid = ag.hauptartgroesseid"
+                + " inner join art a on a.artid = af.artid"
+                + " inner join art a_a on a_a.name = a.name || '_A'"
+                + " inner join artfarbe af_a on af_a.farbenid = af.farbenid"
+                + " inner join hauptartgroesse hag_a on hag_a.artid = a_a.artid and hag_a.groesseid = hag.groesseid"
+                + " inner join artgroesse ag_a on ag_a.hauptartgroesseid = hag_a.hauptartgroesseid and ag_a.artfarbeid = af_a.artfarbeid"
+                + " left join artgroessebestand agb on agb.artgroesseid = ag_a.artgroesseid"
+                + " where ag.artgroesseid = ?";
+
+        try {
+            pStmt = con.prepareStatement(sql);
+            pStmt.setInt(1, artgroesseid);
+
+            rs = pStmt.executeQuery();
+
+            if (rs.next()) {
+                bestand = rs.getInt(1);
+
+                if (rs.wasNull()) {
+                    return null;
+                }
+            }
+
+            return bestand;
+        } finally {
+            FirebirdDb.close(rs, pStmt, null);
+        }
     }
 
     private Zulauf getNaechsteZulaufinfo(Connection con, int artgroesseid) throws SQLException {
