@@ -171,7 +171,8 @@ public class ExcelBestandUpload extends Thread {
 
                                     DecimalFormat dformat = new DecimalFormat("########0");
                                     Integer bestandAuslaufartikel = getBestandAuslaufartikel(con, rs.getInt("ARTGROESSEID"));
-                                    if(bestandAuslaufartikel != null && bestandAuslaufartikel.intValue() > 0){
+
+                                    if( "FARE".equalsIgnoreCase(ApplicationConfig.getValue("customer", "")) && bestandAuslaufartikel != null && bestandAuslaufartikel.intValue() > 0){
                                         if(!"de_DE".equalsIgnoreCase(sLocale)){
                                             data.put(header[10], INVENTUR_EN);
                                         } else {
