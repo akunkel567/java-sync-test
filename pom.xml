@@ -9,9 +9,9 @@
    
 	<groupId>de.complex</groupId>
 	<artifactId>clxProductSync</artifactId>
-	<version>2.13</version>
+	<version>2.14-SNAPSHOT</version>
         
-        <name>${project.artifactId} - ${project.version}</name>
+    <name>${project.artifactId} - ${project.version}</name>
 	
 	<packaging>jar</packaging>
 	
