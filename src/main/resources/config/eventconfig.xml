@@ -203,5 +203,8 @@
         <event name="ZOLLTARIFSTATUS" />
         <event name="ZOLLTARIFBERECHBASIS" />
         <event name="MWST" />
+        <event name="ARTEKPREISTYP" />
+        <event name="ARTLIEFERANTPREISE" />
+        <event name="WAEHRUNGSFAKTOREK" />
     </events>
 </eventconfig>
