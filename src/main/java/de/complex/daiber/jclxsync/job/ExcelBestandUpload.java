@@ -172,8 +172,8 @@ public class ExcelBestandUpload extends Thread {
                                     DecimalFormat dformat = new DecimalFormat("########0");
                                     Integer bestandAuslaufartikel = getBestandAuslaufartikel(con, rs.getInt("ARTGROESSEID"));
 
-                                    if( "FARE".equalsIgnoreCase(ApplicationConfig.getValue("customer", "")) && bestandAuslaufartikel != null && bestandAuslaufartikel.intValue() > 0){
-                                        if(!"de_DE".equalsIgnoreCase(sLocale)){
+                                    if ("FARE".equalsIgnoreCase(ApplicationConfig.getValue("customer", "")) && bestandAuslaufartikel != null && bestandAuslaufartikel.intValue() > 0) {
+                                        if (!"de_DE".equalsIgnoreCase(sLocale)) {
                                             data.put(header[10], INVENTUR_EN);
                                         } else {
                                             data.put(header[10], INVENTUR_DE);
@@ -199,6 +199,21 @@ public class ExcelBestandUpload extends Thread {
                                                 data.put(header[12], naechsterZulauf.getKalenderwoche()); // M
                                             } else {
                                                 data.put(header[11], "");
+                                                data.put(header[12], "");
+                                            }
+                                        } else {
+                                            data.put(header[11], "");
+                                            data.put(header[12], "");
+                                        }
+                                    } else if ("MBW".equalsIgnoreCase(ApplicationConfig.getValue("customer", ""))) {
+                                        Zulauf naechsterZulauf = getNaechsteZulaufinfo(con, rs.getInt("ARTGROESSEID"));
+
+                                        if (naechsterZulauf != null) {
+                                            if (naechsterZulauf.isStatusIndispatch()) {
+                                                data.put(header[11], naechsterZulauf.getMenge()); // L
+                                                data.put(header[12], naechsterZulauf.getKalenderwoche()); // M
+                                            } else {
+                                                data.put(header[11], "");
                                                 data.put(header[12], naechsterZulauf.getKalenderwoche());
                                             }
                                         } else {
@@ -206,7 +221,6 @@ public class ExcelBestandUpload extends Thread {
                                             data.put(header[12], "");
                                         }
                                     } else {
-
                                         try {
                                             int zulaufmenge_sh = rs.getInt("ZULAUFMENGE_SH");
                                             if (zulaufmenge_sh != 0) {
@@ -222,13 +236,13 @@ public class ExcelBestandUpload extends Thread {
                                         try {
                                             final String STATUS_DE = "Lieferung nicht vor KW";
                                             final String STATUS_EN = "Further addition to stock app. week";
-                                        
+
                                             String zulaufstatusSH = rs.getString("ZULAUFSTATUS_SH");
-                                            
-                                            if(!"de_DE".equalsIgnoreCase(sLocale)){
-                                               zulaufstatusSH = zulaufstatusSH.replaceAll(STATUS_DE, STATUS_EN);
+
+                                            if (!"de_DE".equalsIgnoreCase(sLocale)) {
+                                                zulaufstatusSH = zulaufstatusSH.replaceAll(STATUS_DE, STATUS_EN);
                                             }
-                                            
+
                                             data.put(header[12], zulaufstatusSH);
                                         } catch (Exception e) {
                                             ExcelBestandUpload.logger.error(e, e);
