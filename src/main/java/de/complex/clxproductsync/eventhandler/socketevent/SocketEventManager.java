@@ -24,6 +24,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
+
+import de.complex.util.lang.StringTool;
 import org.apache.log4j.Logger;
 
 /**
@@ -92,16 +94,21 @@ public class SocketEventManager extends Thread {
             Date nextPing = new Date(System.currentTimeMillis() + PINGINVERVAL * 1000L);
             Date checkAll = new Date(System.currentTimeMillis() + CHECKINVERVAL * 1000L);
 
-            try {
-                if (!this.isConnected()) {
-                    this.openConnection();
-                }
+            // keine SocketConnection wenn socketURL nicht gepflegt
+            if(!StringTool.isEmpty(this.socketURL)) {
+                try {
+                    if (!this.isConnected()) {
+                        this.openConnection();
+                    }
 
-                if (!this.isConnected()) {
-                    this.resetConnection();
+                    if (!this.isConnected()) {
+                        this.resetConnection();
+                    }
+                } catch (Exception e) {
+                    SocketEventManager.logger.error(e, e);
                 }
-            } catch (Exception e) {
-                SocketEventManager.logger.error(e, e);
+            } else {
+                SocketEventManager.logger.warn("SocketUrl ist nicht gepflegt. Es wird keine Socket-Verbindung aufgebaut!");
             }
 
             while (!this.isInterrupted()) {
@@ -142,13 +149,15 @@ public class SocketEventManager extends Thread {
                         // nix...! todo
                     }
 
-                    try {
-                        if (nextPing.before(new Date())) {
-                            nextPing = new Date(System.currentTimeMillis() + PINGINVERVAL * 1000L);
-                            this.ping();
+                    if(!StringTool.isEmpty(this.socketURL)) {
+                        try {
+                            if (nextPing.before(new Date())) {
+                                nextPing = new Date(System.currentTimeMillis() + PINGINVERVAL * 1000L);
+                                this.ping();
+                            }
+                        } catch (Exception e) {
+                            // nix
                         }
-                    } catch (Exception e) {
-                        // nix
                     }
 
                     try {
@@ -209,8 +218,7 @@ public class SocketEventManager extends Thread {
     }
 
     public boolean openConnection() {
-        SocketEventManager.logger.info("try to open a SocketConnection...");
-        SocketEventManager.logger.info(String.format("Connection Info Host:%s Port:%s User:%s Pass:%s", this.socketURL, this.socketPort, this.socketUser, this.socketPass));
+        SocketEventManager.logger.info(String.format("open SocketConnection Info Host:%s Port:%s User:%s Pass:%s", this.socketURL, this.socketPort, this.socketUser, this.socketPass));
 
         if (connResetTime != null) {
             SocketEventManager.logger.error("SocketConnection Reset Time :" + connResetTime.toString());

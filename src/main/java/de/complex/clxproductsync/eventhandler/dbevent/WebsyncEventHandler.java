@@ -47,7 +47,7 @@ public class WebsyncEventHandler {
 //		return (EventConfig) this.eventConfigs.get(eventName);
 //	}
     public void run(String eventName) {
-        WebsyncEventHandler.logger.info("ActionName: " + eventName + " start");
+        WebsyncEventHandler.logger.debug("ActionName: " + eventName + " start");
         ActiveRecord ar = null;
         ActiveRecord[] ars = null;
         String xml = null;
@@ -78,7 +78,7 @@ public class WebsyncEventHandler {
                 for (SnJob job : snJobs) {
 
                     currJob = job;
-                    WebsyncEventHandler.logger.info("Job start - " + job.toString());
+                    WebsyncEventHandler.logger.debug("Job start - " + job.toString());
                     WebsyncEventHandler.logger.debug("Debugcount: " + debugcount + " snjobCount: " + snJobs.length);
                     debugcount++;
 
@@ -93,7 +93,7 @@ public class WebsyncEventHandler {
 
                         SoapHandler.sendXmlData(job, xmlConverter.fromBlankActiveRecord(ar, job.getSnJobFremdId()));
                         snjobDAO.setSnJobDone(job);
-                        WebsyncEventHandler.logger.info("Job done - " + job.toString() + " done");
+                        WebsyncEventHandler.logger.debug("Job done - " + job.toString() + " done");
                     } else {
                         // Insert und Update
                         Connection con = null;
@@ -107,7 +107,7 @@ public class WebsyncEventHandler {
 
                                 SoapHandler.sendXmlData(job, xml);
                                 snjobDAO.setSnJobDone(job);
-                                WebsyncEventHandler.logger.info("Job done - " + job.toString());
+                                WebsyncEventHandler.logger.info(String.format("Job done - snjobid: %d eventname: %s fremdid: %d",job.getSnJobId(), job.getEventName(), job.getSnJobFremdId()));
                             } else {
                                 snjobDAO.setSnJobDoneWhileNotExists(job);
                                 WebsyncEventHandler.logger.warn("Job done, Datensatz nicht vorhanden - " + job);

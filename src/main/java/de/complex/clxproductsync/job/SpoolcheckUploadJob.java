@@ -21,12 +21,12 @@ public class SpoolcheckUploadJob implements StatefulJob {
 
     public void execute(JobExecutionContext context) throws JobExecutionException {
         try {
-            SpoolcheckUploadJob.logger.info("SpoolcheckUploadJob execute");
+            SpoolcheckUploadJob.logger.debug("SpoolcheckUploadJob execute");
             JobDataMap dataMap = context.getJobDetail().getJobDataMap();
             Properties prop = (Properties) dataMap.get("prop");
 
             new SpoolcheckUpload(prop).start();
-            SpoolcheckUploadJob.logger.info("SpoolcheckUploadJob done");
+            SpoolcheckUploadJob.logger.debug("SpoolcheckUploadJob done");
         } catch (Exception e) {
             SpoolcheckUploadJob.logger.error("Error in SpoolcheckUploadJob!");
             JobExecutionException e2 = new JobExecutionException(e);

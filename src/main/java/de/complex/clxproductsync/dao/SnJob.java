@@ -125,6 +125,13 @@ public class SnJob {
 
     @Override
     public String toString() {
-        return "SnJob {snjobid " + snJobId + ", eventName " + eventName + ", snJobFremdId " + snJobFremdId + ", snJobTyp " + snJobTyp + ", fileName " + fileName + "}";
+        return "SnJob{" +
+                "snJobId=" + snJobId +
+                ", eventName='" + eventName + '\'' +
+                ", snJobFremdId=" + snJobFremdId +
+                ", snJobTyp='" + snJobTyp + '\'' +
+                ", fileName='" + fileName + '\'' +
+                ", herkunft='" + herkunft + '\'' +
+                '}';
     }
 }

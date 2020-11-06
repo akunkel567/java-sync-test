@@ -47,7 +47,7 @@ public class SpoolcheckUpload extends Thread {
     @Override
     public void run() {
         Thread.currentThread().setName("SpoolcheckUpload " + sdf.format(new Date()));
-        SpoolcheckUpload.logger.info("SpoolcheckUpload Upload run");
+        SpoolcheckUpload.logger.debug("SpoolcheckUpload Upload run");
         Thread.setDefaultUncaughtExceptionHandler(new ClxUncaughtExceptionHandler());
 
         FirebirdDb db = null;
