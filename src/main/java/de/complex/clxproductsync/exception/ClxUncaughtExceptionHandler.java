@@ -7,7 +7,6 @@ package de.complex.clxproductsync.exception;
 import org.apache.log4j.Logger;
 
 /**
- *
  * @author kunkel
  */
 public class ClxUncaughtExceptionHandler implements Thread.UncaughtExceptionHandler {
@@ -15,6 +14,6 @@ public class ClxUncaughtExceptionHandler implements Thread.UncaughtExceptionHand
     Logger logger = Logger.getLogger(ClxUncaughtExceptionHandler.class);
 
     public void uncaughtException(Thread t, Throwable e) {
-        logger.error(t.getName(), e);
+        logger.fatal(t.getName(), e);
     }
 }
