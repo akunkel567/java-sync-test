@@ -7,14 +7,12 @@ package de.complex.clxproductsync.test;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.Properties;
-import org.quartz.CronTrigger;
-import org.quartz.JobDataMap;
-import org.quartz.JobDetail;
-import org.quartz.Scheduler;
-import org.quartz.SchedulerException;
-import org.quartz.SchedulerFactory;
-import org.quartz.Trigger;
+
+import org.quartz.*;
 import org.quartz.impl.StdSchedulerFactory;
+
+import static org.quartz.JobBuilder.newJob;
+import static org.quartz.TriggerBuilder.newTrigger;
 
 /**
  *
@@ -70,19 +68,15 @@ public class QuartzTest extends Thread {
             jobDataMap.put("prop", p);
 
             // CDHBestand job
-            job = new JobDetail("cdhartbestand_job", "group", TestStatefulJob.class);
-            job.setJobDataMap(jobDataMap);
-            trigger = new CronTrigger("cdhbestand_trigger", "group", "cdhartbestand_job", "group", "0/2 * * * * ?");
-            sched.addJob(job, true);
-            dt = sched.scheduleJob(trigger);
+            job = newJob(TestStatefulJob.class).withIdentity("cdhartbestand_job", "group").usingJobData(jobDataMap).build();
+            trigger = newTrigger().forJob(job).withIdentity("cdhbestand_trigger", "group").withSchedule(CronScheduleBuilder.cronSchedule("0/2 * * * * ?")).build();
+
+            dt = sched.scheduleJob(job, trigger);
             System.out.println("TestStatefulJob :" + dt.toString());
 
             sched.start();
 
         } catch (SchedulerException ex) {
-            System.err.println("FatalError:" + ex.getMessage());
-            ex.printStackTrace(System.err);
-        } catch (java.text.ParseException ex) {
             System.err.println("FatalError:" + ex.getMessage());
             ex.printStackTrace(System.err);
         }
@@ -93,9 +87,9 @@ public class QuartzTest extends Thread {
 
                 Trigger t = null;
                 try {
-                    t = sched.getTrigger("cdhbestand_trigger", "group");
+                    t = sched.getTrigger(new TriggerKey("cdhbestand_trigger", "group"));
                     if (t != null) {
-                        System.out.println(t.getFullName() + " naechster Start: " + t.getNextFireTime());
+                        System.out.println(t.getKey() + " naechster Start: " + t.getNextFireTime());
                     } else {
                         System.out.println(" kein cdhbestand_trigger aktiv");
                     }

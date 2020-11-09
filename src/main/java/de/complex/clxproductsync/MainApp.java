@@ -39,13 +39,11 @@ import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.log4j.Logger;
 import org.apache.log4j.xml.DOMConfigurator;
-import org.quartz.CronTrigger;
-import org.quartz.JobDetail;
-import org.quartz.Scheduler;
-import org.quartz.SchedulerException;
-import org.quartz.SchedulerFactory;
-import org.quartz.Trigger;
+import org.quartz.*;
 import org.quartz.impl.StdSchedulerFactory;
+
+import static org.quartz.JobBuilder.newJob;
+import static org.quartz.TriggerBuilder.newTrigger;
 
 /**
  *
@@ -320,24 +318,18 @@ public class MainApp extends Thread {
                 // Spoolcheckerupload job
                 final String DEFAULT_SPOOLCHECK_INTVERVAL = "0 * * * * ?";
                 String spoolcheckInterval = ApplicationConfig.getValue("spoolcheck_interval", DEFAULT_SPOOLCHECK_INTVERVAL);
-                try {
-                    trigger = new CronTrigger("spoolchecker_trigger", "group", "spoolcheck_job", "group", spoolcheckInterval);
-                } catch (ParseException ex) {
-                    throw new InitException("spoolcheck_interval prüfen. ", ex);
-                }
+                job = newJob(SpoolcheckUploadJob.class).withIdentity("spoolcheck_job", "group").build();
+                trigger = newTrigger().forJob(job).withIdentity("spoolchecker_trigger", "group").withSchedule(CronScheduleBuilder.cronSchedule(spoolcheckInterval)).build();
 
-                job = new JobDetail("spoolcheck_job", "group", SpoolcheckUploadJob.class);
-                sched.addJob(job, true);
-                dt = sched.scheduleJob(trigger);
+                dt = sched.scheduleJob(job, trigger);
                 MainApp.logger.info("SpoolcheckUploadJob: " + dt.toString());
 
                 // CDHBestand job
                 if (!ApplicationConfig.getValue("cdh.artbestand_cron", "").equals("")) {
-                    job = new JobDetail("cdhartbestand_job", "group", CDHArtBestandJob.class);
-                    //job.setJobDataMap(jobDataMap);
-                    trigger = new CronTrigger("cdhbestand_trigger", "group", "cdhartbestand_job", "group", ApplicationConfig.getValue("cdh.artbestand_cron", "0 * * * * ?"));
-                    sched.addJob(job, true);
-                    dt = sched.scheduleJob(trigger);
+                    job = newJob(CDHArtBestandJob.class).withIdentity("cdhartbestand_job", "group").build();
+                    trigger = newTrigger().forJob(job).withIdentity("cdhbestand_trigger", "group").withSchedule(CronScheduleBuilder.cronSchedule(ApplicationConfig.getValue("cdh.artbestand_cron", "0 * * * * ?"))).build();
+
+                    dt = sched.scheduleJob(job, trigger);
                     MainApp.logger.info("CDHArtBestandJob: " + dt.toString());
                 } else {
                     MainApp.logger.warn("CDHArtBestandJob wird nicht gestartet. Keine Einstellung für 'cdh.artbestand_cron' gesetzt.");
@@ -345,22 +337,21 @@ public class MainApp extends Thread {
 
                 // CDHZulauf job
                 if (!ApplicationConfig.getValue("cdh.zulaufinfo_cron", "").equals("")) {
-                    job = new JobDetail("cdhzulaufinfo_job", "group", CDHZulaufinfoJob.class);
-                    trigger = new CronTrigger("cdhzulaufinfo_trigger", "group", "cdhzulaufinfo_job", "group", ApplicationConfig.getValue("cdh.zulaufinfo_cron", "0 0 0 * * ?"));
-                    sched.addJob(job, true);
-                    dt = sched.scheduleJob(trigger);
+                    job = newJob(CDHZulaufinfoJob.class).withIdentity("cdhzulaufinfo_job", "group").build();
+                    trigger = newTrigger().forJob(job).withIdentity("cdhzulaufinfo_trigger", "group").withSchedule(CronScheduleBuilder.cronSchedule(ApplicationConfig.getValue("cdh.zulaufinfo_cron", "0 0 0 * * ?"))).build();
+
+                    dt = sched.scheduleJob(job, trigger);
                     MainApp.logger.info("CDHZulaufinfo: " + dt.toString());
                 } else {
                     MainApp.logger.warn("CDHZulaufinfo wird nicht gestartet. Keine Einstellung für 'cdh.zulaufinfo_cron' gesetzt.");
-
                 }
 
                 // ExcelBestandJob
                 if (!ApplicationConfig.getValue("excelbestandupload", "").equals("")) {
-                    job = new JobDetail("excelbestand_job", "group", ExcelBestandUploadJob.class);
-                    trigger = new CronTrigger("excelbestand_trigger", "group", "excelbestand_job", "group", ApplicationConfig.getValue("excelbestandupload", "0 0 * * * ?"));
-                    sched.addJob(job, true);
-                    dt = sched.scheduleJob(trigger);
+                    job = newJob(ExcelBestandUploadJob.class).withIdentity("excelbestand_job", "group").build();
+                    trigger = newTrigger().forJob(job).withIdentity("excelbestand_trigger", "group").withSchedule(CronScheduleBuilder.cronSchedule(ApplicationConfig.getValue("excelbestandupload", "0 0 * * * ?"))).build();
+
+                    dt = sched.scheduleJob(job, trigger);
                     MainApp.logger.info("ExcelBestandUploadJob: " + dt.toString());
                 } else {
                     MainApp.logger.warn("CDHZulaufinfo wird nicht gestartet. Keine Einstellung für 'excelbestandupload' gesetzt.");
@@ -368,11 +359,6 @@ public class MainApp extends Thread {
 
                 sched.start();
 
-            } catch (ParseException ex) {
-                System.err.println("FatalError:" + ex.getMessage());
-                MainApp.logger.error(ex, ex);
-
-                throw new InitException(ex);
             } catch (SchedulerException ex) {
                 System.err.println("FatalError:" + ex.getMessage());
                 MainApp.logger.error(ex, ex);
@@ -426,30 +412,30 @@ public class MainApp extends Thread {
 
                     Trigger t = null;
                     try {
-                        t = sched.getTrigger("spoolchecker_trigger", "group");
+                        t = sched.getTrigger(new TriggerKey("spoolchecker_trigger", "group"));
                         if (t != null) {
-                            MainApp.logger.debug(t.getFullName() + " naechster Start: " + t.getNextFireTime());
+                            MainApp.logger.debug(t.getKey() + " naechster Start: " + t.getNextFireTime());
                         } else {
                             MainApp.logger.debug(" kein spoolchecker_trigger aktiv");
                         }
 
-                        t = sched.getTrigger("cdhbestand_trigger", "group");
+                        t = sched.getTrigger(new TriggerKey("cdhbestand_trigger", "group"));
                         if (t != null) {
-                            MainApp.logger.debug(t.getFullName() + " naechster Start: " + t.getNextFireTime());
+                            MainApp.logger.debug(t.getKey() + " naechster Start: " + t.getNextFireTime());
                         } else {
                             MainApp.logger.debug(" kein cdhbestand_trigger aktiv");
                         }
 
-                        t = sched.getTrigger("cdhzulaufinfo_trigger", "group");
+                        t = sched.getTrigger(new TriggerKey("cdhzulaufinfo_trigger", "group"));
                         if (t != null) {
-                            MainApp.logger.debug(t.getFullName() + " naechster Start: " + t.getNextFireTime());
+                            MainApp.logger.debug(t.getKey() + " naechster Start: " + t.getNextFireTime());
                         } else {
                             MainApp.logger.debug(" kein cdhzulaufinfo_trigger aktiv");
                         }
 
-                        t = sched.getTrigger("excelbestand_trigger", "group");
+                        t = sched.getTrigger(new TriggerKey("excelbestand_trigger", "group"));
                         if (t != null) {
-                            MainApp.logger.debug(t.getFullName() + " naechster Start: " + t.getNextFireTime());
+                            MainApp.logger.debug(t.getKey() + " naechster Start: " + t.getNextFireTime());
                         } else {
                             MainApp.logger.debug(" kein excelbestand_trigger aktiv");
                         }
