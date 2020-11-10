@@ -188,6 +188,12 @@
 			<artifactId>quartz</artifactId>
 			<version>2.3.0</version>
 			<type>jar</type>
+			<exclusions>
+				<exclusion>
+					<groupId>com.zaxxer</groupId>
+					<artifactId>HikariCP-java6</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>de.complex.commons</groupId>
@@ -195,11 +201,19 @@
 			<version>1.2.0</version>
 			<type>jar</type>
                         <exclusions>
-                            <exclusion>
-                                <groupId>org.firebirdsql.jdbc</groupId>
-                                <artifactId>jaybird-jdk16</artifactId>
-                            </exclusion>
-                        </exclusions>
+							<exclusion>
+								<groupId>org.firebirdsql.jdbc</groupId>
+								<artifactId>jaybird-jdk16</artifactId>
+							</exclusion>
+							<exclusion>
+								<groupId>de.complex.commons</groupId>
+								<artifactId>clxDatabase</artifactId>
+							</exclusion>
+							<exclusion>
+								<groupId>de.complex.commons</groupId>
+								<artifactId>clxLibrary</artifactId>
+							</exclusion>
+						</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>tanukisoft</groupId>
@@ -219,7 +233,7 @@
 		<dependency>
 			<groupId>de.complex.commons</groupId>
 			<artifactId>clxDatabase</artifactId>
-			<version>3.0</version>
+			<version>3.1-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>com.microsoft.sqlserver</groupId>
@@ -246,11 +260,11 @@
 			<artifactId>commons-cli</artifactId>
 			<version>1.2</version>
 		</dependency>
-                <dependency>
-                    <groupId>de.complex.commons</groupId>
-                    <artifactId>clxLibrary</artifactId>
-                    <version>1.3</version>
-                </dependency>
+		<dependency>
+			<groupId>de.complex.commons</groupId>
+			<artifactId>clxLibrary</artifactId>
+			<version>1.3</version>
+		</dependency>
 	</dependencies>
 
 </project>
