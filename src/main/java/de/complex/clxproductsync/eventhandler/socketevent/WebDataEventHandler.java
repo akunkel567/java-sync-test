@@ -63,7 +63,7 @@ public class WebDataEventHandler extends AbstractSocketEventHandler {
 
                     for (Snjobweb snjobweb : snjobwebs) {
                         currSnjobWeb = snjobweb;
-                        WebDataEventHandler.logger.info("Snjobweb start - " + snjobweb);
+                        WebDataEventHandler.logger.debug("Snjobweb start - " + snjobweb);
 
                         try {
                             XmlOut xmlOut = SoapHandler.getXmlData(snjobweb.getSnjobwebid());
