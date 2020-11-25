@@ -1,0 +1,104 @@
+<?xml version="1.0"?>
+<definitions name="Shipping" targetNamespace="urn:Shipping" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="urn:Shipping" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/" xmlns="http://schemas.xmlsoap.org/wsdl/">
+<types xmlns="http://schemas.xmlsoap.org/wsdl/">
+<schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="urn:Shipping">
+<complexType name="FakApi">
+<all>
+<element name="fakid" type="xsd:int"/>
+</all>
+</complexType>
+<complexType name="SoapAnswer">
+<all>
+<element name="status" type="xsd:int"/>
+<element name="msg" type="xsd:string"/>
+<element name="rowsok" type="xsd:int"/>
+<element name="Returnnok" type="tns:ReturnnokList"/>
+</all>
+</complexType>
+<complexType name="ReturnnokList">
+<complexContent>
+<restriction base="SOAP-ENC:Array">
+<attribute ref="SOAP-ENC:arrayType" wsdl:arrayType="tns:Returnnok[]"/>
+</restriction>
+</complexContent>
+</complexType>
+<complexType name="Returnnok">
+<all>
+<element name="id" type="xsd:int"/>
+<element name="table" type="xsd:string"/>
+</all>
+</complexType>
+</schema>
+</types>
+<message name="GetNewFaklistRequest">
+<part name="login" type="xsd:string"/>
+<part name="password" type="xsd:string"/>
+</message>
+<message name="GetNewFaklistResponse"/>
+<message name="GetFakRequest">
+<part name="login" type="xsd:string"/>
+<part name="password" type="xsd:string"/>
+<part name="fakspoolid" type="xsd:int"/>
+</message>
+<message name="GetFakResponse">
+<part name="FakApi" type="tns:FakApi"/>
+</message>
+<message name="SetFakOkRequest">
+<part name="login" type="xsd:string"/>
+<part name="password" type="xsd:string"/>
+<part name="fakspoolid" type="xsd:int"/>
+</message>
+<message name="SetFakOkResponse">
+<part name="SoapAnswer" type="tns:SoapAnswer"/>
+</message>
+<portType name="ShippingPort">
+<operation name="GetNewFaklist">
+<input message="tns:GetNewFaklistRequest"/>
+<output message="tns:GetNewFaklistResponse"/>
+</operation>
+<operation name="GetFak">
+<input message="tns:GetFakRequest"/>
+<output message="tns:GetFakResponse"/>
+</operation>
+<operation name="SetFakOk">
+<input message="tns:SetFakOkRequest"/>
+<output message="tns:SetFakOkResponse"/>
+</operation>
+</portType>
+<binding name="ShippingBinding" type="tns:ShippingPort">
+<soap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
+<operation name="GetNewFaklist">
+<soap:operation soapAction="urn:Shipping#ShippingApi#GetNewFaklist"/>
+<input>
+<soap:body use="encoded" namespace="urn:Shipping" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+</input>
+<output>
+<soap:body use="encoded" namespace="urn:Shipping" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+</output>
+</operation>
+<operation name="GetFak">
+<soap:operation soapAction="urn:Shipping#ShippingApi#GetFak"/>
+<input>
+<soap:body use="encoded" namespace="urn:Shipping" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+</input>
+<output>
+<soap:body use="encoded" namespace="urn:Shipping" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+</output>
+</operation>
+<operation name="SetFakOk">
+<soap:operation soapAction="urn:Shipping#ShippingApi#SetFakOk"/>
+<input>
+<soap:body use="encoded" namespace="urn:Shipping" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+</input>
+<output>
+<soap:body use="encoded" namespace="urn:Shipping" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+</output>
+</operation>
+</binding>
+<service name="ShippingService">
+<documentation/>
+<port name="ShippingPort" binding="tns:ShippingBinding">
+<soap:address location="http://backend.logitel.sw/shipping"/>
+</port>
+</service>
+</definitions>
