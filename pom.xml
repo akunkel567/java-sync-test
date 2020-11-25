@@ -73,6 +73,14 @@
 			</properties>
 		</profile>
 	</profiles>
+
+	<repositories>
+		<repository>
+			<id>mulesoft</id>
+			<name>mulesoft</name>
+			<url>https://repository.mulesoft.org</url>
+		</repository>
+	</repositories>
 	
 	<build>
 		<plugins>
@@ -215,9 +223,9 @@
                         </exclusions>
 		</dependency>
 		<dependency>
-			<groupId>org.tanukisoftware</groupId>
+			<groupId>tanukisoft</groupId>
 			<artifactId>wrapper</artifactId>
-			<version>3.3.6</version>
+			<version>3.5.43</version>
 		</dependency>
 		<dependency>
 			<groupId>net.sf.supercsv</groupId>
