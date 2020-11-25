@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<activerecord name="preisgruppe" tablename="preisgruppe"  pkey="preisgruppenid" procedure="false" >
-	<select_fields></select_fields>
-	<exclude_fields>sau sadt scu scdt</exclude_fields>
-</activerecord>

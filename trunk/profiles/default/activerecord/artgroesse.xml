@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<activerecord name="artgroesse" tablename="sel_artgroesse_for_web" pkey="artgroesseid" procedure="true">
-    <mapping tablename="artgroesse" pkey="artgroesseid">
-        <field name="artgroesseid">artgroesseid</field>
-    </mapping>
-</activerecord>
-
