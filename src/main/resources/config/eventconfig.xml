@@ -206,5 +206,7 @@
         <event name="ARTEKPREISTYP" />
         <event name="ARTLIEFERANTPREISE" />
         <event name="WAEHRUNGSFAKTOREK" />
+        <event name="EKBESTELLKOPF" />
+        <event name="ARTEKPREISTYPGROESSE" />
     </events>
 </eventconfig>
