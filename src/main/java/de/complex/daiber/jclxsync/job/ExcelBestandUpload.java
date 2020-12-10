@@ -259,6 +259,7 @@ public class ExcelBestandUpload extends Thread {
                                         Integer warengruppenId = getWarengruppenid(con, rs.getInt("ARTGROESSEID"));
 
                                         if (warengruppenIdsOhneZulaufinfo.contains(warengruppenId.toString())) {
+                                            data.put(header[10], dformat.format(0));
                                             data.put(header[11], "");
                                             data.put(header[12], "");
                                         }
