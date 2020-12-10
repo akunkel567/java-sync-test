@@ -39,7 +39,6 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
- *
  * @author Kunkel
  */
 public class ExcelBestandUpload extends Thread {
@@ -84,6 +83,11 @@ public class ExcelBestandUpload extends Thread {
                     ExcelBestandUpload.logger.debug("FirebirdDb Connection:" + con);
                     stmtSprachen = con.createStatement();
                     stmt = con.createStatement();
+
+                    ArrayList<String> warengruppenIdsOhneZulaufinfo = new ArrayList<String>();
+                    for (String wgrid : StringTool.getNotNullTrim(ApplicationConfig.getValue("excelbestand.warengruppenids_ohne_zulaufinfo", "")).split(",")) {
+                        warengruppenIdsOhneZulaufinfo.add(wgrid);
+                    }
 
                     String exportsprachenConf = StringTool.getNotNullTrim(ApplicationConfig.getValue("excelbestand.exportsprachen", ""));
 
@@ -154,7 +158,7 @@ public class ExcelBestandUpload extends Thread {
                                 int rowIndex = 0;
                                 while (rs.next()) {
                                     rowIndex++;
-                                    ExcelBestandUpload.logger.debug("row:" + rowIndex);
+                                    //ExcelBestandUpload.logger.debug("row:" + rowIndex);
 
                                     final HashMap<String, ? super Object> data = new HashMap<String, Object>();
 
@@ -205,6 +209,7 @@ public class ExcelBestandUpload extends Thread {
                                             data.put(header[11], "");
                                             data.put(header[12], "");
                                         }
+
                                     } else if ("MBW".equalsIgnoreCase(ApplicationConfig.getValue("customer", ""))) {
                                         Zulauf naechsterZulauf = getNaechsteZulaufinfo(con, rs.getInt("ARTGROESSEID"));
 
@@ -247,6 +252,15 @@ public class ExcelBestandUpload extends Thread {
                                         } catch (Exception e) {
                                             ExcelBestandUpload.logger.error(e, e);
                                             data.put(header[12], "N/A");
+                                        }
+                                    }
+
+                                    if (!warengruppenIdsOhneZulaufinfo.isEmpty()) {
+                                        Integer warengruppenId = getWarengruppenid(con, rs.getInt("ARTGROESSEID"));
+
+                                        if (warengruppenIdsOhneZulaufinfo.contains(warengruppenId.toString())) {
+                                            data.put(header[11], "");
+                                            data.put(header[12], "");
                                         }
                                     }
 
@@ -426,6 +440,39 @@ public class ExcelBestandUpload extends Thread {
         }
     }
 
+    private Integer getWarengruppenid(Connection con, int artgroesseid) throws SQLException {
+
+        Integer warengruppenid = null;
+
+        java.sql.PreparedStatement pStmt = null;
+        java.sql.ResultSet rs = null;
+
+        String sql = "select ART.WARENGRUPPENID\n" +
+                " from ARTGROESSE\n" +
+                " inner join ARTFARBE on ARTFARBE.ARTFARBEID = ARTGROESSE.ARTFARBEID\n" +
+                " inner join ART on ART.ARTID = ARTFARBE.ARTID\n" +
+                " where ARTGROESSE.ARTGROESSEID = ?";
+
+        try {
+            pStmt = con.prepareStatement(sql);
+            pStmt.setInt(1, artgroesseid);
+
+            rs = pStmt.executeQuery();
+
+            if (rs.next()) {
+                warengruppenid = rs.getInt(1);
+
+                if (rs.wasNull()) {
+                    return null;
+                }
+            }
+
+            return warengruppenid;
+        } finally {
+            FirebirdDb.close(rs, pStmt, null);
+        }
+    }
+
     private Zulauf getNaechsteZulaufinfo(Connection con, int artgroesseid) throws SQLException {
         java.sql.PreparedStatement pStmt = null;
         java.sql.ResultSet rs = null;
@@ -510,7 +557,7 @@ public class ExcelBestandUpload extends Thread {
 
         BasicConfigurator.configure();
         Logger.getRootLogger().setLevel(Level.DEBUG);
-        
+
         MainApp.debug = true;
 
 //        String iniFilename = "./conf/clxProductSync_fare.properties";
