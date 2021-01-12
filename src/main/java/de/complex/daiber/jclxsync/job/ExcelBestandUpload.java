@@ -130,6 +130,8 @@ public class ExcelBestandUpload extends Thread {
                             String kuerzel = rsSprachen.getString(2);
                             String sLocale = rsSprachen.getString(3);
 
+                            ExcelBestandUpload.logger.debug(String.format("export parameter. spracheid: %d, kuerzel: %s, sLocale: %s", spracheid, kuerzel, sLocale));
+
 //						Parameter Procedure
 //						P_MARKENID
 //						P_SPRACHEID
@@ -141,7 +143,11 @@ public class ExcelBestandUpload extends Thread {
                                 excelbestandShopid = "null";
                             }
 
-                            String sql = "SELECT * FROM SEL_EXPORT_SKULAGER(null," + spracheid + ",1,null,null," + excelbestandShopid + ")";
+                            String sql = "SELECT SEL_EXPORT_SKULAGER.*, ag.AUSLAUF as AG_AUSLAUF, af.AUSLAUF as AF_AUSLAUF, a.AUSLAUF as A_AUSLAUF " +
+                                    " FROM SEL_EXPORT_SKULAGER(null," + spracheid + ",1,null,null," + excelbestandShopid + ")" +
+                                    " inner join ARTGROESSE ag on ag.ARTGROESSEID=SEL_EXPORT_SKULAGER.ARTGROESSEID\n" +
+                                    " inner join artfarbe af on af.ARTFARBEID=ag.ARTFARBEID\n" +
+                                    " inner join art a on a.artid=af.ARTID";
                             ExcelBestandUpload.logger.debug("sql:" + sql);
                             rs = stmt.executeQuery(sql);
 
@@ -158,7 +164,10 @@ public class ExcelBestandUpload extends Thread {
                                 int rowIndex = 0;
                                 while (rs.next()) {
                                     rowIndex++;
-                                    //ExcelBestandUpload.logger.debug("row:" + rowIndex);
+
+                                    if ((rowIndex == 1) || (rowIndex % 1000 == 0)) {
+                                        ExcelBestandUpload.logger.debug("row:" + rowIndex);
+                                    }
 
                                     final HashMap<String, ? super Object> data = new HashMap<String, Object>();
 
@@ -265,6 +274,13 @@ public class ExcelBestandUpload extends Thread {
                                         }
                                     }
 
+                                    Boolean auslauf = (rs.getInt("AG_AUSLAUF") == 1) || (rs.getInt("AF_AUSLAUF") == 1) || (rs.getInt("A_AUSLAUF") == 1);
+                                    if (auslauf) {
+                                        data.put(header[13], "1");
+                                    } else {
+                                        data.put(header[13], "");
+                                    }
+
                                     try {
                                         writer.write(data, header);
                                     } catch (Exception e) {
@@ -273,7 +289,7 @@ public class ExcelBestandUpload extends Thread {
 
                                     }
                                 }
-
+                                ExcelBestandUpload.logger.debug("lastrow:" + rowIndex);
                             } finally {
                                 try {
                                     writer.close();
@@ -286,6 +302,7 @@ public class ExcelBestandUpload extends Thread {
                             try {
                                 ExcelBestandUpload.logger.info("SoapHandler.sendFileData: " + file.getAbsolutePath());
                                 SoapHandler.sendFileData(null, "bestandexcel", spracheid, file);
+                                ExcelBestandUpload.logger.info("SoapHandler.sendFileData: OK");
                             } catch (RemoteCallException ex) {
                                 ExcelBestandUpload.logger.error(ex, ex);
                             }
@@ -377,7 +394,9 @@ public class ExcelBestandUpload extends Thread {
         File exportLabelsBundle = new File(confPath + "/ExportLabelsBundle.properties");
         if (!exportLabelsBundle.exists()) {
             ExcelBestandUpload.logger.warn("ExportLabelsBundle.properties nicht vorhanden. Verwende DefaultHeader. Pfad " + exportLabelsBundle.getAbsolutePath());
-            return new String[]{"clxSKU-ID", "ERP-SKU-ID", "Neu", "Marke", "Artikel", "Farbe", "Farbkürzel", "Größe", "Artikelbezeichnung", "Kurzbeschreibung", "Lagermenge", "Zulaufmenge", "Zulaufstatus"};
+
+            //                   0            1             2      3        4          5        6             7        8                     9                   10            11             12             13
+            return new String[]{"clxSKU-ID", "ERP-SKU-ID", "Neu", "Marke", "Artikel", "Farbe", "Farbkürzel", "Größe", "Artikelbezeichnung", "Kurzbeschreibung", "Lagermenge", "Zulaufmenge", "Zulaufstatus", "Auslauf"};
         }
 
         File conf = new File(confPath);
@@ -402,6 +421,39 @@ public class ExcelBestandUpload extends Thread {
         return labels.getString(key);
     }
 
+ /*   private Boolean isSkuAuslauf(Connection con, int artgroesseid) throws SQLException {
+
+        Boolean auslauf = null;
+
+        java.sql.PreparedStatement pStmt = null;
+        java.sql.ResultSet rs = null;
+
+        String sql = "select ag.auslauf, af.auslauf, a.auslauf"
+                + " from artgroesse ag"
+                + " inner join artfarbe af on af.artfarbeid = ag.artfarbeid"
+                + " inner join art a on a.artid = af.artid"
+                + " where ag.artgroesseid = ?";
+
+        try {
+            pStmt = con.prepareStatement(sql);
+            pStmt.setInt(1, artgroesseid);
+
+            rs = pStmt.executeQuery();
+
+            if (rs.next()) {
+                auslauf = (rs.getInt(1) == 1) || (rs.getInt(2) == 1) || (rs.getInt(3) == 1);
+
+                if (rs.wasNull()) {
+                    return null;
+                }
+            }
+
+            return auslauf;
+        } finally {
+            FirebirdDb.close(rs, pStmt, null);
+        }
+    }
+*/
     private Integer getBestandAuslaufartikel(Connection con, int artgroesseid) throws SQLException {
 
         Integer bestand = null;

@@ -22,5 +22,6 @@ public enum HeaderKey {
     KURZBESCHREIBUNG,
     LAGERMENGE,
     ZULAUFMENGE,
-    ZULAUFSTATUS
+    ZULAUFSTATUS,
+    AUSLAUF
 }
