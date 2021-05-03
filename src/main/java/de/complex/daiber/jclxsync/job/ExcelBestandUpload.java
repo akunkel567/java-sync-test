@@ -13,10 +13,13 @@ import de.complex.clxproductsync.exception.ClxUncaughtExceptionHandler;
 import de.complex.clxproductsync.soap.RemoteCallException;
 import de.complex.clxproductsync.soap.SoapHandler;
 import de.complex.clxproductsync.tools.ClxFtp;
+import de.complex.clxproductsync.tools.SftpTransfer;
+import de.complex.clxproductsync.tools.SftpUploadException;
 import de.complex.database.SQLLog;
 import de.complex.database.firebird.FirebirdDb;
 import de.complex.database.firebird.FirebirdDbPool;
 import de.complex.tools.config.ApplicationConfig;
+import de.complex.transfer.sftp.SftpSession;
 import de.complex.util.lang.StringTool;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.BasicConfigurator;
@@ -151,7 +154,7 @@ public class ExcelBestandUpload extends Thread {
                             ExcelBestandUpload.logger.debug("sql:" + sql);
                             rs = stmt.executeQuery(sql);
 
-                            File file = new File("bestand.csv");
+                            File file = new File("bestand_" +  kuerzel + ".csv");
 
                             OutputStreamWriter osw = new OutputStreamWriter(new FileOutputStream(file), "UTF-8");
                             osw.write('\uFEFF');
@@ -298,68 +301,34 @@ public class ExcelBestandUpload extends Thread {
                                 }
 
                             }
+                        } while (rsSprachen.next());
+                    }
 
-                            try {
-                                ExcelBestandUpload.logger.info("SoapHandler.sendFileData: " + file.getAbsolutePath());
-                                SoapHandler.sendFileData(null, "bestandexcel", spracheid, file);
-                                ExcelBestandUpload.logger.info("SoapHandler.sendFileData: OK");
-                            } catch (RemoteCallException ex) {
-                                ExcelBestandUpload.logger.error(ex, ex);
+                    FirebirdDb.close(rsSprachen, null, null);
+                    rsSprachen = stmtSprachen.executeQuery(sqlBuilder.toString());
+
+                    if (!rsSprachen.next()) {
+                        ExcelBestandUpload.logger.error("Keine Sprachen mit dem Konfig-Wert (excelbestand.exportsprachen) '" + exportsprachenConf + "' gefunden!");
+                    } else {
+                        do {
+                            int spracheid = rsSprachen.getInt(1);
+                            logger.debug("do transfer - spracheid: " + spracheid);
+
+                            String kuerzel = rsSprachen.getString(2);
+                            String sLocale = rsSprachen.getString(3);
+                            File file = new File("bestand_" + kuerzel + ".csv");
+
+                            sendWithSoap(spracheid, file);
+                            sendWithFtp(kuerzel, file);
+
+                            if ("true".equalsIgnoreCase(ApplicationConfig.getValue("excelbestand.deleteTempFile", "false"))) {
+                                logger.debug("deleteFile: " + file);
+                                FileUtils.deleteQuietly(file);
                             }
-
-                            File ftpUploadFile = null;
-
-                            if (!ApplicationConfig.getValue("excelbestand.ftphost", "").equals("")) {
-                                ExcelBestandUpload.logger.info("ftpUpload: " + file.getAbsolutePath());
-                                try {
-                                    ExcelBestandUpload.logger.debug("file absolutePath: " + file.getAbsolutePath());
-                                    ExcelBestandUpload.logger.debug("file path: " + file.getPath());
-                                    ExcelBestandUpload.logger.debug("file name: " + file.getName());
-
-                                    ftpUploadFile = new File("bestand_" + rsSprachen.getString("KUERZEL") + ".csv");
-                                    ExcelBestandUpload.logger.debug(ftpUploadFile.getAbsolutePath() + " - " + ftpUploadFile.getName());
-
-                                    FileUtils.copyFile(file, ftpUploadFile);
-
-                                    ExcelBestandUpload.logger.debug("file: " + file);
-                                    ExcelBestandUpload.logger.debug("ftpUploadFile: " + ftpUploadFile);
-
-                                    String ftphost = ApplicationConfig.getValue("excelbestand.ftphost", "");
-                                    String username = ApplicationConfig.getValue("excelbestand.username", "");
-                                    String password = ApplicationConfig.getValue("excelbestand.password", "");
-                                    String remotepath = ApplicationConfig.getValue("excelbestand.remotepath", ".");
-                                    boolean passiveMode = Boolean.valueOf(ApplicationConfig.getValue("excelbestand.passivemode", "false"));
-
-                                    ClxFtp ftp = new ClxFtp(ftphost, username, password, passiveMode);
-                                    if (!ftp.uploadFile(ftpUploadFile, remotepath)) {
-                                        ExcelBestandUpload.logger.error("ftp Upload fehler");
-                                    }
-                                } catch (Exception e) {
-                                    ExcelBestandUpload.logger.error(e, e);
-                                }
-                            } else {
-                                ExcelBestandUpload.logger.debug("Kein Ftp-Upload. Ftp-Zugang nicht konfiguriert.");
-                            }
-
-                            try {
-                                if (file != null && file.exists()) {
-                                    file.delete();
-                                }
-                            } catch (Exception ignore) {
-                            }
-
-                            try {
-                                if (ftpUploadFile != null && ftpUploadFile.exists()) {
-                                    ftpUploadFile.delete();
-                                }
-                            } catch (Exception ignore) {
-                            }
-
                         } while (rsSprachen.next());
                     }
 
                     con.commit();
-
                 } catch (java.sql.SQLException e) {
                     ExcelBestandUpload.logger.error("SQL Error", e);
                     SQLLog.logger.error("SQL Error.", e);
@@ -374,6 +343,54 @@ public class ExcelBestandUpload extends Thread {
         }
 
         ExcelBestandUpload.logger.info("ExcelBestandUpload fertig");
+    }
+
+    private void sendWithFtp(String kuerzel, File file) throws SftpUploadException {
+        File ftpUploadFile = null;
+
+        if (!ApplicationConfig.getValue("excelbestand.ftphost", "").equals("")) {
+            ExcelBestandUpload.logger.info("ftpUpload: " + file.getAbsolutePath());
+
+            ExcelBestandUpload.logger.debug("file absolutePath: " + file.getAbsolutePath());
+            ExcelBestandUpload.logger.debug("file path: " + file.getPath());
+            ExcelBestandUpload.logger.debug("file name: " + file.getName());
+
+            ftpUploadFile = new File("bestand_" + kuerzel + ".csv");
+            ExcelBestandUpload.logger.debug(ftpUploadFile.getAbsolutePath() + " - " + ftpUploadFile.getName());
+
+            ExcelBestandUpload.logger.debug("file: " + file);
+            ExcelBestandUpload.logger.debug("ftpUploadFile: " + ftpUploadFile);
+
+            String ftphost = ApplicationConfig.getValue("excelbestand.ftphost", "");
+            String username = ApplicationConfig.getValue("excelbestand.username", "");
+            String password = ApplicationConfig.getValue("excelbestand.password", "");
+            String remotepath = ApplicationConfig.getValue("excelbestand.remotepath", ".");
+            boolean passiveMode = Boolean.valueOf(ApplicationConfig.getValue("excelbestand.passivemode", "false"));
+
+            if ("true".equalsIgnoreCase(ApplicationConfig.getValue("excelbestand.useSftp", "false"))){
+
+                SftpTransfer sftp = new SftpTransfer(ftphost, username, password, remotepath, ftpUploadFile);
+                sftp.send();
+            } else{
+
+                ClxFtp ftp = new ClxFtp(ftphost, username, password, passiveMode);
+                if (!ftp.uploadFile(ftpUploadFile, remotepath)) {
+                    ExcelBestandUpload.logger.error("ftp Upload fehler");
+                }
+            }
+        } else {
+            ExcelBestandUpload.logger.debug("Kein Ftp-Upload. Ftp-Zugang nicht konfiguriert.");
+        }
+    }
+
+    private void sendWithSoap(int spracheid, File file) {
+        try {
+            ExcelBestandUpload.logger.info("SoapHandler.sendFileData: " + file.getAbsolutePath());
+            SoapHandler.sendFileData(null, "bestandexcel", spracheid, file);
+            ExcelBestandUpload.logger.info("SoapHandler.sendFileData: OK");
+        } catch (RemoteCallException ex) {
+            ExcelBestandUpload.logger.error(ex, ex);
+        }
     }
 
     private void setCellValue(HSSFRow row, int cellIndex, String value) {
