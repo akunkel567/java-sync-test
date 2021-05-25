@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<activerecord name="ada" tablename="ada"  pkey="adaid" procedure="false" >
+	<readonly_fields>visible adresstext</readonly_fields>
+		<mapping tablename="ada" pkey="adaid">
+		<field name="adaid">adaid</field>		
+		<field name="hausnr">number</field>		
+		<field name="fremdid">cdh_address_id</field>		
+	</mapping>
+</activerecord>

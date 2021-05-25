@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<activerecord name="preisgruppedetail" tablename="sel_preisgruppedetail_for_web" pkey="preisgruppedetailid" procedure="true">
+    <mapping tablename="preisgruppedetail" pkey="preisgruppedetailid">
+        <field name="preisgruppedetailid">preisgruppedetailid</field>
+    </mapping>
+</activerecord>
