@@ -6,6 +6,7 @@ package de.complex.clxproductsync.soap;
 
 import de.complex.clxproductsync.dao.SnJob;
 import de.complex.clxproductsync.eventhandler.fileevent.FileConvertException;
+import de.complex.util.lang.StringTool;
 import org.apache.log4j.Logger;
 import de.complex.clxproductsync.eventhandler.fileevent.FileConverter;
 import de.complex.clxproductsync.soap.axis.FiledataIn;
@@ -75,6 +76,10 @@ public class SoapHandler {
     }
 
     public static void sendFileData(SnJob snJob, final String fremdkz, final int fremdid, final File file) throws RemoteCallException {
+        SoapHandler.sendFileData(snJob, fremdkz, fremdid, file, null);
+    }
+
+    public static void sendFileData(SnJob snJob, final String fremdkz, final int fremdid, final File file, String remoteFilename) throws RemoteCallException {
         SoapHandler.logger.debug("call sendFileData fremdkz: " + fremdkz + " fremdid: " + fremdid + " file: " + file.getAbsolutePath());
 
         RemoteCall<Void> r = new TransferRemoteCall<Void>() {
@@ -96,7 +101,14 @@ public class SoapHandler {
                     FiledataIn fileDataIn = new FiledataIn();
                     fileDataIn.setFremdid(fremdid);
                     fileDataIn.setFremdkz(fremdkz);
-                    fileDataIn.setFilename(file.getName());
+
+                    if (StringTool.isEmpty(remoteFilename)) {
+                        fileDataIn.setFilename(file.getName());
+                    } else {
+                        fileDataIn.setFilename(remoteFilename);
+                    }
+                    SoapHandler.logger.debug("SendFileData remoteFilename: " + fileDataIn.getFilename());
+
                     fileDataIn.setContent(fileData);
 
                     SoapAnswer answer = stub.setFile(ApplicationConfig.getValue("ws_username").trim(), ApplicationConfig.getValue("ws_password").trim(), fileDataIn);
