@@ -186,6 +186,10 @@ public class ExcelBestandUpload extends Thread {
                                     data.put(header[9], rs.getString("KURZBESCHREIBUNG") == null ? "" : rs.getString("KURZBESCHREIBUNG")); // J
 
                                     DecimalFormat dformat = new DecimalFormat("########0");
+
+/*                                  Spezialfunktion für Livegang von Fare-ERP
+                                    Nicht komplett entfernt weil das evtl. für Daiber-Livegang nochmal benötigt wird.
+
                                     Integer bestandAuslaufartikel = getBestandAuslaufartikel(con, rs.getInt("ARTGROESSEID"));
 
                                     if ("FARE".equalsIgnoreCase(ApplicationConfig.getValue("customer", "")) && bestandAuslaufartikel != null && bestandAuslaufartikel.intValue() > 0) {
@@ -203,6 +207,16 @@ public class ExcelBestandUpload extends Thread {
                                             ExcelBestandUpload.logger.error(e, e);
                                             data.put(header[10], "N/A");
                                         }
+                                    }
+ */
+
+                                    // K
+                                    try {
+                                        int lagermenge = rs.getInt("LAGERMENGE");
+                                        data.put(header[10], dformat.format(lagermenge));
+                                    } catch (Exception e) {
+                                        ExcelBestandUpload.logger.error(e, e);
+                                        data.put(header[10], "N/A");
                                     }
 
                                     // L und M, je Customer unterschiedlich
