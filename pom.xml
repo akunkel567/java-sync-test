@@ -52,8 +52,8 @@
 	</properties>
 
 	<scm>
-		<connection>scm:svn:https://complex-it.xp-dev.com/svn/clxProduct/Sync/clxProductSync/tags/Version-2.33</connection>
-		<developerConnection>scm:svn:https://complex-it.xp-dev.com/svn/clxProduct/Sync/clxProductSync/tags/Version-2.33</developerConnection>
+		<connection>scm:svn:https://complex-it.xp-dev.com/svn/clxProduct/Sync/clxProductSync/branches/Version-2.33</connection>
+		<developerConnection>scm:svn:https://complex-it.xp-dev.com/svn/clxProduct/Sync/clxProductSync/branches/Version-2.33</developerConnection>
 	</scm>
 	
 	<profiles>
