@@ -318,7 +318,7 @@ public class ExcelBestandUpload extends Thread {
                             String sLocale = rsSprachen.getString(3);
                             File file = new File("bestand_" + kuerzel + ".csv");
 
-                            sendWithSoap(spracheid, file);
+                            sendWithSoap(spracheid, file, "bestand.csv");
                             sendWithFtp(kuerzel, file);
 
                             if ("true".equalsIgnoreCase(ApplicationConfig.getValue("excelbestand.deleteTempFile", "false"))) {
@@ -383,10 +383,10 @@ public class ExcelBestandUpload extends Thread {
         }
     }
 
-    private void sendWithSoap(int spracheid, File file) {
+    private void sendWithSoap(int spracheid, File file, String remoteFilename) {
         try {
             ExcelBestandUpload.logger.info("SoapHandler.sendFileData: " + file.getAbsolutePath());
-            SoapHandler.sendFileData(null, "bestandexcel", spracheid, file);
+            SoapHandler.sendFileData(null, "bestandexcel", spracheid, file, remoteFilename);
             ExcelBestandUpload.logger.info("SoapHandler.sendFileData: OK");
         } catch (RemoteCallException ex) {
             ExcelBestandUpload.logger.error(ex, ex);
