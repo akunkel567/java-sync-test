@@ -208,5 +208,6 @@
         <event name="WAEHRUNGSFAKTOREK" />
         <event name="EKBESTELLKOPF" />
         <event name="ARTEKPREISTYPGROESSE" />
+        <event name="LANDSPRACHE" />
     </events>
 </eventconfig>
