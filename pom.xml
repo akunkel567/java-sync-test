@@ -8,7 +8,7 @@
    
 	<groupId>de.complex</groupId>
 	<artifactId>clxProductSync</artifactId>
-	<version>2.36</version>
+	<version>2.36.1-SNAPSHOT</version>
         
     <name>${project.artifactId} - ${project.version}</name>
 	
@@ -52,8 +52,8 @@
 	</properties>
 
 	<scm>
-		<connection>scm:svn:https://complex-it.xp-dev.com/svn/clxProduct/Sync/clxProductSync/tags/Version-2.36</connection>
-		<developerConnection>scm:svn:https://complex-it.xp-dev.com/svn/clxProduct/Sync/clxProductSync/tags/Version-2.36</developerConnection>
+		<connection>scm:svn:https://complex-it.xp-dev.com/svn/clxProduct/Sync/clxProductSync/branches/Version-2.36</connection>
+		<developerConnection>scm:svn:https://complex-it.xp-dev.com/svn/clxProduct/Sync/clxProductSync/branches/Version-2.36</developerConnection>
 	</scm>
 	
 	<profiles>
