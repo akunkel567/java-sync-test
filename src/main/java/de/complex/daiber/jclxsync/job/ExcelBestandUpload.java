@@ -573,19 +573,23 @@ public class ExcelBestandUpload extends Thread {
                     + " AND ARTGROESSEZULAUF.ARTGROESSEID = ?"
                     + " ORDER BY 3";
 
-            pStmt = con.prepareStatement(sql);
-            pStmt.setInt(1, artgroesseid);
+            try {
+                pStmt = con.prepareStatement(sql);
+                pStmt.setInt(1, artgroesseid);
 
-            rs = pStmt.executeQuery();
+                rs = pStmt.executeQuery();
 
-            if (rs.next()) {
-                Zulauf zulauf = new Zulauf();
+                if (rs.next()) {
+                    Zulauf zulauf = new Zulauf();
 
-                zulauf.setStatus(rs.getString("STATUS"));
-                zulauf.setMenge(rs.getInt("MENGE"));
-                zulauf.setKalenderwoche(rs.getInt("LIEFERKW") + "/" + getYearForWeeknumber(rs.getInt("LIEFERKW")));
+                    zulauf.setStatus(rs.getString("STATUS"));
+                    zulauf.setMenge(rs.getInt("MENGE"));
+                    zulauf.setKalenderwoche(rs.getInt("LIEFERKW") + "/" + getYearForWeeknumber(rs.getInt("LIEFERKW")));
 
-                return zulauf;
+                    return zulauf;
+                }
+            } finally {
+                FirebirdDb.close(rs, pStmt, null);
             }
 
             // jetzt auf ordered prüfen
@@ -598,19 +602,23 @@ public class ExcelBestandUpload extends Thread {
                     + " AND ARTGROESSEZULAUF.ARTGROESSEID = ?"
                     + " ORDER BY 3";
 
-            pStmt = con.prepareStatement(sql);
-            pStmt.setInt(1, artgroesseid);
+            try {
+                pStmt = con.prepareStatement(sql);
+                pStmt.setInt(1, artgroesseid);
 
-            rs = pStmt.executeQuery();
+                rs = pStmt.executeQuery();
 
-            if (rs.next()) {
-                Zulauf zulauf = new Zulauf();
+                if (rs.next()) {
+                    Zulauf zulauf = new Zulauf();
 
-                zulauf.setStatus(rs.getString("STATUS"));
-                zulauf.setMenge(rs.getInt("MENGE"));
-                zulauf.setKalenderwoche(rs.getInt("LIEFERKW") + "/" + getYearForWeeknumber(rs.getInt("LIEFERKW")));
+                    zulauf.setStatus(rs.getString("STATUS"));
+                    zulauf.setMenge(rs.getInt("MENGE"));
+                    zulauf.setKalenderwoche(rs.getInt("LIEFERKW") + "/" + getYearForWeeknumber(rs.getInt("LIEFERKW")));
 
-                return zulauf;
+                    return zulauf;
+                }
+            } finally {
+                FirebirdDb.close(rs, pStmt, null);
             }
 
             return null;
