@@ -251,6 +251,21 @@ public class ExcelBestandUpload extends Thread {
                                             data.put(header[11], "");
                                             data.put(header[12], "");
                                         }
+                                    } else if ("DAIBER".equalsIgnoreCase(ApplicationConfig.getValue("customer", ""))) {
+                                        Zulauf naechsterZulauf = getNaechsteZulaufinfo(con, rs.getInt("ARTGROESSEID"));
+
+                                        if (naechsterZulauf != null) {
+                                            if (naechsterZulauf.isStatusIndispatch()) {
+                                                data.put(header[11], naechsterZulauf.getMenge()); // L
+                                                data.put(header[12], naechsterZulauf.getKalenderwoche()); // M
+                                            } else {
+                                                data.put(header[11], "");
+                                                data.put(header[12], naechsterZulauf.getKalenderwoche());
+                                            }
+                                        } else {
+                                            data.put(header[11], "");
+                                            data.put(header[12], "");
+                                        }
                                     } else {
                                         try {
                                             int zulaufmenge_sh = rs.getInt("ZULAUFMENGE_SH");
