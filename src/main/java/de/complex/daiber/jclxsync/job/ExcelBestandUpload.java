@@ -255,12 +255,15 @@ public class ExcelBestandUpload extends Thread {
                                         Zulauf naechsterZulauf = getNaechsteZulaufinfo(con, rs.getInt("ARTGROESSEID"));
 
                                         if (naechsterZulauf != null) {
-                                            if (naechsterZulauf.isStatusIndispatch()) {
+                                            if (naechsterZulauf.isStatusOrdered()) {
+                                                data.put(header[11], "0"); // L
+                                                data.put(header[12], "geordert"); // M
+                                            } else if (naechsterZulauf.isStatusIndispatch()) {
                                                 data.put(header[11], naechsterZulauf.getMenge()); // L
                                                 data.put(header[12], naechsterZulauf.getKalenderwoche()); // M
                                             } else {
                                                 data.put(header[11], "");
-                                                data.put(header[12], naechsterZulauf.getKalenderwoche());
+                                                data.put(header[12], "");
                                             }
                                         } else {
                                             data.put(header[11], "");
