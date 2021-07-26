@@ -45,4 +45,8 @@ public class Zulauf {
     public boolean isStatusIndispatch() {
         return STATUS_INDISPATCH.equalsIgnoreCase(status);
     }
+
+    public boolean isStatusOrdered() {
+        return STATUS_ORDERED.equalsIgnoreCase(status);
+    }
 }
