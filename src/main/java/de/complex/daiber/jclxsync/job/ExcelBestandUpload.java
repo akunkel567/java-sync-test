@@ -19,7 +19,6 @@ import de.complex.database.SQLLog;
 import de.complex.database.firebird.FirebirdDb;
 import de.complex.database.firebird.FirebirdDbPool;
 import de.complex.tools.config.ApplicationConfig;
-import de.complex.transfer.sftp.SftpSession;
 import de.complex.util.lang.StringTool;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.BasicConfigurator;
@@ -257,10 +256,18 @@ public class ExcelBestandUpload extends Thread {
                                         if (naechsterZulauf != null) {
                                             if (naechsterZulauf.isStatusOrdered()) {
                                                 data.put(header[11], "0"); // L
-                                                data.put(header[12], "geordert"); // M
+
+                                                final String GEORDERT_DE = "geordert";
+                                                final String GEORDERT_EN = "ordered";
+
+                                                if (!"de_DE".equalsIgnoreCase(sLocale)) {
+                                                    data.put(header[12], GEORDERT_EN); // M
+                                                } else {
+                                                    data.put(header[12], GEORDERT_DE); // M
+                                                }
                                             } else if (naechsterZulauf.isStatusIndispatch()) {
                                                 data.put(header[11], naechsterZulauf.getMenge()); // L
-                                                data.put(header[12], naechsterZulauf.getKalenderwoche()); // M
+                                                data.put(header[12], "ca. KW " + naechsterZulauf.getKalenderwoche()); // M
                                             } else {
                                                 data.put(header[11], "");
                                                 data.put(header[12], "");
@@ -579,70 +586,37 @@ public class ExcelBestandUpload extends Thread {
         java.sql.PreparedStatement pStmt = null;
         java.sql.ResultSet rs = null;
 
+        String sql = "select BESTELLT," +
+                " ZULAUFKW," +
+                " ZULAUFMENGE" +
+                " from ARTGROESSEBESTAND" +
+                " where ARTGROESSEID = ?" +
+                " and (BESTELLT <> 0 or ZULAUFKW <> 0)";
+
         try {
-            // zuerst indispatch peüfen
+            pStmt = con.prepareStatement(sql);
+            pStmt.setInt(1, artgroesseid);
 
-            String sql = "SELECT FIRST 1 ARTGROESSEZULAUF.MENGE"
-                    + " , ARTGROESSEZULAUF.LIEFERKW"
-                    + " , IIF( coalesce(ARTGROESSEZULAUF.LIEFERKW,0) < F_KALENDERWOCHE('now'), coalesce(ARTGROESSEZULAUF.LIEFERKW,0) + 100, ARTGROESSEZULAUF.LIEFERKW)"
-                    + " , ARTGROESSEZULAUF.STATUS"
-                    + " FROM ARTGROESSEZULAUF"
-                    + " WHERE UPPER(ARTGROESSEZULAUF.STATUS)=UPPER('" + Zulauf.STATUS_INDISPATCH + "')"
-                    + " AND ARTGROESSEZULAUF.ARTGROESSEID = ?"
-                    + " ORDER BY 3";
+            rs = pStmt.executeQuery();
 
-            try {
-                pStmt = con.prepareStatement(sql);
-                pStmt.setInt(1, artgroesseid);
+            if (rs.next()) {
+                Zulauf zulauf = new Zulauf();
 
-                rs = pStmt.executeQuery();
-
-                if (rs.next()) {
-                    Zulauf zulauf = new Zulauf();
-
-                    zulauf.setStatus(rs.getString("STATUS"));
-                    zulauf.setMenge(rs.getInt("MENGE"));
-                    zulauf.setKalenderwoche(rs.getInt("LIEFERKW") + "/" + getYearForWeeknumber(rs.getInt("LIEFERKW")));
-
-                    return zulauf;
+                if (rs.getInt("BESTELLT") == 1){
+                    zulauf.setStatus(Zulauf.STATUS_ORDERED);
+                } else {
+                    zulauf.setStatus(Zulauf.STATUS_INDISPATCH);
+                    zulauf.setMenge(rs.getInt("ZULAUFMENGE"));
+                    zulauf.setKalenderwoche(rs.getInt("ZULAUFKW") + "/" + getYearForWeeknumber(rs.getInt("ZULAUFKW")));
                 }
-            } finally {
-                FirebirdDb.close(rs, pStmt, null);
+
+                return zulauf;
             }
-
-            // jetzt auf ordered prüfen
-            sql = "SELECT FIRST 1 ARTGROESSEZULAUF.MENGE"
-                    + " , ARTGROESSEZULAUF.LIEFERKW"
-                    + " , IIF( coalesce(ARTGROESSEZULAUF.LIEFERKW,0) < F_KALENDERWOCHE('now'), coalesce(ARTGROESSEZULAUF.LIEFERKW,0) + 100, ARTGROESSEZULAUF.LIEFERKW)"
-                    + " , ARTGROESSEZULAUF.STATUS"
-                    + " FROM ARTGROESSEZULAUF"
-                    + " WHERE UPPER(ARTGROESSEZULAUF.STATUS)=UPPER('" + Zulauf.STATUS_ORDERED + "')"
-                    + " AND ARTGROESSEZULAUF.ARTGROESSEID = ?"
-                    + " ORDER BY 3";
-
-            try {
-                pStmt = con.prepareStatement(sql);
-                pStmt.setInt(1, artgroesseid);
-
-                rs = pStmt.executeQuery();
-
-                if (rs.next()) {
-                    Zulauf zulauf = new Zulauf();
-
-                    zulauf.setStatus(rs.getString("STATUS"));
-                    zulauf.setMenge(rs.getInt("MENGE"));
-                    zulauf.setKalenderwoche(rs.getInt("LIEFERKW") + "/" + getYearForWeeknumber(rs.getInt("LIEFERKW")));
-
-                    return zulauf;
-                }
-            } finally {
-                FirebirdDb.close(rs, pStmt, null);
-            }
-
-            return null;
         } finally {
             FirebirdDb.close(rs, pStmt, null);
         }
+
+        return null;
     }
 
     private int getWeekNumber() {
