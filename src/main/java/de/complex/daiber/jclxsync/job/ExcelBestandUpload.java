@@ -52,6 +52,12 @@ public class ExcelBestandUpload extends Thread {
     public static final String INVENTUR_DE = "in Inventur";
     public static final String INVENTUR_EN = "in inventory";
 
+    final String GEORDERT_DE = "geordert";
+    final String GEORDERT_EN = "ordered";
+
+    final String CIRCA_DE = "ca.";
+    final String CIRCA_EN = "approx.";
+
     /**
      * Creates a new instance of BundlePreisUpload
      */
@@ -252,22 +258,26 @@ public class ExcelBestandUpload extends Thread {
                                         }
                                     } else if ("DAIBER".equalsIgnoreCase(ApplicationConfig.getValue("customer", ""))) {
                                         Zulauf naechsterZulauf = getNaechsteZulaufinfo(con, rs.getInt("ARTGROESSEID"));
+                                        ExcelBestandUpload.logger.debug(String.format("naechster Zulauf Artgroesseid %d Zulauf %s", rs.getInt("ARTGROESSEID"), naechsterZulauf));
 
                                         if (naechsterZulauf != null) {
-                                            if (naechsterZulauf.isStatusOrdered()) {
-                                                data.put(header[11], "0"); // L
 
-                                                final String GEORDERT_DE = "geordert";
-                                                final String GEORDERT_EN = "ordered";
+                                            if (naechsterZulauf.isStatusIndispatch()) {
+                                                data.put(header[11], naechsterZulauf.getMenge()); // L
+
+                                                if (!"de_DE".equalsIgnoreCase(sLocale)) {
+                                                    data.put(header[12], CIRCA_EN + " KW " + naechsterZulauf.getKalenderwoche()); // M
+                                                } else {
+                                                    data.put(header[12], CIRCA_DE + " KW " + naechsterZulauf.getKalenderwoche()); // M
+                                                }
+                                            } else if (naechsterZulauf.isStatusOrdered()) {
+                                                data.put(header[11], "0"); // L
 
                                                 if (!"de_DE".equalsIgnoreCase(sLocale)) {
                                                     data.put(header[12], GEORDERT_EN); // M
                                                 } else {
                                                     data.put(header[12], GEORDERT_DE); // M
                                                 }
-                                            } else if (naechsterZulauf.isStatusIndispatch()) {
-                                                data.put(header[11], naechsterZulauf.getMenge()); // L
-                                                data.put(header[12], "ca. KW " + naechsterZulauf.getKalenderwoche()); // M
                                             } else {
                                                 data.put(header[11], "");
                                                 data.put(header[12], "");
@@ -588,10 +598,11 @@ public class ExcelBestandUpload extends Thread {
 
         String sql = "select BESTELLT," +
                 " ZULAUFKW," +
-                " ZULAUFMENGE" +
+                " ZULAUFMENGE," +
+                " ZULAUFSTATUS" +
                 " from ARTGROESSEBESTAND" +
                 " where ARTGROESSEID = ?" +
-                " and (BESTELLT <> 0 or ZULAUFKW <> 0)";
+                " and (BESTELLT <> 0 or coalesce(ZULAUFSTATUS,'') <> '')";
 
         try {
             pStmt = con.prepareStatement(sql);
@@ -602,13 +613,16 @@ public class ExcelBestandUpload extends Thread {
             if (rs.next()) {
                 Zulauf zulauf = new Zulauf();
 
-                if (rs.getInt("BESTELLT") == 1){
-                    zulauf.setStatus(Zulauf.STATUS_ORDERED);
+                zulauf.setStatus(rs.getString("ZULAUFSTATUS"));
+
+                if (rs.getInt("BESTELLT") == 1) {
+                    zulauf.setBestellt(true);
                 } else {
-                    zulauf.setStatus(Zulauf.STATUS_INDISPATCH);
-                    zulauf.setMenge(rs.getInt("ZULAUFMENGE"));
-                    zulauf.setKalenderwoche(rs.getInt("ZULAUFKW") + "/" + getYearForWeeknumber(rs.getInt("ZULAUFKW")));
+                    zulauf.setBestellt(true);
                 }
+
+                zulauf.setMenge(rs.getInt("ZULAUFMENGE"));
+                zulauf.setKalenderwoche(rs.getInt("ZULAUFKW") + "/" + getYearForWeeknumber(rs.getInt("ZULAUFKW")));
 
                 return zulauf;
             }

@@ -5,18 +5,18 @@
  */
 package de.complex.daiber.jclxsync.job;
 
+import de.complex.util.lang.StringTool;
+
 /**
  *
  * @author akunkel
  */
 public class Zulauf {
 
-    public final static String STATUS_ORDERED = "ordered";
-    public final static String STATUS_INDISPATCH = "indispatch";
-
     private String status;
     private int menge;
     private String kalenderwoche;
+    private boolean bestellt;
 
     public String getStatus() {
         return status;
@@ -42,11 +42,29 @@ public class Zulauf {
         this.kalenderwoche = kalenderwoche;
     }
 
+    public boolean isBestellt() {
+        return bestellt;
+    }
+
+    public void setBestellt(boolean bestellt) {
+        this.bestellt = bestellt;
+    }
+
     public boolean isStatusIndispatch() {
-        return STATUS_INDISPATCH.equalsIgnoreCase(status);
+        return !StringTool.isEmpty(getStatus(), true);
     }
 
     public boolean isStatusOrdered() {
-        return STATUS_ORDERED.equalsIgnoreCase(status);
+        return isBestellt();
+    }
+
+    @Override
+    public String toString() {
+        return "Zulauf{" +
+                "status='" + status + '\'' +
+                ", menge=" + menge +
+                ", kalenderwoche='" + kalenderwoche + '\'' +
+                ", bestellt=" + bestellt +
+                '}';
     }
 }
