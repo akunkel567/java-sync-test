@@ -15,7 +15,8 @@ public class Zulauf {
 
     private String status;
     private int menge;
-    private String kalenderwoche;
+    private int kalenderwoche;
+    private int jahr;
     private boolean bestellt;
 
     public String getStatus() {
@@ -34,12 +35,20 @@ public class Zulauf {
         this.menge = menge;
     }
 
-    public String getKalenderwoche() {
+    public int getKalenderwoche() {
         return kalenderwoche;
     }
 
-    public void setKalenderwoche(String kalenderwoche) {
+    public void setKalenderwoche(int kalenderwoche) {
         this.kalenderwoche = kalenderwoche;
+    }
+
+    public int getJahr() {
+        return jahr;
+    }
+
+    public void setJahr(int jahr) {
+        this.jahr = jahr;
     }
 
     public boolean isBestellt() {
@@ -51,7 +60,7 @@ public class Zulauf {
     }
 
     public boolean isStatusIndispatch() {
-        return !StringTool.isEmpty(getStatus(), true);
+        return "INDISPATCH".equalsIgnoreCase(StringTool.getNotNullTrim(getStatus()));
     }
 
     public boolean isStatusOrdered() {
@@ -63,7 +72,8 @@ public class Zulauf {
         return "Zulauf{" +
                 "status='" + status + '\'' +
                 ", menge=" + menge +
-                ", kalenderwoche='" + kalenderwoche + '\'' +
+                ", kalenderwoche=" + kalenderwoche +
+                ", jahr=" + jahr +
                 ", bestellt=" + bestellt +
                 '}';
     }
