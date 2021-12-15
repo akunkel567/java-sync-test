@@ -38,6 +38,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
+import java.time.temporal.IsoFields;
 import java.util.*;
 
 /**
@@ -231,7 +232,7 @@ public class ExcelBestandUpload extends Thread {
                                         if (naechsterZulauf != null) {
                                             if (naechsterZulauf.isStatusIndispatch()) {
                                                 data.put(header[11], naechsterZulauf.getMenge()); // L
-                                                data.put(header[12], naechsterZulauf.getKalenderwoche()); // M
+                                                data.put(header[12], naechsterZulauf.getKalenderwoche() + "/" + naechsterZulauf.getJahr()); // M
                                             } else {
                                                 data.put(header[11], "");
                                                 data.put(header[12], "");
@@ -247,10 +248,10 @@ public class ExcelBestandUpload extends Thread {
                                         if (naechsterZulauf != null) {
                                             if (naechsterZulauf.isStatusIndispatch()) {
                                                 data.put(header[11], naechsterZulauf.getMenge()); // L
-                                                data.put(header[12], naechsterZulauf.getKalenderwoche()); // M
+                                                data.put(header[12], naechsterZulauf.getKalenderwoche() + "/" + naechsterZulauf.getJahr()); // M
                                             } else {
                                                 data.put(header[11], "");
-                                                data.put(header[12], naechsterZulauf.getKalenderwoche());
+                                                data.put(header[12], "");
                                             }
                                         } else {
                                             data.put(header[11], "");
@@ -263,20 +264,22 @@ public class ExcelBestandUpload extends Thread {
                                         if (naechsterZulauf != null) {
 
                                             if (naechsterZulauf.isStatusIndispatch()) {
-                                                data.put(header[11], naechsterZulauf.getMenge()); // L
+                                               data.put(header[11], naechsterZulauf.getMenge()); // L
 
                                                 if (!"de_DE".equalsIgnoreCase(sLocale)) {
-                                                    data.put(header[12], CIRCA_EN + " KW " + naechsterZulauf.getKalenderwoche()); // M
+                                                    data.put(header[12], CIRCA_EN + " CW " + naechsterZulauf.getKalenderwoche() + "/" + naechsterZulauf.getJahr()); // M
                                                 } else {
-                                                    data.put(header[12], CIRCA_DE + " KW " + naechsterZulauf.getKalenderwoche()); // M
+                                                    data.put(header[12], CIRCA_DE + " KW" + naechsterZulauf.getKalenderwoche() + "/" + naechsterZulauf.getJahr()); // M
                                                 }
                                             } else if (naechsterZulauf.isStatusOrdered()) {
-                                                data.put(header[11], "0"); // L
+                                                data.put(header[11], naechsterZulauf.getMenge()); // L
+
+                                                int quartal = getQuartal(naechsterZulauf.getKalenderwoche(), naechsterZulauf.getJahr());
 
                                                 if (!"de_DE".equalsIgnoreCase(sLocale)) {
-                                                    data.put(header[12], GEORDERT_EN); // M
+                                                    data.put(header[12], CIRCA_EN + " Q" + quartal + "/" + naechsterZulauf.getJahr()); // M
                                                 } else {
-                                                    data.put(header[12], GEORDERT_DE); // M
+                                                    data.put(header[12], CIRCA_DE + " Q" + quartal + "/" + naechsterZulauf.getJahr()); // M
                                                 }
                                             } else {
                                                 data.put(header[11], "");
@@ -596,13 +599,15 @@ public class ExcelBestandUpload extends Thread {
         java.sql.PreparedStatement pStmt = null;
         java.sql.ResultSet rs = null;
 
-        String sql = "select BESTELLT," +
-                " ZULAUFKW," +
-                " ZULAUFMENGE," +
-                " ZULAUFSTATUS" +
-                " from ARTGROESSEBESTAND" +
-                " where ARTGROESSEID = ?" +
-                " and (BESTELLT <> 0 or coalesce(ZULAUFSTATUS,'') <> '')";
+        String sql = "select AGZ.LIEFERKW" +
+                " , IIF(agz.LIEFERKW >= (extract(week from date 'now')), (extract(year from date 'now')), (extract(year from date 'now'))+1) as LIEFERJAHR" +
+                " , AGZ.STATUS" +
+                " , AGZ.MENGE" +
+                " from ARTGROESSEZULAUF AGZ" +
+                " where AGZ.ARTGROESSEID = ?" +
+                " order by AGZ.STATUS" +
+                ", IIF(AGZ.LIEFERKW >= (extract(week from date 'now')), (extract(year from date 'now')), (extract(year from date 'now'))+1)" +
+                ", AGZ.LIEFERKW";
 
         try {
             pStmt = con.prepareStatement(sql);
@@ -613,16 +618,17 @@ public class ExcelBestandUpload extends Thread {
             if (rs.next()) {
                 Zulauf zulauf = new Zulauf();
 
-                zulauf.setStatus(rs.getString("ZULAUFSTATUS"));
+                zulauf.setStatus(rs.getString("STATUS"));
 
-                if (rs.getInt("BESTELLT") == 1) {
+                if ("ORDERED".equalsIgnoreCase(rs.getString("STATUS"))) {
                     zulauf.setBestellt(true);
                 } else {
-                    zulauf.setBestellt(true);
+                    zulauf.setBestellt(false);
                 }
 
-                zulauf.setMenge(rs.getInt("ZULAUFMENGE"));
-                zulauf.setKalenderwoche(rs.getInt("ZULAUFKW") + "/" + getYearForWeeknumber(rs.getInt("ZULAUFKW")));
+                zulauf.setMenge(rs.getInt("MENGE"));
+                zulauf.setKalenderwoche(rs.getInt("LIEFERKW"));
+                zulauf.setJahr(rs.getInt("LIEFERJAHR"));
 
                 return zulauf;
             }
@@ -648,6 +654,16 @@ public class ExcelBestandUpload extends Thread {
         } else {
             return getYear();
         }
+    }
+
+    private int getQuartal(int kw, int jahr) {
+
+        final GregorianCalendar calendar = new GregorianCalendar(Locale.GERMANY);
+        calendar.clear();
+        calendar.set(Calendar.YEAR,jahr);
+        calendar.set(Calendar.WEEK_OF_YEAR, kw);
+
+        return (calendar.get(Calendar.MONTH) / 3) + 1;
     }
 
     public static void main(String[] args) throws IOException, SQLException {
