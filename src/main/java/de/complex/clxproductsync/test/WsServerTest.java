@@ -5,10 +5,12 @@
 package de.complex.clxproductsync.test;
 
 import de.complex.clxproductsync.monitor.server.WsServer;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.xml.ws.Endpoint;
 
 /**
@@ -17,6 +19,7 @@ import javax.xml.ws.Endpoint;
  */
 public class WsServerTest extends Thread {
 
+    private static Logger logger = LogManager.getLogger(WsServerTest.class);
     private Endpoint endpoint;
     private WsServer wsServer;
 
@@ -31,7 +34,7 @@ public class WsServerTest extends Thread {
         try {
             System.out.println(InetAddress.getLocalHost().getHostAddress());
         } catch (UnknownHostException ex) {
-            Logger.getLogger(WsServerTest.class.getName()).log(Level.SEVERE, null, ex);
+            logger.debug(ex,ex);
         }
 
         wsServer = new WsServer();

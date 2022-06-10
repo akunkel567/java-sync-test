@@ -3,7 +3,7 @@ package de.complex.daiber.jclxsync.job;
 import de.complex.clxproductsync.MainApp;
 import de.complex.database.firebird.FirebirdDbPool;
 import de.complex.tools.config.ApplicationConfig;
-import org.apache.log4j.*;
+import org.apache.logging.log4j.*;
 import org.junit.Ignore;
 import java.io.File;
 import java.io.FileInputStream;
@@ -14,10 +14,6 @@ public class ExcelBestandUploadTest {
 
     @org.junit.Before
     public void setUp() throws Exception {
-        BasicConfigurator.configure();
-        Logger.getRootLogger().setLevel(Level.DEBUG);
-        Logger.getRootLogger().removeAllAppenders();
-        Logger.getRootLogger().addAppender(new ConsoleAppender(new SimpleLayout()));
     }
 
     @org.junit.Test

@@ -16,7 +16,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import de.complex.util.lang.StringTool;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  *
@@ -24,7 +25,7 @@ import org.apache.log4j.Logger;
  */
 public class SocketEventListener extends Thread {
 
-    private static Logger logger = Logger.getLogger(SocketEventListener.class);
+    private static Logger logger = LogManager.getLogger(SocketEventListener.class);
     //private Logger logger;
     private InputStream inputStream;
     private String line;

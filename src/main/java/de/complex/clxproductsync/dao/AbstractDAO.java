@@ -14,7 +14,7 @@ import de.complex.database.firebird.FirebirdDb;
 import java.util.Properties;
 import java.util.Vector;
 
-import org.apache.log4j.*;
+import org.apache.logging.log4j.*;
 
 /**
  *
@@ -22,7 +22,7 @@ import org.apache.log4j.*;
  */
 public abstract class AbstractDAO {
 
-    private static Logger logger = Logger.getLogger(AbstractDAO.class);
+    private static Logger logger = LogManager.getLogger(AbstractDAO.class);
     protected FirebirdDb db;
     protected Properties prop;
 

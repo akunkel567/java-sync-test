@@ -29,7 +29,8 @@ import java.util.Properties;
 import org.apache.axis.AxisFault;
 import org.apache.commons.codec.binary.Base64;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  *
@@ -37,7 +38,7 @@ import org.apache.log4j.Logger;
  */
 public class FileEventHandler {
 
-    private static Logger logger = Logger.getLogger(FileEventHandler.class);
+    private static Logger logger = LogManager.getLogger(FileEventHandler.class);
     private FirebirdDb db = null;
     private SnJobDAO snJobDAO = null;
 

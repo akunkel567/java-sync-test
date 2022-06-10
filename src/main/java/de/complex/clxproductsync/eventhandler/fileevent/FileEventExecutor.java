@@ -9,7 +9,8 @@ import de.complex.database.firebird.FirebirdDbPool;
 import de.complex.clxproductsync.exception.ClxUncaughtExceptionHandler;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  *
@@ -17,7 +18,7 @@ import org.apache.log4j.Logger;
  */
 public class FileEventExecutor extends Thread {
 
-    private static Logger logger = Logger.getLogger(FileEventExecutor.class);
+    private static Logger logger = LogManager.getLogger(FileEventExecutor.class);
     private String name;
     public static SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss:SSS");
     String eventname = null;

@@ -27,7 +27,8 @@ import java.util.Vector;
 import java.util.logging.Level;
 import javax.xml.bind.JAXBException;
 import org.apache.axis.AxisFault;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  *
@@ -35,7 +36,7 @@ import org.apache.log4j.Logger;
  */
 public abstract class AbstractSocketEventHandler {
 
-    private static Logger logger = Logger.getLogger(AbstractSocketEventHandler.class);
+    private static Logger logger = LogManager.getLogger(AbstractSocketEventHandler.class);
     private String handleEventType;
     private Mailer mailer = null;
     private Map<String, TableConfig> tableConfigs = new HashMap<String, TableConfig>();

@@ -6,6 +6,7 @@ package de.complex.clxproductsync.test;
 
 import de.complex.activerecord.ActiveRecord;
 import de.complex.activerecord.config.ActiveRecordConfig;
+import de.complex.daiber.jclxsync.job.ExcelBestandUpload;
 import de.complex.database.firebird.FirebirdDb;
 import de.complex.clxproductsync.eventhandler.fileevent.FileConvertException;
 import de.complex.clxproductsync.xml.XmlConverter;
@@ -13,16 +14,19 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.sql.SQLException;
-import org.apache.log4j.ConsoleAppender;
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
-import org.apache.log4j.SimpleLayout;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.core.config.Configurator;
+import org.apache.logging.log4j.core.config.DefaultConfiguration;
 
 /**
  *
  * @author kunkel
  */
 public class CreateXmlDataTest {
+
+    private static Logger logger = LogManager.getLogger(CreateXmlDataTest.class);
 
     /**
      * @param args the command line arguments
@@ -32,10 +36,8 @@ public class CreateXmlDataTest {
     }
 
     public CreateXmlDataTest() throws SQLException, FileConvertException {
-        Logger logger = Logger.getRootLogger();
-
-        logger.addAppender(new ConsoleAppender(new SimpleLayout()));
-        logger.setLevel(Level.DEBUG);
+        Configurator.initialize(new DefaultConfiguration());
+        Configurator.setRootLevel(Level.DEBUG);
 
         ActiveRecordConfig.configFilePath = "activerecord";
 

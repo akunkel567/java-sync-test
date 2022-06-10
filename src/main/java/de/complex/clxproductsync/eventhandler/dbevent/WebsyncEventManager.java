@@ -20,7 +20,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  *
@@ -28,7 +29,7 @@ import org.apache.log4j.Logger;
  */
 public class WebsyncEventManager extends Thread {
 
-    private static Logger logger = Logger.getLogger(WebsyncEventManager.class);
+    private static Logger logger = LogManager.getLogger(WebsyncEventManager.class);
     private Properties prop;
     private String[] eventnames;
     private FirebirdEventConfig eventconfig;

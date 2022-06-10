@@ -37,8 +37,8 @@ import java.util.logging.Level;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
-import org.apache.log4j.Logger;
-import org.apache.log4j.xml.DOMConfigurator;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.quartz.*;
 import org.quartz.impl.StdSchedulerFactory;
 
@@ -51,7 +51,7 @@ import static org.quartz.TriggerBuilder.newTrigger;
  */
 public class MainApp extends Thread {
 
-    private static Logger logger = Logger.getLogger(MainApp.class);
+    private static Logger logger = LogManager.getLogger(MainApp.class);
     public String versionString = null;
     public static boolean debug = false;
     FirebirdDb db = null;
@@ -63,8 +63,6 @@ public class MainApp extends Thread {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        DOMConfigurator.configureAndWatch("conf/log4j.xml", 60 * 1000);
-
         MainApp mainApp = new MainApp(args);
         mainApp.start(args, true);
     }

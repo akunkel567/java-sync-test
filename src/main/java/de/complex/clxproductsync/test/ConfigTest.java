@@ -5,16 +5,21 @@
 package de.complex.clxproductsync.test;
 
 import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import de.complex.daiber.jclxsync.job.ExcelBestandUpload;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  *
  * @author kunkel
  */
 public class ConfigTest {
+
+    private static Logger logger = LogManager.getLogger(ConfigTest.class);
 
     /**
      * @param args the command line arguments
@@ -31,7 +36,7 @@ public class ConfigTest {
             System.out.println(config.getInt("snjoblimit", 1000));
 
         } catch (ConfigurationException ex) {
-            Logger.getLogger(ConfigTest.class.getName()).log(Level.SEVERE, null, ex);
+            logger.debug(ex,ex);
         }
     }
 }

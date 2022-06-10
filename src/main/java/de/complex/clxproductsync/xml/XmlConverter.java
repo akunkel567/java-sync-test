@@ -19,7 +19,8 @@ import java.util.Iterator;
 import java.util.List;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.FileUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  *
@@ -27,7 +28,7 @@ import org.apache.log4j.Logger;
  */
 public class XmlConverter {
 
-    private static Logger logger = Logger.getLogger(XmlConverter.class);
+    private static Logger logger = LogManager.getLogger(XmlConverter.class);
 
     public XmlConverter() {
     }

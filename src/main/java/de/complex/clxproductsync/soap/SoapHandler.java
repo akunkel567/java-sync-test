@@ -7,7 +7,8 @@ package de.complex.clxproductsync.soap;
 import de.complex.clxproductsync.dao.SnJob;
 import de.complex.clxproductsync.eventhandler.fileevent.FileConvertException;
 import de.complex.util.lang.StringTool;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import de.complex.clxproductsync.eventhandler.fileevent.FileConverter;
 import de.complex.clxproductsync.soap.axis.FiledataIn;
 import de.complex.clxproductsync.soap.axis.SnjobIn;
@@ -31,7 +32,7 @@ import org.apache.axis.AxisFault;
  */
 public class SoapHandler {
 
-    private static Logger logger = Logger.getLogger(SoapHandler.class);
+    private static Logger logger = LogManager.getLogger(SoapHandler.class);
 
     public SoapHandler() {
     }

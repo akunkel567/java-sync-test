@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN" name="jMobis" packages="">
+    <Appenders>
+        <RollingFile name="main" fileName="../../log/main.log" filePattern="main.log.%i">
+            <PatternLayout>
+                <Pattern>%d{ISO8601} [%t] %-5p %c{1} (%F:%L) - %m%n</Pattern>
+            </PatternLayout>
+            <Policies>
+                <SizeBasedTriggeringPolicy size="10MB"/>
+            </Policies>
+            <DefaultRolloverStrategy max="10"/>
+        </RollingFile>
+        <RollingFile name="kombi" fileName="../../log/kombi.log" filePattern="kombi.log.%i">
+            <PatternLayout>
+                <Pattern>%d{ISO8601} [%t] %-5p %c{1} (%F:%L) - %m%n</Pattern>
+            </PatternLayout>
+            <Policies>
+                <SizeBasedTriggeringPolicy size="10MB"/>
+            </Policies>
+            <DefaultRolloverStrategy max="10"/>
+        </RollingFile>
+    </Appenders>
+    <Loggers>
+        <Logger name="de.complex" level="info" additivity="false">
+            <AppenderRef ref="main"/>
+        </Logger>
+		<Logger name="de.complex.jmobis.socket.NewAdaAkCombiEventHandler" level="debug" additivity="false">
+			<AppenderRef ref="kombi"/>
+		</Logger>
+		<Logger name="de.complex.jmobis.dao.WebAkDAO" level="debug" additivity="false">
+			<AppenderRef ref="kombi"/>
+		</Logger>
+        <Root level="info">
+            <AppenderRef ref="main"/>
+        </Root>
+    </Loggers>
+</Configuration>

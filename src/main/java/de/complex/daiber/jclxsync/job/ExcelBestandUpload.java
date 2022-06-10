@@ -21,9 +21,11 @@ import de.complex.database.firebird.FirebirdDbPool;
 import de.complex.tools.config.ApplicationConfig;
 import de.complex.util.lang.StringTool;
 import org.apache.commons.io.FileUtils;
-import org.apache.log4j.BasicConfigurator;
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.core.config.Configurator;
+import org.apache.logging.log4j.core.config.DefaultConfiguration;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.supercsv.io.CsvMapWriter;
@@ -46,7 +48,7 @@ import java.util.*;
  */
 public class ExcelBestandUpload extends Thread {
 
-    private static Logger logger = Logger.getLogger(ExcelBestandUpload.class);
+    private static Logger logger = LogManager.getLogger(ExcelBestandUpload.class);
     public static SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd ss:SSS");
     private Properties prop;
 
@@ -669,8 +671,8 @@ public class ExcelBestandUpload extends Thread {
     public static void main(String[] args) throws IOException, SQLException {
         // TODO code application logic here
 
-        BasicConfigurator.configure();
-        Logger.getRootLogger().setLevel(Level.DEBUG);
+        Configurator.initialize(new DefaultConfiguration());
+        Configurator.setRootLevel(Level.DEBUG);
 
         MainApp.debug = true;
 

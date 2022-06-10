@@ -16,7 +16,8 @@ import java.net.URL;
 import java.rmi.RemoteException;
 import javax.xml.rpc.ServiceException;
 import org.apache.axis.AxisFault;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  *
@@ -24,7 +25,7 @@ import org.apache.log4j.Logger;
  */
 public class TablesyncHandler {
 
-    private static Logger logger = Logger.getLogger(TablesyncHandler.class);
+    private static Logger logger = LogManager.getLogger(TablesyncHandler.class);
 
     public static TableIdList getTableIdList(final String tablename) throws RemoteCallException {
         TablesyncHandler.logger.debug("call getTableIdList");

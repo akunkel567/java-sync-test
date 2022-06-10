@@ -92,7 +92,7 @@ public class WriteXmlDataTest {
 //				try {
 //					m.marshal(xmlData, serializer.asContentHandler());
 //				} catch (IOException ex) {
-//					Logger.getLogger(WriteXmlDataTest.class.getName()).log(Level.SEVERE, null, ex);
+//					LogManager.getLogger(WriteXmlDataTest.class.getName()).log(Level.SEVERE, null, ex);
 //				}
 //
 //

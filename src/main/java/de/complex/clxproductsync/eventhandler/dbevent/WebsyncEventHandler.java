@@ -25,7 +25,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  *
@@ -33,7 +34,7 @@ import org.apache.log4j.Logger;
  */
 public class WebsyncEventHandler {
 
-    private static Logger logger = Logger.getLogger(WebsyncEventHandler.class);
+    private static Logger logger = LogManager.getLogger(WebsyncEventHandler.class);
     private Properties prop = null;
     private String eventname = null;
     private FirebirdDb db = null;

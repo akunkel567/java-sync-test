@@ -4,9 +4,8 @@
  */
 package de.complex.clxproductsync;
 
-import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
-import org.apache.log4j.xml.DOMConfigurator;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.tanukisoftware.wrapper.WrapperListener;
 import org.tanukisoftware.wrapper.WrapperManager;
 
@@ -16,17 +15,13 @@ import org.tanukisoftware.wrapper.WrapperManager;
  */
 public class Main implements WrapperListener {
 
-    private static Logger logger = Logger.getLogger(Main.class);
+    private static Logger logger = LogManager.getLogger(Main.class);
     MainApp mainApp;
 
     /**
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        //PropertyConfigurator.configure("../conf/log4j.properties");
-        //PropertyConfigurator.configureAndWatch("../conf/log4j.properties",60*1000);
-        DOMConfigurator.configureAndWatch("../conf/log4j.xml", 60 * 1000);
-
         // Start the application.  If the JVM was launched from the native
         //  Wrapper then the application will wait for the native Wrapper to
         //  call the application's start method.  Otherwise the start method
@@ -35,7 +30,6 @@ public class Main implements WrapperListener {
     }
 
     private Main(String[] args) {
-        PropertyConfigurator.configureAndWatch("../conf/log4j.xml", 60 * 1000);
     }
 
     private Main() {

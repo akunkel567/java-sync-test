@@ -9,7 +9,8 @@ import de.complex.database.firebird.FirebirdDbPool;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Properties;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  *
@@ -17,7 +18,7 @@ import org.apache.log4j.Logger;
  */
 public class SocketEventExecutor extends Thread {
 
-    private static Logger logger = Logger.getLogger(SocketEventExecutor.class);
+    private static Logger logger = LogManager.getLogger(SocketEventExecutor.class);
     private String name;
     public static SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss:SSS");
     String eventname;

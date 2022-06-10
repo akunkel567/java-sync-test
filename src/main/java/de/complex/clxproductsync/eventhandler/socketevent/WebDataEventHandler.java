@@ -24,7 +24,8 @@ import de.complex.clxproductsync.xml.XmlData;
 import de.complex.clxproductsync.xml.XmlRow;
 import de.complex.clxproductsync.xml.XmlTable;
 import java.sql.SQLException;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import de.complex.tools.config.ApplicationConfig;
 import java.sql.Connection;
 import org.apache.axis.AxisFault;
@@ -35,7 +36,7 @@ import org.apache.axis.AxisFault;
  */
 public class WebDataEventHandler extends AbstractSocketEventHandler {
 
-    private static Logger logger = Logger.getLogger(WebDataEventHandler.class);
+    private static Logger logger = LogManager.getLogger(WebDataEventHandler.class);
     public static final String EVENTTYPE = SocketEventTypes.WEBDATA;
     private AbstractClxDatabase db;
 

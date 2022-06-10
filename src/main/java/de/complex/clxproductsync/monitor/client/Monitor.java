@@ -18,8 +18,8 @@ import java.net.URL;
 import javax.swing.Timer;
 import javax.xml.namespace.QName;
 import javax.xml.ws.Holder;
-import org.apache.log4j.Logger;
-import org.apache.log4j.xml.DOMConfigurator;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  *
@@ -27,7 +27,7 @@ import org.apache.log4j.xml.DOMConfigurator;
  */
 public class Monitor extends javax.swing.JFrame implements ActionListener {
 
-    private static Logger logger = Logger.getLogger(Monitor.class);
+    private static Logger logger = LogManager.getLogger(Monitor.class);
     WsServerService ws = null;
     JClxWebSyncWebServices port = null;
 
@@ -35,7 +35,6 @@ public class Monitor extends javax.swing.JFrame implements ActionListener {
      * Creates new form Monitor
      */
     public Monitor() {
-        DOMConfigurator.configureAndWatch("conf/log4j.xml", 60 * 1000);
 
         if (!ApplicationConfig.loadConfig("conf/monitor.conf")) {
             Monitor.logger.fatal("Config Error...!");

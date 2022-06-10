@@ -55,10 +55,12 @@ import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
-import org.apache.log4j.BasicConfigurator;
-import org.apache.log4j.Level;
+import org.apache.logging.log4j.core.config.Configurator;
+import org.apache.logging.log4j.core.config.DefaultConfiguration;
+import org.apache.logging.log4j.Level;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  *
@@ -66,7 +68,7 @@ import org.apache.log4j.Logger;
  */
 public class WebTableCheck extends Thread {
 
-    private static Logger logger = Logger.getLogger(WebTableCheck.class);
+    private static Logger logger = LogManager.getLogger(WebTableCheck.class);
     public static SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd ss:SSS");
 
     private CommandLine cmdLine = null;
@@ -74,8 +76,8 @@ public class WebTableCheck extends Thread {
     public static void main(String[] args) throws Exception {
         // TODO code application logic here
 
-        BasicConfigurator.configure();
-        Logger.getRootLogger().setLevel(Level.INFO);
+        Configurator.initialize(new DefaultConfiguration());
+        Configurator.setRootLevel(Level.DEBUG);
 
         WebTableCheck tableCheck = new WebTableCheck();
         tableCheck.runFromCommandLine(args);

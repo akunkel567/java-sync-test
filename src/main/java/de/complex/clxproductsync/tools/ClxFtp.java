@@ -14,7 +14,8 @@ import java.util.Properties;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
 import org.apache.commons.net.ftp.FTPReply;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  *
@@ -22,7 +23,7 @@ import org.apache.log4j.Logger;
  */
 public class ClxFtp {
 
-    private static Logger logger = Logger.getLogger(ClxFtp.class);
+    private static Logger logger = LogManager.getLogger(ClxFtp.class);
     private FTPClient ftpclient;
     private String user;
     private String password;

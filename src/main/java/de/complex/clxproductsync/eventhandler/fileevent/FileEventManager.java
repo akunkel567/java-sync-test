@@ -19,7 +19,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  *
@@ -27,7 +28,7 @@ import org.apache.log4j.Logger;
  */
 public class FileEventManager extends Thread {
 
-    private static Logger logger = Logger.getLogger(FileEventManager.class);
+    private static Logger logger = LogManager.getLogger(FileEventManager.class);
     private Properties prop;
 
     public static int jobCheckInterval = 10 * 1000;

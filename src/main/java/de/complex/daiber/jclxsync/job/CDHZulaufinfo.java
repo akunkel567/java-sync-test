@@ -30,10 +30,12 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Properties;
 import java.util.Vector;
-import org.apache.log4j.BasicConfigurator;
-import org.apache.log4j.Level;
+import org.apache.logging.log4j.core.config.Configurator;
+import org.apache.logging.log4j.core.config.DefaultConfiguration;
+import org.apache.logging.log4j.Level;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  *
@@ -41,7 +43,7 @@ import org.apache.log4j.Logger;
  */
 public class CDHZulaufinfo extends Thread {
 
-    private static Logger logger = Logger.getLogger(CDHZulaufinfo.class);
+    private static Logger logger = LogManager.getLogger(CDHZulaufinfo.class);
     public static SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd ss:SSS");
     private Properties prop;
 
@@ -196,8 +198,8 @@ public class CDHZulaufinfo extends Thread {
     public static void main(String[] args) throws IOException {
         // TODO code application logic here
 
-        BasicConfigurator.configure();
-        Logger.getRootLogger().setLevel(Level.DEBUG);
+        Configurator.initialize(new DefaultConfiguration());
+        Configurator.setRootLevel(Level.DEBUG);
 
         String iniFilename = "./conf/clxProductSync.properties";
         ApplicationConfig.loadConfig(iniFilename);

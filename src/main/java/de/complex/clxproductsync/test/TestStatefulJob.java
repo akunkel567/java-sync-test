@@ -6,7 +6,8 @@ package de.complex.clxproductsync.test;
 
 import java.util.Properties;
 import java.util.logging.Level;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.quartz.JobDataMap;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;

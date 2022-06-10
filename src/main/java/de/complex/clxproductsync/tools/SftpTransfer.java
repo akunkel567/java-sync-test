@@ -7,7 +7,8 @@ package de.complex.clxproductsync.tools;
 
 import de.complex.transfer.sftp.SftpSession;
 import org.apache.commons.io.input.ReaderInputStream;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.File;
 import java.io.FileReader;
@@ -19,7 +20,7 @@ import java.io.IOException;
  */
 public class SftpTransfer {
 
-    private static final Logger LOG = Logger.getLogger(SftpTransfer.class);
+    private static final Logger LOG = LogManager.getLogger(SftpTransfer.class);
 
     private String host;
     private String username;

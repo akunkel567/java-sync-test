@@ -8,7 +8,8 @@ import de.complex.util.lang.StringTool;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.logging.Level;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  *
@@ -16,7 +17,7 @@ import org.apache.log4j.Logger;
  */
 public class MssqlDb {
 
-    private static Logger logger = Logger.getLogger(MssqlDb.class);
+    private static Logger logger = LogManager.getLogger(MssqlDb.class);
     public static final String driverName = "com.microsoft.sqlserver.jdbc.SQLServerDriver";
     private String username;
     private String password;

@@ -26,7 +26,8 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 import de.complex.util.lang.StringTool;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  *
@@ -34,7 +35,7 @@ import org.apache.log4j.Logger;
  */
 public class SocketEventManager extends Thread {
 
-    private static Logger logger = Logger.getLogger(SocketEventManager.class);
+    private static Logger logger = LogManager.getLogger(SocketEventManager.class);
     private HashMap<String, AbstractSocketEventHandler> eventHandlerList;
     private Socket socket;
     private String socketURL;

@@ -10,7 +10,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import org.apache.commons.codec.binary.Base64;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  *
@@ -18,7 +19,7 @@ import org.apache.log4j.Logger;
  */
 public class FileConverter {
 
-    private static Logger logger = Logger.getLogger(FileConverter.class);
+    private static Logger logger = LogManager.getLogger(FileConverter.class);
 
     public static byte[] toBase64byteArray(File file) throws FileConvertException {
         byte inByte[] = null;

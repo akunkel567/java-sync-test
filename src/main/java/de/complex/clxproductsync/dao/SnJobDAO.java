@@ -19,7 +19,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
-import org.apache.log4j.*;
+import org.apache.logging.log4j.*;
 import java.util.Vector;
 
 /**
@@ -28,8 +28,8 @@ import java.util.Vector;
  */
 public class SnJobDAO {
 
-    private static Logger logger = Logger.getLogger(SnJobDAO.class);
-    //private static Logger testlog = Logger.getLogger("testlog");
+    private static Logger logger = LogManager.getLogger(SnJobDAO.class);
+    //private static Logger testlog = LogManager.getLogger("testlog");
     FirebirdDb db;
     private String checkEventQry = null;
     public static final int SNJOBDONE = 1;

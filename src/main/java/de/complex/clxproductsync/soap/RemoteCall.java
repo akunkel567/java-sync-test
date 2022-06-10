@@ -9,7 +9,8 @@ import java.net.MalformedURLException;
 import java.rmi.RemoteException;
 import javax.xml.rpc.ServiceException;
 import org.apache.axis.AxisFault;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  *
@@ -17,7 +18,7 @@ import org.apache.log4j.Logger;
  */
 abstract class RemoteCall<T> {
 
-    private static Logger logger = Logger.getLogger(RemoteCall.class);
+    private static Logger logger = LogManager.getLogger(RemoteCall.class);
 
     protected T run() throws AxisFault, ServiceException, MalformedURLException, RemoteException, RemoteCallException {
         throw new IllegalStateException("implement me");

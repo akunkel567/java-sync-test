@@ -5,7 +5,8 @@
 package de.complex.clxproductsync.job;
 
 import java.util.Properties;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.quartz.JobDataMap;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
@@ -17,7 +18,7 @@ import org.quartz.StatefulJob;
  */
 public class SpoolcheckUploadJob implements StatefulJob {
 
-    private static Logger logger = Logger.getLogger(SpoolcheckUploadJob.class);
+    private static Logger logger = LogManager.getLogger(SpoolcheckUploadJob.class);
 
     public void execute(JobExecutionContext context) throws JobExecutionException {
         try {

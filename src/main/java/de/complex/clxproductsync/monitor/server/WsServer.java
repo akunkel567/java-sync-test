@@ -10,7 +10,8 @@ import javax.jws.WebParam;
 import javax.jws.WebResult;
 import javax.jws.WebService;
 import javax.jws.soap.SOAPBinding;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  *
@@ -20,7 +21,7 @@ import org.apache.log4j.Logger;
 @SOAPBinding(style = SOAPBinding.Style.RPC)
 public class WsServer {
 
-    private static Logger logger = Logger.getLogger(WsServer.class);
+    private static Logger logger = LogManager.getLogger(WsServer.class);
     private MainApp mainApp = null;
     private boolean pause = false;
 

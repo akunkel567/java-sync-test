@@ -25,7 +25,8 @@ import java.util.Date;
 import java.util.Properties;
 import java.util.Vector;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  *
@@ -33,7 +34,7 @@ import org.apache.log4j.Logger;
  */
 public class SpoolcheckUpload extends Thread {
 
-    private static Logger logger = Logger.getLogger(SpoolcheckUpload.class);
+    private static Logger logger = LogManager.getLogger(SpoolcheckUpload.class);
     public static SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd ss:SSS");
     private Properties prop;
 

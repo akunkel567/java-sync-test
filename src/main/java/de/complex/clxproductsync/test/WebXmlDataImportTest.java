@@ -14,7 +14,7 @@ import de.complex.clxproductsync.xml.XmlTable;
 import de.complex.tools.config.ApplicationConfig;
 import de.complex.tools.xml.XmlHelper;
 import java.io.File;
-import org.apache.log4j.PropertyConfigurator;
+
 
 /**
  *

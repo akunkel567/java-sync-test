@@ -5,7 +5,8 @@
 package de.complex.daiber.jclxsync.job;
 
 import java.util.Properties;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.quartz.JobDataMap;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
@@ -16,7 +17,7 @@ import org.quartz.JobExecutionException;
  */
 public class ExcelBestandUploadJob implements org.quartz.StatefulJob {
 
-    private static Logger logger = Logger.getLogger(ExcelBestandUploadJob.class);
+    private static Logger logger = LogManager.getLogger(ExcelBestandUploadJob.class);
 
     public ExcelBestandUploadJob() {
         ExcelBestandUploadJob.logger.debug(this + " create " + ExcelBestandUploadJob.class.getName());
