@@ -14,21 +14,9 @@ import de.complex.clxproductsync.dao.SnJobDAO;
 import de.complex.clxproductsync.exception.JobException;
 import de.complex.clxproductsync.soap.RemoteCallException;
 import de.complex.clxproductsync.soap.SoapHandler;
-
 import de.complex.tools.config.ApplicationConfig;
-import de.complex.tools.mail.Mailer;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-
-import java.net.URL;
-import java.util.Properties;
-
-import org.apache.axis.AxisFault;
-import org.apache.commons.codec.binary.Base64;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 

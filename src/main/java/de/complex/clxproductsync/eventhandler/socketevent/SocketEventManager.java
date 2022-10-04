@@ -170,7 +170,7 @@ public class SocketEventManager extends Thread {
                         // nix
                     }
 
-                    yield();
+                    Thread.yield();
                     try {
                         Thread.sleep(1000);
                     } catch (InterruptedException e) {

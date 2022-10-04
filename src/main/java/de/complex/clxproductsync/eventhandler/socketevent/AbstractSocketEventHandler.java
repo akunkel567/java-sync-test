@@ -11,22 +11,16 @@ package de.complex.clxproductsync.eventhandler.socketevent;
 import de.complex.database.firebird.FirebirdDb;
 import de.complex.clxproductsync.eventhandler.socketevent.config.SocketConfig;
 import de.complex.clxproductsync.eventhandler.socketevent.config.TableConfig;
-import de.complex.clxproductsync.soap.SoapHandler;
 import de.complex.tools.config.ApplicationConfig;
 import de.complex.tools.mail.Mailer;
 import de.complex.tools.xml.XmlHelper;
 import java.io.File;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Vector;
-import java.util.logging.Level;
-import javax.xml.bind.JAXBException;
-import org.apache.axis.AxisFault;
+
+import jakarta.xml.bind.JAXBException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -52,8 +46,8 @@ public abstract class AbstractSocketEventHandler {
     }
 
     public boolean doSendError(int typeId, int webid) {
-        Integer type = new Integer(typeId);
-        Integer id = new Integer(webid);
+        Integer type = Integer.valueOf(typeId);
+        Integer id = Integer.valueOf(webid);
 
         Vector vec = map.get(type);
 
@@ -185,30 +179,6 @@ public abstract class AbstractSocketEventHandler {
     public abstract String getHandleEventType();
 
     public abstract void run();
-
-    public void showAxisFault(AxisFault af) {
-//		AbstractSocketEventHandler.logger.error("AxisFault " + this.getClass().getName() + " a *******************************************************");
-//		AbstractSocketEventHandler.logger.error("AxisFault " + this.getClass().getName() + " - getFaultCode (LocalPart) :" + af.getFaultCode().getLocalPart());
-//		AbstractSocketEventHandler.logger.error("AxisFault " + this.getClass().getName() + " - getFaultCode (Prefix) :" + af.getFaultCode().getPrefix());
-//		AbstractSocketEventHandler.logger.error("AxisFault " + this.getClass().getName() + " - getFaultString :" + af.getFaultString());
-//		AbstractSocketEventHandler.logger.error("AxisFault " + this.getClass().getName() + " - getMessage :" + af.getMessage());
-//		AbstractSocketEventHandler.logger.error("AxisFault " + this.getClass().getName() + " e *******************************************************");
-//
-//		af.printStackTrace();
-//
-//		String errorStr = "AxisFault " + this.getClass().getName() + " a *******************************************************"
-//				  + "\nAxisFault " + this.getClass().getName() + " - getFaultCode (LocalPart) :" + af.getFaultCode().getLocalPart()
-//				  + "\nAxisFault " + this.getClass().getName() + " - getFaultCode (Prefix) :" + af.getFaultCode().getPrefix()
-//				  + "\nAxisFault " + this.getClass().getName() + " - getFaultString :" + af.getFaultString()
-//				  + "\nAxisFault " + this.getClass().getName() + " - getMessage :" + af.getMessage()
-//				  + "\nAxisFault " + this.getClass().getName() + " e *******************************************************";
-//
-//
-//		if (this.mailer != null) {
-//			this.mailer.postErrorMail(" Axis-Error", errorStr, "AxisFault", af.hashCode());
-//		}
-//
-    }
 
     public Mailer getMailer() {
         return mailer;

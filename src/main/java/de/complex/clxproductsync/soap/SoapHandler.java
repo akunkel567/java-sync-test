@@ -7,24 +7,16 @@ package de.complex.clxproductsync.soap;
 import de.complex.clxproductsync.dao.SnJob;
 import de.complex.clxproductsync.eventhandler.fileevent.FileConvertException;
 import de.complex.util.lang.StringTool;
+import jakarta.xml.ws.BindingProvider;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import de.complex.clxproductsync.eventhandler.fileevent.FileConverter;
-import de.complex.clxproductsync.soap.axis.FiledataIn;
-import de.complex.clxproductsync.soap.axis.SnjobIn;
-import de.complex.clxproductsync.soap.axis.Snjobweb;
-import de.complex.clxproductsync.soap.axis.SoapAnswer;
-import de.complex.clxproductsync.soap.axis.TransferPort;
-import de.complex.clxproductsync.soap.axis.TransferService;
-import de.complex.clxproductsync.soap.axis.TransferServiceLocator;
-import de.complex.clxproductsync.soap.axis.XmlOut;
+import de.complex.clxproductsync.soap.transfer.*;
 import de.complex.tools.config.ApplicationConfig;
 import java.io.File;
 import java.net.MalformedURLException;
-import java.net.URL;
 import java.rmi.RemoteException;
-import javax.xml.rpc.ServiceException;
-import org.apache.axis.AxisFault;
+
 
 /**
  *
@@ -37,12 +29,23 @@ public class SoapHandler {
     public SoapHandler() {
     }
 
+    public static TransferPort getTransferPort(){
+        TransferService service = new TransferService();
+        TransferPort port = service.getTransferPort();
+
+        String endpointURL = ApplicationConfig.getValue("ws_url").trim() + "/transfer";
+        BindingProvider bp = (BindingProvider) port;
+        bp.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, endpointURL);
+
+        return port;
+    }
+
     public static void sendXmlData(final SnJob snJob, final String xmlData) throws RemoteCallException {
         SoapHandler.logger.debug("call sendXmlData");
 
         RemoteCall<Void> r = new TransferRemoteCall<Void>() {
             @Override
-            public Void runTransfer(TransferPort stub) throws AxisFault, ServiceException, MalformedURLException, RemoteException, RemoteCallException {
+            public Void runTransfer(TransferPort stub) throws MalformedURLException, RemoteException, RemoteCallException {
                 int errorCount = 0;
 
                 SnjobIn snjobIn = new SnjobIn();
@@ -56,10 +59,10 @@ public class SoapHandler {
                 snjobIn.setScu(snJob.getScu() == null ? "" : snJob.getScu());
                 snjobIn.setScdt(snJob.getScdt() == null ? "" : snJob.getScdt());
 
-                SoapAnswer[] answers = stub.setDataFromXml(ApplicationConfig.getValue("ws_username").trim(), ApplicationConfig.getValue("ws_password").trim(), snjobIn, xmlData);
+                SoapAnswerList soapAnswerList = getTransferPort().setDataFromXml(ApplicationConfig.getValue("ws_username").trim(), ApplicationConfig.getValue("ws_password").trim(), snjobIn, xmlData);
 
-                if (answers != null) {
-                    for (SoapAnswer answer : answers) {
+                if (soapAnswerList != null) {
+                    for (SoapAnswer answer : soapAnswerList.getItem()) {
                         if (answer.getStatus() != 0) {
                             errorCount++;
                         }
@@ -85,7 +88,7 @@ public class SoapHandler {
 
         RemoteCall<Void> r = new TransferRemoteCall<Void>() {
             @Override
-            public Void runTransfer(TransferPort stub) throws AxisFault, ServiceException, MalformedURLException, RemoteException, RemoteCallException {
+            public Void runTransfer(TransferPort stub) throws MalformedURLException, RemoteException, RemoteCallException {
 
                 byte[] fileData;
 
@@ -138,7 +141,7 @@ public class SoapHandler {
 
         RemoteCall<Void> r = new TransferRemoteCall<Void>() {
             @Override
-            public Void runTransfer(TransferPort stub) throws AxisFault, ServiceException, MalformedURLException, RemoteException, RemoteCallException {
+            public Void runTransfer(TransferPort stub) throws MalformedURLException, RemoteException, RemoteCallException {
 
                 FiledataIn fileDataIn = new FiledataIn();
                 fileDataIn.setFremdid(fremdid);
@@ -163,13 +166,12 @@ public class SoapHandler {
         r.start();
     }
 
-    public static Snjobweb[] getSnJobWebList(final int limit) throws RemoteCallException {
+    public static SnjobwebList getSnJobWebList(final int limit) throws RemoteCallException {
         SoapHandler.logger.debug("call getSnJobWebList");
-        RemoteCall<Snjobweb[]> r = new TransferRemoteCall<Snjobweb[]>() {
+        RemoteCall<SnjobwebList> r = new TransferRemoteCall<>() {
             @Override
-            public Snjobweb[] runTransfer(TransferPort stub) throws AxisFault, ServiceException, MalformedURLException, RemoteException {
-
-                return stub.getListFromSnjobweb(ApplicationConfig.getValue("ws_username").trim(), ApplicationConfig.getValue("ws_password").trim(), limit);
+            public SnjobwebList runTransfer(TransferPort stub) throws MalformedURLException, RemoteException {
+                return getTransferPort().getListFromSnjobweb(ApplicationConfig.getValue("ws_username").trim(), ApplicationConfig.getValue("ws_password").trim(), limit);
 
             }
         };
@@ -181,10 +183,8 @@ public class SoapHandler {
 
         RemoteCall<XmlOut> r = new TransferRemoteCall<XmlOut>() {
             @Override
-            public XmlOut runTransfer(TransferPort stub) throws AxisFault, ServiceException, MalformedURLException, RemoteException {
-
-                return stub.getXmlFromSnjobweb(ApplicationConfig.getValue("ws_username").trim(), ApplicationConfig.getValue("ws_password").trim(), snjobwebid);
-
+            public XmlOut runTransfer(TransferPort stub) throws MalformedURLException, RemoteException {
+                return getTransferPort().getXmlFromSnjobweb(ApplicationConfig.getValue("ws_username").trim(), ApplicationConfig.getValue("ws_password").trim(), snjobwebid);
             }
         };
         return r.start();
@@ -194,9 +194,9 @@ public class SoapHandler {
 
         RemoteCall<Void> r = new TransferRemoteCall<Void>() {
             @Override
-            public Void runTransfer(TransferPort stub) throws AxisFault, ServiceException, MalformedURLException, RemoteException, RemoteCallException {
+            public Void runTransfer(TransferPort stub) throws MalformedURLException, RemoteException, RemoteCallException {
 
-                SoapAnswer answer = stub.setSnjobwebOk(ApplicationConfig.getValue("ws_username").trim(), ApplicationConfig.getValue("ws_password").trim(), snjobwebid);
+                SoapAnswer answer = getTransferPort().setSnjobwebOk(ApplicationConfig.getValue("ws_username").trim(), ApplicationConfig.getValue("ws_password").trim(), snjobwebid);
 
                 if (answer != null) {
                     if (answer.getStatus() != 0) {
@@ -215,14 +215,13 @@ public class SoapHandler {
 
     private static class TransferRemoteCall<T> extends RemoteCall {
 
-        protected T runTransfer(TransferPort stub) throws AxisFault, ServiceException, MalformedURLException, RemoteException, RemoteCallException {
+        protected T runTransfer(TransferPort stub) throws MalformedURLException, RemoteException, RemoteCallException {
             throw new IllegalStateException("implement me");
         }
 
         @Override
-        protected T run() throws AxisFault, ServiceException, MalformedURLException, RemoteException, RemoteCallException {
-            TransferService service = new TransferServiceLocator();
-            TransferPort stub = service.getTransferPort(new URL(ApplicationConfig.getValue("ws_url").trim() + "/transfer"));
+        protected T run() throws MalformedURLException, RemoteException, RemoteCallException {
+            TransferPort stub = getTransferPort();
 
             return runTransfer(stub);
         }

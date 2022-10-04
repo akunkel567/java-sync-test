@@ -9,26 +9,25 @@
 package de.complex.clxproductsync.eventhandler.socketevent;
 
 import de.complex.activerecord.ActiveRecord;
+import de.complex.clxproductsync.soap.transfer.Snjobweb;
+import de.complex.clxproductsync.soap.transfer.SnjobwebList;
+import de.complex.clxproductsync.soap.transfer.XmlOut;
 import de.complex.database.AbstractClxDatabase;
-import de.complex.database.exception.DbConnectionNotAvailableException;
 import de.complex.database.firebird.FirebirdDb;
 import de.complex.clxproductsync.eventhandler.socketevent.config.ProcedureConfig;
 import de.complex.clxproductsync.eventhandler.socketevent.config.TableConfig;
 import de.complex.clxproductsync.soap.RemoteCallException;
 import de.complex.clxproductsync.soap.SoapHandler;
-import de.complex.clxproductsync.soap.axis.Snjobweb;
-import de.complex.clxproductsync.soap.axis.XmlOut;
-import de.complex.clxproductsync.xml.XmlCol;
-import de.complex.clxproductsync.xml.XmlConverter;
-import de.complex.clxproductsync.xml.XmlData;
-import de.complex.clxproductsync.xml.XmlRow;
-import de.complex.clxproductsync.xml.XmlTable;
+import de.complex.clxproductsync.eventhandler.socketevent.xml.XmlCol;
+import de.complex.clxproductsync.eventhandler.socketevent.xml.XmlConverter;
+import de.complex.clxproductsync.eventhandler.socketevent.xml.XmlData;
+import de.complex.clxproductsync.eventhandler.socketevent.xml.XmlRow;
+import de.complex.clxproductsync.eventhandler.socketevent.xml.XmlTable;
 import java.sql.SQLException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import de.complex.tools.config.ApplicationConfig;
 import java.sql.Connection;
-import org.apache.axis.AxisFault;
 
 /**
  *
@@ -54,15 +53,15 @@ public class WebDataEventHandler extends AbstractSocketEventHandler {
         try {
 
             if (ApplicationConfig.getValue("websync", "true").equals("true")) {
-                Snjobweb[] snjobwebs = null;
+                SnjobwebList snjobwebs = null;
 
                 int limit = Integer.parseInt(ApplicationConfig.getValue("snjobweblimit", "2"));
 
                 do {
                     snjobwebs = SoapHandler.getSnJobWebList(limit);
-                    WebDataEventHandler.logger.info("Anzahl snjobwebs: " + snjobwebs.length);
+                    WebDataEventHandler.logger.info("Anzahl snjobwebs: " + snjobwebs.getItem().size());
 
-                    for (Snjobweb snjobweb : snjobwebs) {
+                    for (Snjobweb snjobweb : snjobwebs.getItem()) {
                         currSnjobWeb = snjobweb;
                         WebDataEventHandler.logger.debug("Snjobweb start - " + snjobweb);
 
@@ -107,17 +106,17 @@ public class WebDataEventHandler extends AbstractSocketEventHandler {
                                 }
                             }
                         } catch (RemoteCallException rce) {
-                            if (rce.getCause() instanceof AxisFault && "410".equalsIgnoreCase(((AxisFault) rce.getCause()).getFaultCode().toString())) {
-                                WebDataEventHandler.logger.warn("AxisFault: " + ((AxisFault) rce.getCause()).getFaultString(), rce);
-
-                                // Datensatz nicht mehr vorhanden, wurde bereits gelöscht und noch offener Löschjob vorhanden 
-                                SoapHandler.setSnJobWebOK(snjobweb.getSnjobwebid());
-                            } else {
+//                            if (rce.getCause() instanceof AxisFault && "410".equalsIgnoreCase(((AxisFault) rce.getCause()).getFaultCode().toString())) {
+//                                WebDataEventHandler.logger.warn("AxisFault: " + ((AxisFault) rce.getCause()).getFaultString(), rce);
+//
+//                                // Datensatz nicht mehr vorhanden, wurde bereits gelöscht und noch offener Löschjob vorhanden
+//                                SoapHandler.setSnJobWebOK(snjobweb.getSnjobwebid());
+//                            } else {
                                 throw rce;
-                            }
+//                            }
                         }
                     }
-                } while (snjobwebs.length == limit);
+                } while (snjobwebs.getItem().size() == limit);
 
                 snjobwebs = null;
             } else {

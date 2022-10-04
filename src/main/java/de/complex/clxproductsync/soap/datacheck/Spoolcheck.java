@@ -1,281 +1,170 @@
-/**
- * Spoolcheck.java
- *
- * This file was auto-generated from WSDL
- * by the Apache Axis 1.4 Apr 22, 2006 (06:55:48 PDT) WSDL2Java emitter.
- */
+
 package de.complex.clxproductsync.soap.datacheck;
 
-public class Spoolcheck implements java.io.Serializable {
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlType;
 
-    private java.lang.String name;
 
-    private int anzahl;
+/**
+ * <p>Java-Klasse für Spoolcheck complex type.
+ * 
+ * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
+ * 
+ * <pre>
+ * &lt;complexType name="Spoolcheck"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;all&gt;
+ *         &lt;element name="name" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
+ *         &lt;element name="anzahl" type="{http://www.w3.org/2001/XMLSchema}int"/&gt;
+ *         &lt;element name="sadt" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
+ *         &lt;element name="now" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
+ *         &lt;element name="idsum" type="{http://www.w3.org/2001/XMLSchema}int"/&gt;
+ *         &lt;element name="id" type="{http://www.w3.org/2001/XMLSchema}int"/&gt;
+ *       &lt;/all&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
+ * </pre>
+ * 
+ * 
+ */
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlType(name = "Spoolcheck", propOrder = {
 
-    private java.lang.String sadt;
+})
+public class Spoolcheck {
 
-    private java.lang.String now;
-
-    private int idsum;
-
-    private int id;
-
-    public Spoolcheck() {
-    }
-
-    public Spoolcheck(
-            java.lang.String name,
-            int anzahl,
-            java.lang.String sadt,
-            java.lang.String now,
-            int idsum,
-            int id) {
-        this.name = name;
-        this.anzahl = anzahl;
-        this.sadt = sadt;
-        this.now = now;
-        this.idsum = idsum;
-        this.id = id;
-    }
+    @XmlElement(required = true)
+    protected String name;
+    protected int anzahl;
+    @XmlElement(required = true)
+    protected String sadt;
+    @XmlElement(required = true)
+    protected String now;
+    protected int idsum;
+    protected int id;
 
     /**
-     * Gets the name value for this Spoolcheck.
-     *
-     * @return name
+     * Ruft den Wert der name-Eigenschaft ab.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
      */
-    public java.lang.String getName() {
+    public String getName() {
         return name;
     }
 
     /**
-     * Sets the name value for this Spoolcheck.
-     *
-     * @param name
+     * Legt den Wert der name-Eigenschaft fest.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
      */
-    public void setName(java.lang.String name) {
-        this.name = name;
+    public void setName(String value) {
+        this.name = value;
     }
 
     /**
-     * Gets the anzahl value for this Spoolcheck.
-     *
-     * @return anzahl
+     * Ruft den Wert der anzahl-Eigenschaft ab.
+     * 
      */
     public int getAnzahl() {
         return anzahl;
     }
 
     /**
-     * Sets the anzahl value for this Spoolcheck.
-     *
-     * @param anzahl
+     * Legt den Wert der anzahl-Eigenschaft fest.
+     * 
      */
-    public void setAnzahl(int anzahl) {
-        this.anzahl = anzahl;
+    public void setAnzahl(int value) {
+        this.anzahl = value;
     }
 
     /**
-     * Gets the sadt value for this Spoolcheck.
-     *
-     * @return sadt
+     * Ruft den Wert der sadt-Eigenschaft ab.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
      */
-    public java.lang.String getSadt() {
+    public String getSadt() {
         return sadt;
     }
 
     /**
-     * Sets the sadt value for this Spoolcheck.
-     *
-     * @param sadt
+     * Legt den Wert der sadt-Eigenschaft fest.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
      */
-    public void setSadt(java.lang.String sadt) {
-        this.sadt = sadt;
+    public void setSadt(String value) {
+        this.sadt = value;
     }
 
     /**
-     * Gets the now value for this Spoolcheck.
-     *
-     * @return now
+     * Ruft den Wert der now-Eigenschaft ab.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
      */
-    public java.lang.String getNow() {
+    public String getNow() {
         return now;
     }
 
     /**
-     * Sets the now value for this Spoolcheck.
-     *
-     * @param now
+     * Legt den Wert der now-Eigenschaft fest.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
      */
-    public void setNow(java.lang.String now) {
-        this.now = now;
+    public void setNow(String value) {
+        this.now = value;
     }
 
     /**
-     * Gets the idsum value for this Spoolcheck.
-     *
-     * @return idsum
+     * Ruft den Wert der idsum-Eigenschaft ab.
+     * 
      */
     public int getIdsum() {
         return idsum;
     }
 
     /**
-     * Sets the idsum value for this Spoolcheck.
-     *
-     * @param idsum
+     * Legt den Wert der idsum-Eigenschaft fest.
+     * 
      */
-    public void setIdsum(int idsum) {
-        this.idsum = idsum;
+    public void setIdsum(int value) {
+        this.idsum = value;
     }
 
     /**
-     * Gets the id value for this Spoolcheck.
-     *
-     * @return id
+     * Ruft den Wert der id-Eigenschaft ab.
+     * 
      */
     public int getId() {
         return id;
     }
 
     /**
-     * Sets the id value for this Spoolcheck.
-     *
-     * @param id
+     * Legt den Wert der id-Eigenschaft fest.
+     * 
      */
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    private java.lang.Object __equalsCalc = null;
-
-    public synchronized boolean equals(java.lang.Object obj) {
-        if (!(obj instanceof Spoolcheck)) {
-            return false;
-        }
-        Spoolcheck other = (Spoolcheck) obj;
-        if (obj == null) {
-            return false;
-        }
-        if (this == obj) {
-            return true;
-        }
-        if (__equalsCalc != null) {
-            return (__equalsCalc == obj);
-        }
-        __equalsCalc = obj;
-        boolean _equals;
-        _equals = true
-                && ((this.name == null && other.getName() == null)
-                || (this.name != null
-                && this.name.equals(other.getName())))
-                && this.anzahl == other.getAnzahl()
-                && ((this.sadt == null && other.getSadt() == null)
-                || (this.sadt != null
-                && this.sadt.equals(other.getSadt())))
-                && ((this.now == null && other.getNow() == null)
-                || (this.now != null
-                && this.now.equals(other.getNow())))
-                && this.idsum == other.getIdsum()
-                && this.id == other.getId();
-        __equalsCalc = null;
-        return _equals;
-    }
-
-    private boolean __hashCodeCalc = false;
-
-    public synchronized int hashCode() {
-        if (__hashCodeCalc) {
-            return 0;
-        }
-        __hashCodeCalc = true;
-        int _hashCode = 1;
-        if (getName() != null) {
-            _hashCode += getName().hashCode();
-        }
-        _hashCode += getAnzahl();
-        if (getSadt() != null) {
-            _hashCode += getSadt().hashCode();
-        }
-        if (getNow() != null) {
-            _hashCode += getNow().hashCode();
-        }
-        _hashCode += getIdsum();
-        _hashCode += getId();
-        __hashCodeCalc = false;
-        return _hashCode;
-    }
-
-    // Type metadata
-    private static org.apache.axis.description.TypeDesc typeDesc
-            = new org.apache.axis.description.TypeDesc(Spoolcheck.class, true);
-
-    static {
-        typeDesc.setXmlType(new javax.xml.namespace.QName("urn:Datacheck", "Spoolcheck"));
-        org.apache.axis.description.ElementDesc elemField = new org.apache.axis.description.ElementDesc();
-        elemField.setFieldName("name");
-        elemField.setXmlName(new javax.xml.namespace.QName("", "name"));
-        elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "string"));
-        elemField.setNillable(false);
-        typeDesc.addFieldDesc(elemField);
-        elemField = new org.apache.axis.description.ElementDesc();
-        elemField.setFieldName("anzahl");
-        elemField.setXmlName(new javax.xml.namespace.QName("", "anzahl"));
-        elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "int"));
-        elemField.setNillable(false);
-        typeDesc.addFieldDesc(elemField);
-        elemField = new org.apache.axis.description.ElementDesc();
-        elemField.setFieldName("sadt");
-        elemField.setXmlName(new javax.xml.namespace.QName("", "sadt"));
-        elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "string"));
-        elemField.setNillable(false);
-        typeDesc.addFieldDesc(elemField);
-        elemField = new org.apache.axis.description.ElementDesc();
-        elemField.setFieldName("now");
-        elemField.setXmlName(new javax.xml.namespace.QName("", "now"));
-        elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "string"));
-        elemField.setNillable(false);
-        typeDesc.addFieldDesc(elemField);
-        elemField = new org.apache.axis.description.ElementDesc();
-        elemField.setFieldName("idsum");
-        elemField.setXmlName(new javax.xml.namespace.QName("", "idsum"));
-        elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "int"));
-        elemField.setNillable(false);
-        typeDesc.addFieldDesc(elemField);
-        elemField = new org.apache.axis.description.ElementDesc();
-        elemField.setFieldName("id");
-        elemField.setXmlName(new javax.xml.namespace.QName("", "id"));
-        elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "int"));
-        elemField.setNillable(false);
-        typeDesc.addFieldDesc(elemField);
-    }
-
-    /**
-     * Return type metadata object
-     */
-    public static org.apache.axis.description.TypeDesc getTypeDesc() {
-        return typeDesc;
-    }
-
-    /**
-     * Get Custom Serializer
-     */
-    public static org.apache.axis.encoding.Serializer getSerializer(
-            java.lang.String mechType,
-            java.lang.Class _javaType,
-            javax.xml.namespace.QName _xmlType) {
-        return new org.apache.axis.encoding.ser.BeanSerializer(
-                _javaType, _xmlType, typeDesc);
-    }
-
-    /**
-     * Get Custom Deserializer
-     */
-    public static org.apache.axis.encoding.Deserializer getDeserializer(
-            java.lang.String mechType,
-            java.lang.Class _javaType,
-            javax.xml.namespace.QName _xmlType) {
-        return new org.apache.axis.encoding.ser.BeanDeserializer(
-                _javaType, _xmlType, typeDesc);
+    public void setId(int value) {
+        this.id = value;
     }
 
 }

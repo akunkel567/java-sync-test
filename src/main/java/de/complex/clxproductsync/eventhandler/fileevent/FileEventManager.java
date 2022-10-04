@@ -101,7 +101,7 @@ public class FileEventManager extends Thread {
                         db = null;
                     }
 
-                    yield();
+                    Thread.yield();
                     try {
                         Thread.sleep(jobCheckInterval);
                     } catch (InterruptedException e) {

@@ -1,0 +1,261 @@
+<?xml version="1.0"?><definitions name="Transfer" targetNamespace="urn:Transfer" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="urn:Transfer" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/" xmlns="http://schemas.xmlsoap.org/wsdl/">
+    <types xmlns="http://schemas.xmlsoap.org/wsdl/">
+        <schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="urn:Transfer">
+            <complexType name="SnjobIn">
+                <all>
+                    <element name="snjobid" type="xsd:long" />
+                    <element name="eventname" type="xsd:string" />
+                    <element name="herkunft" type="xsd:string" />
+                    <element name="fremdid" type="xsd:long" />
+                    <element name="jobtyp" type="xsd:string" />
+                    <element name="sau" type="xsd:string" />
+                    <element name="sadt" type="xsd:string" />
+                    <element name="scu" type="xsd:string" />
+                    <element name="scdt" type="xsd:string" />
+                </all>
+            </complexType>
+            <complexType name="SoapAnswerList">
+                <sequence>
+                    <element name="item" type="tns:SoapAnswer" minOccurs="0" maxOccurs="unbounded"/>
+                </sequence>
+            </complexType>
+            <complexType name="SoapAnswer">
+                <all>
+                    <element name="status" type="xsd:int" />
+                    <element name="msg" type="xsd:string" />
+                    <element name="rowsok" type="xsd:int" />
+                    <element name="Returnnok" type="tns:ReturnnokList" />
+                </all>
+            </complexType>
+            <complexType name="SnjobwebList">
+                <sequence>
+                    <element name="item" type="tns:Snjobweb" minOccurs="0" maxOccurs="unbounded"/>
+                </sequence>
+            </complexType>
+            <complexType name="Snjobweb">
+                <all>
+                    <element name="snjobwebid" type="xsd:int" />
+                    <element name="eventname" type="xsd:string" />
+                    <element name="herkunft" type="xsd:string" />
+                    <element name="fremdid" type="xsd:int" />
+                    <element name="jobtyp" type="xsd:string" />
+                    <element name="done" type="xsd:int" />
+                    <element name="selfdone" type="xsd:int" />
+                    <element name="create_user" type="xsd:string" />
+                    <element name="create_date" type="xsd:string" />
+                    <element name="update_user" type="xsd:string" />
+                    <element name="update_date" type="xsd:string" />
+                </all>
+            </complexType>
+            <complexType name="XmlOut">
+                <all>
+                    <element name="xml" type="xsd:string" />
+                </all>
+            </complexType>
+            <complexType name="FiledataIn">
+                <all>
+                    <element name="filename" type="xsd:string" />
+                    <element name="fremdkz" type="xsd:string" />
+                    <element name="fremdid" type="xsd:long" />
+                    <element name="content" type="xsd:base64Binary" />
+                </all>
+            </complexType>
+            <complexType name="SoapInfoList">
+                <sequence>
+                    <element name="item" type="tns:SoapInfo" minOccurs="0" maxOccurs="unbounded"/>
+                </sequence>
+            </complexType>
+            <complexType name="SoapInfo">
+                <all>
+                    <element name="key" type="xsd:string" />
+                    <element name="value" type="xsd:string" />
+                </all>
+            </complexType>
+            <complexType name="ReturnnokList">
+                <sequence>
+                    <element name="item" type="tns:Returnnok" minOccurs="0" maxOccurs="unbounded"/>
+                </sequence>
+            </complexType>
+            <complexType name="Returnnok" />
+        </schema>
+    </types>
+    <message name="SetDataFromXmlRequest">
+        <part name="login" type="xsd:string" />
+        <part name="password" type="xsd:string" />
+        <part name="SnjobIn" type="tns:SnjobIn" />
+        <part name="xml" type="xsd:string" />
+    </message>
+    <message name="SetDataFromXmlResponse">
+        <part name="SoapAnswer" type="tns:SoapAnswerList" />
+    </message>
+    <message name="GetListFromSnjobwebRequest">
+        <part name="login" type="xsd:string" />
+        <part name="password" type="xsd:string" />
+        <part name="limit" type="xsd:int" />
+    </message>
+    <message name="GetListFromSnjobwebResponse">
+        <part name="Snjobweb" type="tns:SnjobwebList" />
+    </message>
+    <message name="GetXmlFromSnjobwebRequest">
+        <part name="login" type="xsd:string" />
+        <part name="password" type="xsd:string" />
+        <part name="snjobwebid" type="xsd:long" />
+    </message>
+    <message name="GetXmlFromSnjobwebResponse">
+        <part name="XmlOut" type="tns:XmlOut" />
+    </message>
+    <message name="SetSnjobwebOkRequest">
+        <part name="login" type="xsd:string" />
+        <part name="password" type="xsd:string" />
+        <part name="snjobwebid" type="xsd:long" />
+    </message>
+    <message name="SetSnjobwebOkResponse">
+        <part name="SoapAnswer" type="tns:SoapAnswer" />
+    </message>
+    <message name="SetFileRequest">
+        <part name="login" type="xsd:string" />
+        <part name="password" type="xsd:string" />
+        <part name="FiledataIn" type="tns:FiledataIn" />
+    </message>
+    <message name="SetFileResponse">
+        <part name="SoapAnswer" type="tns:SoapAnswer" />
+    </message>
+    <message name="DeleteFileRequest">
+        <part name="login" type="xsd:string" />
+        <part name="password" type="xsd:string" />
+        <part name="FiledataIn" type="tns:FiledataIn" />
+    </message>
+    <message name="DeleteFileResponse">
+        <part name="SoapAnswer" type="tns:SoapAnswer" />
+    </message>
+    <message name="InfoRequest">
+        <part name="login" type="xsd:string" />
+        <part name="password" type="xsd:string" />
+    </message>
+    <message name="InfoResponse">
+        <part name="SoapInfo" type="tns:SoapInfoList" />
+    </message>
+    <message name="InfoByKeyRequest">
+        <part name="login" type="xsd:string" />
+        <part name="password" type="xsd:string" />
+        <part name="key" type="xsd:string" />
+    </message>
+    <message name="InfoByKeyResponse">
+        <part name="SoapInfo" type="tns:SoapInfo" />
+    </message>
+    <portType name="TransferPort">
+        <operation name="SetDataFromXml">
+            <input message="tns:SetDataFromXmlRequest" />
+            <output message="tns:SetDataFromXmlResponse" />
+        </operation>
+        <operation name="GetListFromSnjobweb">
+            <input message="tns:GetListFromSnjobwebRequest" />
+            <output message="tns:GetListFromSnjobwebResponse" />
+        </operation>
+        <operation name="GetXmlFromSnjobweb">
+            <input message="tns:GetXmlFromSnjobwebRequest" />
+            <output message="tns:GetXmlFromSnjobwebResponse" />
+        </operation>
+        <operation name="SetSnjobwebOk">
+            <input message="tns:SetSnjobwebOkRequest" />
+            <output message="tns:SetSnjobwebOkResponse" />
+        </operation>
+        <operation name="SetFile">
+            <input message="tns:SetFileRequest" />
+            <output message="tns:SetFileResponse" />
+        </operation>
+        <operation name="DeleteFile">
+            <input message="tns:DeleteFileRequest" />
+            <output message="tns:DeleteFileResponse" />
+        </operation>
+        <operation name="Info">
+            <input message="tns:InfoRequest" />
+            <output message="tns:InfoResponse" />
+        </operation>
+        <operation name="InfoByKey">
+            <input message="tns:InfoByKeyRequest" />
+            <output message="tns:InfoByKeyResponse" />
+        </operation>
+    </portType>
+    <binding name="TransferBinding" type="tns:TransferPort">
+        <soap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http" />
+        <operation name="SetDataFromXml">
+            <soap:operation soapAction="urn:Transfer#TransferApi#SetDataFromXml" />
+            <input>
+                <soap:body namespace="urn:Transfer" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+            </input>
+            <output>
+                <soap:body namespace="urn:Transfer" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+            </output>
+        </operation>
+        <operation name="GetListFromSnjobweb">
+            <soap:operation soapAction="urn:Transfer#TransferApi#GetListFromSnjobweb" />
+            <input>
+                <soap:body namespace="urn:Transfer" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+            </input>
+            <output>
+                <soap:body namespace="urn:Transfer" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+            </output>
+        </operation>
+        <operation name="GetXmlFromSnjobweb">
+            <soap:operation soapAction="urn:Transfer#TransferApi#GetXmlFromSnjobweb" />
+            <input>
+                <soap:body namespace="urn:Transfer" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+            </input>
+            <output>
+                <soap:body namespace="urn:Transfer" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+            </output>
+        </operation>
+        <operation name="SetSnjobwebOk">
+            <soap:operation soapAction="urn:Transfer#TransferApi#SetSnjobwebOk" />
+            <input>
+                <soap:body namespace="urn:Transfer" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+            </input>
+            <output>
+                <soap:body namespace="urn:Transfer" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+            </output>
+        </operation>
+        <operation name="SetFile">
+            <soap:operation soapAction="urn:Transfer#TransferApi#SetFile" />
+            <input>
+                <soap:body namespace="urn:Transfer" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+            </input>
+            <output>
+                <soap:body namespace="urn:Transfer" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+            </output>
+        </operation>
+        <operation name="DeleteFile">
+            <soap:operation soapAction="urn:Transfer#TransferApi#DeleteFile" />
+            <input>
+                <soap:body namespace="urn:Transfer" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+            </input>
+            <output>
+                <soap:body namespace="urn:Transfer" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+            </output>
+        </operation>
+        <operation name="Info">
+            <soap:operation soapAction="urn:Transfer#TransferApi#Info" />
+            <input>
+                <soap:body namespace="urn:Transfer" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+            </input>
+            <output>
+                <soap:body namespace="urn:Transfer" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+            </output>
+        </operation>
+        <operation name="InfoByKey">
+            <soap:operation soapAction="urn:Transfer#TransferApi#InfoByKey" />
+            <input>
+                <soap:body namespace="urn:Transfer" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+            </input>
+            <output>
+                <soap:body namespace="urn:Transfer" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+            </output>
+        </operation>
+    </binding>
+    <service name="TransferService">
+        <documentation />
+        <port name="TransferPort" binding="tns:TransferBinding">
+            <soap:address location="http://www.example.com/" />
+        </port>
+    </service>
+</definitions>

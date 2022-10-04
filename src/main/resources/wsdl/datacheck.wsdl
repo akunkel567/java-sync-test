@@ -1,0 +1,135 @@
+<?xml version="1.0"?><definitions name="Datacheck" targetNamespace="urn:Datacheck" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="urn:Datacheck" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/" xmlns="http://schemas.xmlsoap.org/wsdl/">
+    <types xmlns="http://schemas.xmlsoap.org/wsdl/">
+        <schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="urn:Datacheck">
+            <complexType name="SpoolcheckList">
+                <sequence>
+                    <element name="item" type="tns:Spoolcheck" minOccurs="0" maxOccurs="unbounded"/>
+                </sequence>
+            </complexType>
+            <complexType name="Spoolcheck">
+                <all>
+                    <element name="name" type="xsd:string" />
+                    <element name="anzahl" type="xsd:int" />
+                    <element name="sadt" type="xsd:string" />
+                    <element name="now" type="xsd:string" />
+                    <element name="idsum" type="xsd:int" />
+                    <element name="id" type="xsd:int" />
+                </all>
+            </complexType>
+        </schema>
+    </types>
+    <message name="GetSpoolcheckRequest">
+        <part name="login" type="xsd:string" />
+        <part name="password" type="xsd:string" />
+    </message>
+    <message name="GetSpoolcheckResponse">
+        <part name="Spoolcheck" type="tns:SpoolcheckList" />
+    </message>
+    <message name="GetSpoolcheckListRequest">
+        <part name="login" type="xsd:string" />
+        <part name="password" type="xsd:string" />
+    </message>
+    <message name="GetSpoolcheckListResponse">
+        <part name="Spoolcheck" type="tns:SpoolcheckList" />
+    </message>
+    <message name="GetSnjobwebListRequest">
+        <part name="login" type="xsd:string" />
+        <part name="password" type="xsd:string" />
+    </message>
+    <message name="GetSnjobwebListResponse">
+        <part name="Spoolcheck" type="tns:SpoolcheckList" />
+    </message>
+    <message name="GetWebSpoolcheckListRequest">
+        <part name="login" type="xsd:string" />
+        <part name="password" type="xsd:string" />
+    </message>
+    <message name="GetWebSpoolcheckListResponse">
+        <part name="Spoolcheck" type="tns:SpoolcheckList" />
+    </message>
+    <message name="SetSpoolcheckListRequest">
+        <part name="login" type="xsd:string" />
+        <part name="password" type="xsd:string" />
+        <part name="Spoolcheck" type="tns:SpoolcheckList" />
+    </message>
+    <message name="SetSpoolcheckListResponse" />
+    <message name="GetStatusRequest">
+        <part name="login" type="xsd:string" />
+        <part name="password" type="xsd:string" />
+    </message>
+    <portType name="DatacheckPort">
+        <operation name="GetSpoolcheck">
+            <input message="tns:GetSpoolcheckRequest" />
+            <output message="tns:GetSpoolcheckResponse" />
+        </operation>
+        <operation name="GetSpoolcheckList">
+            <input message="tns:GetSpoolcheckListRequest" />
+            <output message="tns:GetSpoolcheckListResponse" />
+        </operation>
+        <operation name="GetSnjobwebList">
+            <input message="tns:GetSnjobwebListRequest" />
+            <output message="tns:GetSnjobwebListResponse" />
+        </operation>
+        <operation name="GetWebSpoolcheckList">
+            <input message="tns:GetWebSpoolcheckListRequest" />
+            <output message="tns:GetWebSpoolcheckListResponse" />
+        </operation>
+        <operation name="SetSpoolcheckList">
+            <input message="tns:SetSpoolcheckListRequest" />
+            <output message="tns:SetSpoolcheckListResponse" />
+        </operation>
+    </portType>
+    <binding name="DatacheckBinding" type="tns:DatacheckPort">
+        <soap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http" />
+        <operation name="GetSpoolcheck">
+            <soap:operation soapAction="urn:Datacheck#DatacheckApi#GetSpoolcheck" />
+            <input>
+                <soap:body namespace="urn:Datacheck" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+            </input>
+            <output>
+                <soap:body namespace="urn:Datacheck" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+            </output>
+        </operation>
+        <operation name="GetSpoolcheckList">
+            <soap:operation soapAction="urn:Datacheck#DatacheckApi#GetSpoolcheckList" />
+            <input>
+                <soap:body namespace="urn:Datacheck" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+            </input>
+            <output>
+                <soap:body namespace="urn:Datacheck" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+            </output>
+        </operation>
+        <operation name="GetSnjobwebList">
+            <soap:operation soapAction="urn:Datacheck#DatacheckApi#GetSnjobwebList" />
+            <input>
+                <soap:body namespace="urn:Datacheck" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+            </input>
+            <output>
+                <soap:body namespace="urn:Datacheck" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+            </output>
+        </operation>
+        <operation name="GetWebSpoolcheckList">
+            <soap:operation soapAction="urn:Datacheck#DatacheckApi#GetWebSpoolcheckList" />
+            <input>
+                <soap:body namespace="urn:Datacheck" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+            </input>
+            <output>
+                <soap:body namespace="urn:Datacheck" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+            </output>
+        </operation>
+        <operation name="SetSpoolcheckList">
+            <soap:operation soapAction="urn:Datacheck#DatacheckApi#SetSpoolcheckList" />
+            <input>
+                <soap:body namespace="urn:Datacheck" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+            </input>
+            <output>
+                <soap:body namespace="urn:Datacheck" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+            </output>
+        </operation>
+    </binding>
+    <service name="DatacheckService">
+        <documentation />
+        <port name="DatacheckPort" binding="tns:DatacheckBinding">
+            <soap:address location="http://www.example.com/" />
+        </port>
+    </service>
+</definitions>

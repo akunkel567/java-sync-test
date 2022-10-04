@@ -9,27 +9,19 @@
 package de.complex.daiber.jclxsync.job;
 
 import de.complex.database.SQLLog;
-import de.complex.database.exception.DbConnectionNotAvailableException;
 import de.complex.database.firebird.FirebirdDb;
 import de.complex.database.firebird.FirebirdDbPool;
 import de.complex.clxproductsync.db.mssql.MssqlDb;
 import de.complex.clxproductsync.exception.ClxUncaughtExceptionHandler;
-import de.complex.clxproductsync.soap.datacheck.DatacheckPort;
-import de.complex.clxproductsync.soap.datacheck.DatacheckService;
-import de.complex.clxproductsync.soap.datacheck.DatacheckServiceLocator;
-import de.complex.clxproductsync.soap.datacheck.Returnnok;
-import de.complex.clxproductsync.soap.datacheck.Spoolcheck;
 import de.complex.tools.config.ApplicationConfig;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.net.URL;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Properties;
-import java.util.Vector;
+
 import org.apache.logging.log4j.core.config.Configurator;
 import org.apache.logging.log4j.core.config.DefaultConfiguration;
 import org.apache.logging.log4j.Level;

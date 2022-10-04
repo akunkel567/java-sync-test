@@ -1,0 +1,1 @@
+.\jaxws-ri\bin\wsimport.bat -Xnocompile -verbose -Xdebug -encoding UTF-8 -p de.complex.clxproductsync.soap.transfer -wsdllocation /wsdl/transfer.wsdl  -d .\..\src\main\java .\..\src\main\resources\wsdl\transfer.wsdl
