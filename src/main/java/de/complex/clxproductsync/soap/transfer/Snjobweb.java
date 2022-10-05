@@ -293,4 +293,20 @@ public class Snjobweb {
         this.updateDate = value;
     }
 
+    @Override
+    public String toString() {
+        return "Snjobweb{" +
+                "snjobwebid=" + snjobwebid +
+                ", eventname='" + eventname + '\'' +
+                ", herkunft='" + herkunft + '\'' +
+                ", fremdid=" + fremdid +
+                ", jobtyp='" + jobtyp + '\'' +
+                ", done=" + done +
+                ", selfdone=" + selfdone +
+                ", createUser='" + createUser + '\'' +
+                ", createDate='" + createDate + '\'' +
+                ", updateUser='" + updateUser + '\'' +
+                ", updateDate='" + updateDate + '\'' +
+                '}';
+    }
 }

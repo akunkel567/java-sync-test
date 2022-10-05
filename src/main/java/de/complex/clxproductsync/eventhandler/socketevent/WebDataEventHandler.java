@@ -92,10 +92,10 @@ public class WebDataEventHandler extends AbstractSocketEventHandler {
                                     WebDataEventHandler.logger.debug("save/delete Table after Commit");
 
                                     SoapHandler.setSnJobWebOK(snjobweb.getSnjobwebid());
-                                    WebDataEventHandler.logger.info("Snjobweb done - " + currSnjobWeb);
+                                    WebDataEventHandler.logger.info("Snjobweb done - {}", currSnjobWeb);
 
                                 } catch (SQLException ex) {
-                                    WebDataEventHandler.logger.error("save not ok - Rollback SnjobWeb: " + snjobweb, ex);
+                                    WebDataEventHandler.logger.error("save not ok - Rollback SnjobWeb: " + snjobweb.toString(), ex);
                                     if (con != null) {
                                         con.rollback();
                                     }
