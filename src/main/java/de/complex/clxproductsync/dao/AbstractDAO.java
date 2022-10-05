@@ -8,8 +8,6 @@
  */
 package de.complex.clxproductsync.dao;
 
-import de.complex.database.SQLLog;
-import de.complex.database.exception.DbConnectionNotAvailableException;
 import de.complex.database.firebird.FirebirdDb;
 import java.util.Properties;
 import java.util.Vector;
@@ -49,15 +47,15 @@ public abstract class AbstractDAO {
             if (c != null) {
                 stmt = c.createStatement();
 
-                SQLLog.logger.debug("SQL-Query :" + qry);
+                logger.debug("SQL-Query :" + qry);
 
                 rs = stmt.executeQuery(qry);
                 while (rs.next()) { // Schleife Artikel A
-                    vec.add(new Integer(rs.getInt(idFieldName)));
+                    vec.add(Integer.valueOf(rs.getInt(idFieldName)));
                 } // Schleife Artikel E
             }
         } catch (java.sql.SQLException e) {
-            SQLLog.logger.error("SQL Error.");
+            logger.error("SQL Error.");
             FirebirdDb.showSQLException(e, qry, this.getClass().getName());
             return null;
         } finally {
@@ -79,16 +77,16 @@ public abstract class AbstractDAO {
             if (c != null) {
                 stmt = c.createStatement();
 
-                SQLLog.logger.debug("SQL-Query :" + qry);
+                logger.debug("SQL-Query :" + qry);
 
                 rs = stmt.executeQuery(qry);
 
                 while (rs.next()) { // Schleife Artikel A
-                    i = new Integer(rs.getInt(idFieldName));
+                    i = Integer.valueOf(rs.getInt(idFieldName));
                 } // Schleife Artikel E
             }
         } catch (java.sql.SQLException e) {
-            SQLLog.logger.error("SQL Error.");
+            logger.error("SQL Error.");
             FirebirdDb.showSQLException(e, qry, this.getClass().getName());
             return null;
         } finally {

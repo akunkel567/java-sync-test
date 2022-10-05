@@ -9,23 +9,17 @@
 package de.complex.clxproductsync.job;
 
 import de.complex.clxproductsync.soap.PortFactory;
-import de.complex.clxproductsync.soap.datacheck.Spoolcheck;
-import de.complex.clxproductsync.soap.datacheck.SpoolcheckList;
-import de.complex.clxproductsync.soap.transfer.Returnnok;
-import de.complex.clxproductsync.soap.transfer.ReturnnokList;
+import de.complex.clxproductsync.soap.datacheck.*;
 import de.complex.database.SQLLog;
 import de.complex.database.firebird.FirebirdDb;
 import de.complex.database.firebird.FirebirdDbPool;
 import de.complex.clxproductsync.exception.ClxUncaughtExceptionHandler;
 import de.complex.tools.config.ApplicationConfig;
-import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Properties;
-import java.util.Vector;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.apache.log4j.Logger;
 
 /**
  *
@@ -33,7 +27,7 @@ import org.apache.logging.log4j.Logger;
  */
 public class SpoolcheckUpload extends Thread {
 
-    private static Logger logger = LogManager.getLogger(SpoolcheckUpload.class);
+    private static Logger logger = Logger.getLogger(SpoolcheckUpload.class);
     public static SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd ss:SSS");
     private Properties prop;
 
@@ -67,7 +61,7 @@ public class SpoolcheckUpload extends Thread {
                     stmt = c.createStatement();
 
                     qry = "select snjob.EVENTNAME, sum(snjob.FREMDID) as IDSUM, count(snjob.snjobid) as ANZAHL from snjob where snjob.DONE = 0 group by 1";
-                    SQLLog.logger.debug("SQL-Query :" + qry);
+                    SpoolcheckUpload.logger.debug("SQL-Query :" + qry);
 
                     rs = stmt.executeQuery(qry);
                     while (rs.next()) { // Schleife Artikel A
@@ -78,13 +72,13 @@ public class SpoolcheckUpload extends Thread {
                         sc.setSadt("");
                         sc.setNow("");
                         sc.setId(0);
-                        sc.setIdsum(rs.getInt("IDSUM"));
+                        sc.setIdsum(rs.getLong("IDSUM"));
 
                         spoolcheckList.getItem().add(sc);
 
                     } // Schleife Artikel E
                 } catch (java.sql.SQLException e) {
-                    SQLLog.logger.error("SQL Error.");
+                    SpoolcheckUpload.logger.error("SQL Error.");
                     FirebirdDb.showSQLException(e, qry, this.getClass().getName());
                     return;
                 }
@@ -98,8 +92,18 @@ public class SpoolcheckUpload extends Thread {
                 SpoolcheckUpload.logger.debug("Anzahl Spoolchecks: keine");
             }
 
+            DatacheckService service = null;
+            DatacheckPort stub = null;
+
             try {
-                new PortFactory().getDatacheckPort().setSpoolcheckList(ApplicationConfig.getValue("ws_username").trim(), ApplicationConfig.getValue("ws_password").trim(), spoolcheckList);
+                ReturnnokList returnnok = new PortFactory().getDatacheckPort().setSpoolcheckList(ApplicationConfig.getValue("ws_username").trim(), ApplicationConfig.getValue("ws_password").trim(), spoolcheckList);
+
+                if (returnnok != null) {
+                    SpoolcheckUpload.logger.debug("Anzahl Returnnok: " + returnnok.getItem().size());
+                } else {
+                    SpoolcheckUpload.logger.debug("Anzahl Returnnok: keine");
+                }
+
             } catch (Exception re) {
                 SpoolcheckUpload.logger.error("SOAP-Error - SpoolcheckUpload Download");
                 SpoolcheckUpload.logger.error(re);

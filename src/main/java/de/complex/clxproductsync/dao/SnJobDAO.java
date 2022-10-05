@@ -95,7 +95,7 @@ public class SnJobDAO {
             c = this.db.getConnection();
             if (c != null) {
                 stmt = c.createStatement();
-                SQLLog.logger.debug(checkEventQry);
+                logger.debug(checkEventQry);
                 rs = stmt.executeQuery(checkEventQry);
 
                 while (rs.next()) {
@@ -103,7 +103,7 @@ public class SnJobDAO {
                 }
             }
         } catch (java.sql.SQLException e) {
-            SQLLog.logger.error("Query: " + checkEventQry, e);
+            logger.error("Query: " + checkEventQry, e);
             return null;
         } finally {
             FirebirdDb.close(rs, stmt, c);
@@ -146,7 +146,7 @@ public class SnJobDAO {
                         + " AND SNJOB.DONE = 0"
                         + " ORDER BY SNJOBID";
 
-                SQLLog.logger.debug(qry);
+                logger.debug(qry);
                 rs = stmt.executeQuery(qry);
 
                 while (rs.next()) {
@@ -218,7 +218,7 @@ public class SnJobDAO {
                         + " AND SNJOB.DONE = 0"
                         + " ORDER BY SNJOBID";
 
-                SQLLog.logger.debug("SnJob: " + qry);
+                logger.debug("SnJob: " + qry);
 
                 rs = stmt.executeQuery(qry);
 
@@ -286,7 +286,7 @@ public class SnJobDAO {
                         + " FROM SNJOB"
                         + " WHERE SNJOB.SNJOBID = " + snJobId;
 
-                SQLLog.logger.debug(qry);
+                logger.debug(qry);
 
                 rs = stmt.executeQuery(qry);
 
@@ -345,7 +345,7 @@ public class SnJobDAO {
                 updateQry = " UPDATE SNJOB SET DONE = " + doneValue
                         + " WHERE SNJOB.SNJOBID = " + snJob.getSnJobId();
 
-                SQLLog.logger.debug(updateQry);
+                logger.debug(updateQry);
                 rows = stmt.executeUpdate(updateQry);
 
                 if (rows != 0) {
@@ -380,7 +380,7 @@ public class SnJobDAO {
                     updateQry = " UPDATE SNJOB SET DONE = 1"
                             + " WHERE SNJOB.SNJOBID = " + snJobs[i].getSnJobId();
 
-                    SQLLog.logger.debug(updateQry);
+                    logger.debug(updateQry);
                     rowsCount += stmt.executeUpdate(updateQry);
                 }
 
@@ -433,7 +433,7 @@ public class SnJobDAO {
             pstmt.setInt(5, job.getSnJobId());
             pstmt.setDate(6, new java.sql.Date(cal.getTimeInMillis()));
 
-            SQLLog.logger.debug(qry);
+            logger.debug(qry);
             rs = pstmt.executeQuery();
 
             if (rs.next()) {

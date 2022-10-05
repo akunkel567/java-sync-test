@@ -21,7 +21,7 @@ import jakarta.xml.bind.annotation.XmlType;
  *         &lt;element name="anzahl" type="{http://www.w3.org/2001/XMLSchema}int"/&gt;
  *         &lt;element name="sadt" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
  *         &lt;element name="now" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
- *         &lt;element name="idsum" type="{http://www.w3.org/2001/XMLSchema}int"/&gt;
+ *         &lt;element name="idsum" type="{http://www.w3.org/2001/XMLSchema}long"/&gt;
  *         &lt;element name="id" type="{http://www.w3.org/2001/XMLSchema}int"/&gt;
  *       &lt;/all&gt;
  *     &lt;/restriction&gt;
@@ -44,7 +44,7 @@ public class Spoolcheck {
     protected String sadt;
     @XmlElement(required = true)
     protected String now;
-    protected int idsum;
+    protected long idsum;
     protected int id;
 
     /**
@@ -139,7 +139,7 @@ public class Spoolcheck {
      * Ruft den Wert der idsum-Eigenschaft ab.
      * 
      */
-    public int getIdsum() {
+    public long getIdsum() {
         return idsum;
     }
 
@@ -147,7 +147,7 @@ public class Spoolcheck {
      * Legt den Wert der idsum-Eigenschaft fest.
      * 
      */
-    public void setIdsum(int value) {
+    public void setIdsum(long value) {
         this.idsum = value;
     }
 

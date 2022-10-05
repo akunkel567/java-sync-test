@@ -88,9 +88,12 @@ public interface DatacheckPort {
      * @param password
      * @param spoolcheck
      * @param login
+     * @return
+     *     returns de.complex.clxproductsync.soap.datacheck.ReturnnokList
      */
     @WebMethod(operationName = "SetSpoolcheckList", action = "urn:Datacheck#DatacheckApi#SetSpoolcheckList")
-    public void setSpoolcheckList(
+    @WebResult(name = "result", partName = "result")
+    public ReturnnokList setSpoolcheckList(
         @WebParam(name = "login", partName = "login")
         String login,
         @WebParam(name = "password", partName = "password")

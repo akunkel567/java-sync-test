@@ -384,7 +384,7 @@ public class ExcelBestandUpload extends Thread {
                     con.commit();
                 } catch (java.sql.SQLException e) {
                     ExcelBestandUpload.logger.error("SQL Error", e);
-                    SQLLog.logger.error("SQL Error.", e);
+                    logger.error("SQL Error.", e);
                     return;
                 }
             } finally {

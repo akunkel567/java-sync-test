@@ -13,14 +13,24 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.Map;
 
 public class PortFactory {
 
     private static final Logger LOG = LogManager.getLogger(PortFactory.class);
 
+    private int CONNECTION_TIMEOUT_IN_MS = 10 * 1000;
+    private int REQUEST_TIMEOUT_IN_MS = 30 * 1000;
+
     public void setUrl(BindingProvider bp, PortPath endpointPath) {
         String endpointURL = ApplicationConfig.getValue("ws_url") + "/" + endpointPath.getUrlPath();
-        bp.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, endpointURL);
+        Map<String, Object> context = bp.getRequestContext();
+
+        context.put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, endpointURL);
+        context.put("com.sun.xml.internal.ws.connect.timeout", CONNECTION_TIMEOUT_IN_MS);
+        context.put("com.sun.xml.internal.ws.request.timeout", REQUEST_TIMEOUT_IN_MS);
+        context.put("com.sun.xml.ws.connect.timeout", CONNECTION_TIMEOUT_IN_MS);
+        context.put("com.sun.xml.ws.request.timeout", REQUEST_TIMEOUT_IN_MS);
     }
 
     public void showWsdl(String path) throws RuntimeException {

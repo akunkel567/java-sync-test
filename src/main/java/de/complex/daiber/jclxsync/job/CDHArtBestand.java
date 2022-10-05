@@ -121,7 +121,7 @@ public class CDHArtBestand extends Thread {
                 cdhCon = msdb.getConnection();
                 CDHArtBestand.logger.debug("Mssql-Db Connection: " + cdhCon);
 
-                SQLLog.logger.debug("ArtgroesseSql-Query :" + artgroesseSql);
+                logger.debug("ArtgroesseSql-Query :" + artgroesseSql);
 
                 CDHBestand bestand = null;
                 stmt = con.createStatement();
@@ -153,7 +153,7 @@ public class CDHArtBestand extends Thread {
                 }
 
                 String sql = "INSERT INTO BESTANDLOG (SAU) VALUES ('')";
-                SQLLog.logger.debug("SQL: " + sql);
+                logger.debug("SQL: " + sql);
                 CDHArtBestand.logger.debug("SQL: " + sql);
                 stmt.executeUpdate(sql); // daten werden über bevore-Insert-trigger 
 
@@ -162,7 +162,7 @@ public class CDHArtBestand extends Thread {
                 CDHArtBestand.logger.info("und Fertig...! *************************************************************************");
             } catch (java.sql.SQLException e) {
                 CDHArtBestand.logger.error("SQL Error", e);
-                SQLLog.logger.error("SQL Error.", e);
+                logger.error("SQL Error.", e);
                 return;
             } finally {
                 try {
@@ -171,7 +171,7 @@ public class CDHArtBestand extends Thread {
                     }
 
                 } catch (java.sql.SQLException e) {
-                    SQLLog.logger.error("SQL Error.", e);
+                    logger.error("SQL Error.", e);
                 }
 
                 FirebirdDb.close(rs, stmt, con);
@@ -253,7 +253,7 @@ public class CDHArtBestand extends Thread {
                     CDHArtBestand.logger.debug("Bestand :" + bestand);
                 }
             } catch (java.sql.SQLException e) {
-                SQLLog.logger.error("SQL Error.", e);
+                logger.error("SQL Error.", e);
                 return null;
             }
         } finally {
@@ -265,7 +265,7 @@ public class CDHArtBestand extends Thread {
                     stmt.close();
                 }
             } catch (java.sql.SQLException e) {
-                SQLLog.logger.error("SQL Error.", e);
+                logger.error("SQL Error.", e);
             }
         }
 
@@ -300,7 +300,7 @@ public class CDHArtBestand extends Thread {
                         CDHArtBestand.logger.debug("kein ClxProdukt Bestand gefunden, Updaten");
                     }
                 } catch (java.sql.SQLException e) {
-                    SQLLog.logger.error("SQL Error.", e);
+                    logger.error("SQL Error.", e);
                     CDHArtBestand.logger.debug("SQL Error.", e);
                 }
 
@@ -316,7 +316,7 @@ public class CDHArtBestand extends Thread {
                 }
 
             } catch (java.sql.SQLException e) {
-                SQLLog.logger.error("SQL Error.", e);
+                logger.error("SQL Error.", e);
                 return;
             }
         } finally {
@@ -331,7 +331,7 @@ public class CDHArtBestand extends Thread {
                     stmt.close();
                 }
             } catch (java.sql.SQLException e) {
-                SQLLog.logger.error("SQL Error.", e);
+                logger.error("SQL Error.", e);
             }
         }
     }
@@ -506,7 +506,7 @@ public class CDHArtBestand extends Thread {
                     pstmt.close();
                 }
             } catch (java.sql.SQLException e) {
-                SQLLog.logger.error("SQL Error.", e);
+                logger.error("SQL Error.", e);
             }
         }
     }
@@ -549,7 +549,7 @@ public class CDHArtBestand extends Thread {
                     pstmt.close();
                 }
             } catch (java.sql.SQLException e) {
-                SQLLog.logger.error("SQL Error.", e);
+                logger.error("SQL Error.", e);
             }
         }
     }

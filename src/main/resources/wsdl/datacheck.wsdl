@@ -1,19 +1,41 @@
 <?xml version="1.0"?><definitions name="Datacheck" targetNamespace="urn:Datacheck" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="urn:Datacheck" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/" xmlns="http://schemas.xmlsoap.org/wsdl/">
     <types xmlns="http://schemas.xmlsoap.org/wsdl/">
         <schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="urn:Datacheck">
-            <complexType name="SpoolcheckList">
-                <sequence>
-                    <element name="item" type="tns:Spoolcheck" minOccurs="0" maxOccurs="unbounded"/>
-                </sequence>
-            </complexType>
             <complexType name="Spoolcheck">
                 <all>
                     <element name="name" type="xsd:string" />
                     <element name="anzahl" type="xsd:int" />
                     <element name="sadt" type="xsd:string" />
                     <element name="now" type="xsd:string" />
-                    <element name="idsum" type="xsd:int" />
+                    <element name="idsum" type="xsd:long" />
                     <element name="id" type="xsd:int" />
+                </all>
+            </complexType>
+            <complexType name="SpoolcheckList">
+                <sequence>
+                    <element name="item" type="tns:Spoolcheck" minOccurs="0" maxOccurs="unbounded"/>
+                </sequence>
+            </complexType>
+            <complexType name="ReturnnokList">
+                <sequence>
+                    <element name="item" type="tns:Returnnok" minOccurs="0" maxOccurs="unbounded"/>
+                </sequence>
+            </complexType>
+            <complexType name="Returnnok">
+                <all>
+                    <element name="id" type="xsd:int" />
+                    <element name="table" type="xsd:string" />
+                </all>
+            </complexType>
+            <complexType name="Status">
+                <all>
+                    <element name="sadt" type="xsd:string" />
+                    <element name="now" type="xsd:string" />
+                    <element name="sekunden" type="xsd:int" />
+                    <element name="countsnjobs" type="xsd:int" />
+                    <element name="countsnjobtypes" type="xsd:int" />
+                    <element name="countwebspools" type="xsd:int" />
+                    <element name="countsnjobwebs" type="xsd:int" />
                 </all>
             </complexType>
         </schema>
@@ -47,11 +69,13 @@
         <part name="Spoolcheck" type="tns:SpoolcheckList" />
     </message>
     <message name="SetSpoolcheckListRequest">
-        <part name="login" type="xsd:string" />
-        <part name="password" type="xsd:string" />
-        <part name="Spoolcheck" type="tns:SpoolcheckList" />
+        <part name="login" type="xsd:string"/>
+        <part name="password" type="xsd:string"/>
+        <part name="Spoolcheck" type="tns:SpoolcheckList"/>
     </message>
-    <message name="SetSpoolcheckListResponse" />
+    <message name="SetSpoolcheckListResponse">
+        <part name="result" type="tns:ReturnnokList" />
+    </message>
     <message name="GetStatusRequest">
         <part name="login" type="xsd:string" />
         <part name="password" type="xsd:string" />

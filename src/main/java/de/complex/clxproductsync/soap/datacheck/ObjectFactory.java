@@ -30,6 +30,14 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link Spoolcheck }
+     * 
+     */
+    public Spoolcheck createSpoolcheck() {
+        return new Spoolcheck();
+    }
+
+    /**
      * Create an instance of {@link SpoolcheckList }
      * 
      */
@@ -38,11 +46,27 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link Spoolcheck }
+     * Create an instance of {@link ReturnnokList }
      * 
      */
-    public Spoolcheck createSpoolcheck() {
-        return new Spoolcheck();
+    public ReturnnokList createReturnnokList() {
+        return new ReturnnokList();
+    }
+
+    /**
+     * Create an instance of {@link Returnnok }
+     * 
+     */
+    public Returnnok createReturnnok() {
+        return new Returnnok();
+    }
+
+    /**
+     * Create an instance of {@link Status }
+     * 
+     */
+    public Status createStatus() {
+        return new Status();
     }
 
 }

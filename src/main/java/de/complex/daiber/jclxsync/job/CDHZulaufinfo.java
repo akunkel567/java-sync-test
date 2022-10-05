@@ -113,7 +113,7 @@ public class CDHZulaufinfo extends Thread {
                 stmt = con.createStatement();
                 stmt.executeUpdate("DELETE FROM ARTGROESSEZULAUF");
 
-                SQLLog.logger.debug("CdhSql-Query :" + cdhSql);
+                logger.debug("CdhSql-Query :" + cdhSql);
 
                 cdhStmt = cdhCon.createStatement();
                 cdhRs = cdhStmt.executeQuery(cdhSql);
@@ -154,7 +154,7 @@ public class CDHZulaufinfo extends Thread {
                 CDHZulaufinfo.logger.info("und Fertig...!");
             } catch (java.sql.SQLException e) {
                 CDHZulaufinfo.logger.error("SQL Error", e);
-                SQLLog.logger.error("SQL Error.", e);
+                logger.error("SQL Error.", e);
                 return;
             } catch (Exception ex) {
                 CDHZulaufinfo.logger.error(ex, ex);
@@ -173,7 +173,7 @@ public class CDHZulaufinfo extends Thread {
                     }
 
                 } catch (java.sql.SQLException e) {
-                    SQLLog.logger.error("SQL Error.", e);
+                    logger.error("SQL Error.", e);
                 }
 
                 FirebirdDb.close(rs, stmt, con);
