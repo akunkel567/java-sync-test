@@ -14,9 +14,6 @@ import de.complex.clxproductsync.eventhandler.fileevent.FileEventManager;
 import de.complex.clxproductsync.eventhandler.socketevent.SocketEventManager;
 import de.complex.clxproductsync.exception.ClxUncaughtExceptionHandler;
 import de.complex.clxproductsync.exception.InitException;
-import de.complex.daiber.jclxsync.job.CDHArtBestandJob;
-import de.complex.daiber.jclxsync.job.CDHZulaufinfoJob;
-import de.complex.daiber.jclxsync.job.ExcelBestandUploadJob;
 import de.complex.database.firebird.FirebirdDbPool;
 import de.complex.clxproductsync.job.SpoolcheckUploadJob;
 import de.complex.tools.config.ApplicationConfig;
@@ -318,39 +315,6 @@ public class MainApp extends Thread {
 
                 dt = sched.scheduleJob(job, trigger);
                 MainApp.logger.info("SpoolcheckUploadJob: " + dt.toString());
-
-                // CDHBestand job
-                if (!ApplicationConfig.getValue("cdh.artbestand_cron", "").equals("")) {
-                    job = newJob(CDHArtBestandJob.class).withIdentity("cdhartbestand_job", "group").build();
-                    trigger = newTrigger().forJob(job).withIdentity("cdhbestand_trigger", "group").withSchedule(CronScheduleBuilder.cronSchedule(ApplicationConfig.getValue("cdh.artbestand_cron", "0 * * * * ?"))).build();
-
-                    dt = sched.scheduleJob(job, trigger);
-                    MainApp.logger.info("CDHArtBestandJob: " + dt.toString());
-                } else {
-                    MainApp.logger.warn("CDHArtBestandJob wird nicht gestartet. Keine Einstellung für 'cdh.artbestand_cron' gesetzt.");
-                }
-
-                // CDHZulauf job
-                if (!ApplicationConfig.getValue("cdh.zulaufinfo_cron", "").equals("")) {
-                    job = newJob(CDHZulaufinfoJob.class).withIdentity("cdhzulaufinfo_job", "group").build();
-                    trigger = newTrigger().forJob(job).withIdentity("cdhzulaufinfo_trigger", "group").withSchedule(CronScheduleBuilder.cronSchedule(ApplicationConfig.getValue("cdh.zulaufinfo_cron", "0 0 0 * * ?"))).build();
-
-                    dt = sched.scheduleJob(job, trigger);
-                    MainApp.logger.info("CDHZulaufinfo: " + dt.toString());
-                } else {
-                    MainApp.logger.warn("CDHZulaufinfo wird nicht gestartet. Keine Einstellung für 'cdh.zulaufinfo_cron' gesetzt.");
-                }
-
-                // ExcelBestandJob
-                if (!ApplicationConfig.getValue("excelbestandupload", "").equals("")) {
-                    job = newJob(ExcelBestandUploadJob.class).withIdentity("excelbestand_job", "group").build();
-                    trigger = newTrigger().forJob(job).withIdentity("excelbestand_trigger", "group").withSchedule(CronScheduleBuilder.cronSchedule(ApplicationConfig.getValue("excelbestandupload", "0 0 * * * ?"))).build();
-
-                    dt = sched.scheduleJob(job, trigger);
-                    MainApp.logger.info("ExcelBestandUploadJob: " + dt.toString());
-                } else {
-                    MainApp.logger.warn("CDHZulaufinfo wird nicht gestartet. Keine Einstellung für 'excelbestandupload' gesetzt.");
-                }
 
                 sched.start();
 

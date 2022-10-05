@@ -4,9 +4,6 @@
  */
 package de.complex.clxproductsync.test;
 
-import java.util.logging.Level;
-
-import de.complex.daiber.jclxsync.job.ExcelBestandUpload;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
