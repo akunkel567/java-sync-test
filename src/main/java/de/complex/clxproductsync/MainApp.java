@@ -30,7 +30,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.commons.configuration.Configuration;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.quartz.*;
@@ -50,7 +49,6 @@ public class MainApp extends Thread {
     public static boolean debug = false;
     FirebirdDb db = null;
     private boolean closedIsRunning = false;
-    public static Configuration config = null;
     public static final String EVENTCONFIGFILENAME = "eventconfig.xml";
 
     /**
