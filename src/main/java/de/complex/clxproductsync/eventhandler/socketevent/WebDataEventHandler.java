@@ -8,6 +8,7 @@
  */
 package de.complex.clxproductsync.eventhandler.socketevent;
 
+import com.sun.xml.ws.fault.ServerSOAPFaultException;
 import de.complex.activerecord.ActiveRecord;
 import de.complex.clxproductsync.soap.transfer.Snjobweb;
 import de.complex.clxproductsync.soap.transfer.SnjobwebList;
@@ -105,15 +106,15 @@ public class WebDataEventHandler extends AbstractSocketEventHandler {
                                     FirebirdDb.close(null, null, con);
                                 }
                             }
-                        } catch (RemoteCallException rce) {
-//                            if (rce.getCause() instanceof AxisFault && "410".equalsIgnoreCase(((AxisFault) rce.getCause()).getFaultCode().toString())) {
-//                                WebDataEventHandler.logger.warn("AxisFault: " + ((AxisFault) rce.getCause()).getFaultString(), rce);
-//
-//                                // Datensatz nicht mehr vorhanden, wurde bereits gelöscht und noch offener Löschjob vorhanden
-//                                SoapHandler.setSnJobWebOK(snjobweb.getSnjobwebid());
-//                            } else {
+                        } catch (ServerSOAPFaultException rce) {
+                            if ("410".equalsIgnoreCase(rce.getFault().getFaultCode())) {
+                                WebDataEventHandler.logger.warn("Datensatz nicht mehr vorhanden. Job auf done gestellt.");
+
+                                // Datensatz nicht mehr vorhanden, wurde bereits gelöscht und noch offener Löschjob vorhanden
+                                SoapHandler.setSnJobWebOK(snjobweb.getSnjobwebid());
+                            } else {
                                 throw rce;
-//                            }
+                            }
                         }
                     }
                 } while (snjobwebs.getItem().size() == limit);
