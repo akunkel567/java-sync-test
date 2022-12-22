@@ -49,8 +49,8 @@
 	</properties>
 
 	<scm>
-		<connection>scm:svn:https://complex-it.xp-dev.com/svn/clxProduct/Sync/clxProductSync/tags/Version-2.62.2</connection>
-		<developerConnection>scm:svn:https://complex-it.xp-dev.com/svn/clxProduct/Sync/clxProductSync/tags/Version-2.62.2</developerConnection>
+		<connection>scm:svn:https://complex-it.xp-dev.com/svn/clxProduct/Sync/clxProductSync/trunk</connection>
+		<developerConnection>scm:svn:https://complex-it.xp-dev.com/svn/clxProduct/Sync/clxProductSync/trunk</developerConnection>
 	</scm>
 	
 	<profiles>
