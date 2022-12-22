@@ -10,6 +10,7 @@ package de.complex.clxproductsync.eventhandler.socketevent;
 
 import com.sun.xml.ws.fault.ServerSOAPFaultException;
 import de.complex.activerecord.ActiveRecord;
+import de.complex.clxproductsync.soap.ResponseErrorCodes;
 import de.complex.clxproductsync.soap.transfer.Snjobweb;
 import de.complex.clxproductsync.soap.transfer.SnjobwebList;
 import de.complex.clxproductsync.soap.transfer.XmlOut;
@@ -107,14 +108,12 @@ public class WebDataEventHandler extends AbstractSocketEventHandler {
                                 }
                             }
                         } catch (ServerSOAPFaultException rce) {
-                            if ("410".equalsIgnoreCase(rce.getFault().getFaultCode())) {
-                                WebDataEventHandler.logger.warn("Datensatz nicht mehr vorhanden. Job auf done gestellt.");
-
-                                // Datensatz nicht mehr vorhanden, wurde bereits gelöscht und noch offener Löschjob vorhanden
-                                SoapHandler.setSnJobWebOK(snjobweb.getSnjobwebid());
-                            } else {
+                            if (!ResponseErrorCodes.isDatasetNotFoundDeleteJobOpen(rce.getFault().getFaultCode())) {
                                 throw rce;
                             }
+
+                            WebDataEventHandler.logger.warn("Datensatz nicht mehr vorhanden. Job wird auf done gestellt.");
+                            SoapHandler.setSnJobWebOK(snjobweb.getSnjobwebid());
                         }
                     }
                 } while (snjobwebs.getItem().size() == limit);
